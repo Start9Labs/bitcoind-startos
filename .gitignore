@@ -1,0 +1,4 @@
+manager/target/
+**/*.rs.bk
+bitcoind.s9pk
+image.tar

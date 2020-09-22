@@ -1,0 +1,22 @@
+compat: v0
+id: bitcoind
+version: "0.20.1"
+title: "Bitcoin Core"
+description:
+  short: "A Bitcoin Full Node"
+  long: "The bitcoin full node implementation by Bitcoin Core."
+release-notes: https://github.com/bitcoin/bitcoin/blob/master/doc/release-notes/release-notes-0.20.1.md
+ports:
+  - internal: 8332
+    tor: 8332
+  - internal: 8333
+    tor: 8333
+image:
+  type: tar
+mount: /root/.bitcoin
+has-instructions: true
+assets:
+  - src: bitcoin.conf.template
+    dst: "."
+    overwrite: true
+hidden-service-version: v2

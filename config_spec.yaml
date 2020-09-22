@@ -1,0 +1,181 @@
+backup-chaindata:
+  type: boolean
+  name: "Backup Chain Data"
+  description: "Include blockchain data in backup."
+rpc:
+  type: object
+  nullable: false
+  name: "RPC Settings"
+  description: "RPC configuration options."
+  spec:
+    enable:
+      type: boolean
+      name: "Enable"
+      description: "Allow remote RPC requests."
+      default: true
+    username:
+      type: string
+      nullable: false
+      name: "Username"
+      description: "The username for connecting to Bitcoin over RPC."
+      default: "bitcoin"
+      pattern: "^[a-zA-Z0-9_]+$"
+      patternDescription: "Must be alphanumeric (can contain underscore)."
+    password:
+      type: string
+      nullable: false
+      name: "RPC Password"
+      description: "The password for connecting to Bitcoin over RPC."
+      default:
+        charset: "a-z,2-7"
+        len: 20
+      pattern: '^[^\n"]*$'
+      patternDescription: "Must not contain newline or quote characters."
+    advanced:
+      type: object
+      nullable: false
+      name: "Advanced"
+      description: "Advanced RPC Settings"
+      spec:
+        auth:
+          name: Authorization
+          description: >-
+            Username and hashed password for JSON-RPC connections.
+            RPC clients connect using the usual http basic authentication.
+          type: list
+          subtype: string
+          default: []
+          spec:
+            pattern: "^[a-zA-Z0-9_-]+:([0-9a-fA-F]{2})+\\$([0-9a-fA-F]{2})+$"
+            patternDescription: 'Each item must be of the form "<USERNAME>:<SALT>$<HASH>".'
+          range: "[0,*)"
+        serialversion:
+          name: Serialization Version
+          description: Return raw transaction or block hex with Segwit or non-SegWit serialization.
+          type: enum
+          values:
+            - non-segwit
+            - segwit
+          default: segwit
+        servertimeout:
+          name: Rpc Server Timeout
+          description: Number of seconds after which an uncompleted RPC call will time out
+          type: number
+          nullable: false
+          range: "[5,300]"
+          integral: true
+          units: seconds
+          default: 30
+        threads:
+          name: Threads
+          description: Number of threads for handling RPC calls.
+          type: number
+          nullable: false
+          default: 1
+          range: "[1,4]"
+          integral: true
+          units: ~
+        workqueue:
+          name: Work Queue
+          description: Set the depth of the work queue to service RPC calls
+          type: number
+          nullable: false
+          default: 16
+          range: "[8,32]"
+          integral: true
+          units: requests
+wallet:
+  type: object
+  nullable: false
+  name: "Wallet"
+  description: "Wallet Settings"
+  spec:
+    enable:
+      name: Enable Wallet
+      description: Load the wallet and enable wallet RPC calls.
+      type: boolean
+      default: true
+    avoidpartialspends:
+      name: Avoid Partial Spends
+      description: >-
+        Group outputs by address, selecting all or none, instead of selecting on a
+        per-output basis. This improves privacy at the expense of higher transaction
+        fees.
+      type: boolean
+      default: true
+    discardfee:
+      name: Discard Change Tolerance
+      description: >-
+        The fee rate (in BTC/kB) that indicates your tolerance
+        for discarding change by adding it to the fee.
+      type: number
+      nullable: false
+      default: 0.0001
+      range: "[0,.01]"
+      integral: false
+      units: BTC/kB
+advanced:
+  type: object
+  nullable: false
+  name: "Advanced"
+  description: "Advanced Settings"
+  spec:
+    peers:
+      type: object
+      nullable: false
+      name: "Peers"
+      description: "Peer Connection Settings"
+      spec:
+        listen:
+          type: boolean
+          name: "Make Public"
+          description: "Allow other nodes to find your server on the network."
+          default: true
+        onlyconnect:
+          type: boolean
+          name: Disable Peer Discovery
+          description: Only connect to specified peers.
+          default: false
+        onlyonion:
+          type: boolean
+          name: Disable Clearnet Connections
+          description: Only connect to peers over Tor
+          default: false
+        addnode:
+          name: Add Nodes
+          description: Add addresses of nodes to connect to
+          type: list
+          subtype: string
+          default: []
+          spec:
+            pattern: "(^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$)|((^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$)|(^[a-z2-7]{16}\\.onion$)|(^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$))"
+            patternDescription: Must be either an IPv4 or IPv6 address or domain name
+          range: "[0,*)"
+    dbcache:
+      type: number
+      nullable: true
+      name: "Database Cache"
+      description: "How much RAM to allocate for caching the TXO set. (Higher values improve syncing performance)"
+      range: "(0,4096]"
+      integral: true
+      units: MiB
+    pruning:
+      type: union
+      name: "Pruning Settings"
+      description: |
+        Blockchain Pruning Options
+        Reduce the blockchain size on disk
+      tag: "Pruning Mode"
+      variants:
+        automatic:
+          size:
+            type: number
+            nullable: false
+            name: "Maximum Size"
+            description: "Limit of blockchain size on disk (requires automatic pruning)."
+            changeWarning: "Increasing this value will require re-downloading the blockchain."
+            default: 550
+            range: "[550,100000)"
+            integral: true
+            units: MiB
+        manual: {}

@@ -1,0 +1,73 @@
+##
+## bitcoin.conf configuration file. Lines beginning with # are comments.
+##
+
+## RPC
+{{#IF rpc.enable
+rpcbind=127.0.0.1:18332
+rpcallowip=127.0.0.1
+}}
+rpcuser={{rpc.username}}
+rpcpassword={{rpc.password}}
+{{#FOREACH rpc.advanced.auth
+rpcauth={{rpc.advanced.auth}}
+}}
+{{#IF rpc.advanced.serialversion = "segwit"
+rpcserialversion=1
+}}
+{{#IF rpc.advanced.serialversion = "non-segwit"
+rpcserialversion=0
+}}
+rpcservertimeout={{rpc.advanced.servertimeout}}
+rpcthreads={{rpc.advanced.threads}}
+rpcworkqueue={{rpc.advanced.workqueue}}
+
+## PEERS
+{{#IF advanced.peers.listen
+listen=1
+bind=0.0.0.0:8333
+}}
+{{#IF !listen
+listen=0
+}}
+{{#IF advanced.peers.onlyconnect
+{{#FOREACH advanced.peers.addnode
+connect={{advanced.peers.addnode}}
+}}
+}}
+{{#IF !advanced.peers.onlyconnect
+{{#FOREACH advanced.peers.addnode
+addnode={{advanced.peers.addnode}}
+}}
+}}
+{{#IF advanced.peers.onlyonion
+onlynet=onion
+}}
+
+## PRUNING
+{{#IF advanced.pruning.mode = "manual"
+prune=1
+}}
+{{#IF advanced.pruning.mode = "automatic"
+prune={{advanced.pruning.size}}
+}}
+
+## PERFORMANCE TUNING
+{{#IF advanced.dbcache
+dbcache={{advanced.dbcache}}
+}}
+
+## WALLET
+{{#IF !wallet.enable
+disablewallet=1
+}}
+{{#IF wallet.enable
+disablewallet=0
+}}
+{{#IF wallet.avoidpartialspends
+avoidpartialspends=1
+}}
+{{#IF !wallet.avoidpartialspends
+avoidpartialspends=0
+}}
+discardfee={{wallet.discardfee}}

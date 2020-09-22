@@ -1,0 +1,3 @@
+---
+- rule: 'rpc.enable? OR !(''advanced.pruning.mode = "manual")'
+  description: "RPC must be enabled for manual pruning."
