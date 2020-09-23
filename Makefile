@@ -1,6 +1,9 @@
 ASSETS := $(shell yq r manifest.yaml assets.*.src)
 ASSET_PATHS := $(addprefix assets/,$(ASSETS))
 VERSION := $(shell yq r manifest.yaml version)
+MANAGER_SRC := $(shell find ./manager -name '*.rs')
+
+.DELETE_ON_ERROR:
 
 all: bitcoind.s9pk
 
@@ -14,6 +17,6 @@ image.tar: Dockerfile docker_entrypoint.sh manager/target/armv7-unknown-linux-mu
 	docker save start9/bitcoind > image.tar
 	docker rmi start9/bitcoind
 
-manager/target/armv7-unknown-linux-musleabihf/release/bitcoind-manager:
+manager/target/armv7-unknown-linux-musleabihf/release/bitcoind-manager: $(MANAGER_SRC)
 	docker run --rm -it -v ~/.cargo/registry:/root/.cargo/registry -v "$(shell pwd)"/manager:/home/rust/src start9/rust-musl-cross:armv7-musleabihf cargo build --release
 	docker run --rm -it -v ~/.cargo/registry:/root/.cargo/registry -v "$(shell pwd)"/manager:/home/rust/src start9/rust-musl-cross:armv7-musleabihf musl-strip target/armv7-unknown-linux-musleabihf/release/bitcoind-manager
