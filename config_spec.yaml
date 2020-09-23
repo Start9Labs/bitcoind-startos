@@ -2,6 +2,7 @@ backup-chaindata:
   type: boolean
   name: "Backup Chain Data"
   description: "Include blockchain data in backup."
+  default: false
 rpc:
   type: object
   nullable: false
