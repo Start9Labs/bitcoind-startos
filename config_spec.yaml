@@ -166,7 +166,7 @@ advanced:
       description: |
         Blockchain Pruning Options
         Reduce the blockchain size on disk
-      tag: "Pruning Mode"
+      tag: mode
       variants:
         automatic:
           size:
@@ -180,3 +180,4 @@ advanced:
             integral: true
             units: MiB
         manual: {}
+      default: automatic
