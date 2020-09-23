@@ -11,7 +11,7 @@ bitcoind.s9pk: manifest.yaml config_spec.yaml config_rules.yaml image.tar $(ASSE
 	appmgr -vv pack $(shell pwd) -o bitcoind.s9pk
 	appmgr verify bitcoind.s9pk
 
-image.tar: Dockerfile docker_entrypoint.sh manager/target/armv7-unknown-linux-musleabihf/release/bitcoind-manager
+image.tar: Dockerfile docker_entrypoint.sh manager/target/armv7-unknown-linux-musleabihf/release/bitcoind-manager manifest.yaml
 	test $(shell uname -m) -eq "aarch64"
 	docker build -t start9/bitcoind --build-arg BITCOIN_VERSION=$(VERSION) .
 	docker save start9/bitcoind > image.tar
