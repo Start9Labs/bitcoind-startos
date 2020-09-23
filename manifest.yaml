@@ -15,6 +15,8 @@ image:
   type: tar
 mount: /root/.bitcoin
 has-instructions: true
+os-version-required: ">=0.2.4"
+os-version-recommended: ">=0.2.4"
 assets:
   - src: bitcoin.conf.template
     dst: "."
