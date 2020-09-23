@@ -7,7 +7,10 @@ MANAGER_SRC := $(shell find ./manager -name '*.rs')
 
 all: bitcoind.s9pk
 
-bitcoind.s9pk: manifest.yaml config_spec.yaml config_rules.yaml image.tar $(ASSET_PATHS)
+install: bitcoind.s9pk
+	appmgr install bitcoind.s9pk
+
+bitcoind.s9pk: manifest.yaml config_spec.yaml config_rules.yaml image.tar instructions.md $(ASSET_PATHS)
 	appmgr -vv pack $(shell pwd) -o bitcoind.s9pk
 	appmgr verify bitcoind.s9pk
 
