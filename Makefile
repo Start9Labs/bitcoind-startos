@@ -21,6 +21,6 @@ image.tar: Dockerfile docker_entrypoint.sh manager/target/armv7-unknown-linux-mu
 	#docker save start9/bitcoind > image.tar
 	#docker rmi start9/bitcoind
 
-manager/target/armv7-unknown-linux-musleabihf/release/bitcoind-manager: $(MANAGER_SRC)
+manager/target/armv7-unknown-linux-musleabihf/release/bitcoind-manager: $(MANAGER_SRC) manager/Cargo.toml manager/Cargo.lock
 	docker run --rm -it -v ~/.cargo/registry:/root/.cargo/registry -v "$(shell pwd)"/manager:/home/rust/src start9/rust-musl-cross:armv7-musleabihf cargo build --release
 	docker run --rm -it -v ~/.cargo/registry:/root/.cargo/registry -v "$(shell pwd)"/manager:/home/rust/src start9/rust-musl-cross:armv7-musleabihf musl-strip target/armv7-unknown-linux-musleabihf/release/bitcoind-manager
