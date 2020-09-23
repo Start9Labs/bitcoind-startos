@@ -1,7 +1,7 @@
 backup-chaindata:
   type: boolean
   name: "Backup Chain Data"
-  description: "Include blockchain data in backup."
+  description: "Optionally include blockchain data in backups. Backups will take significantly longer. This is off by default because this data can also be recovered by re-syncing"
   default: false
 rpc:
   type: object
@@ -60,7 +60,7 @@ rpc:
           default: segwit
         servertimeout:
           name: Rpc Server Timeout
-          description: Number of seconds after which an uncompleted RPC call will time out
+          description: Number of seconds after which an uncompleted RPC call will time out.
           type: number
           nullable: false
           range: "[5,300]"
@@ -69,7 +69,7 @@ rpc:
           default: 30
         threads:
           name: Threads
-          description: Number of threads for handling RPC calls.
+          description: Set the number of threads for handling RPC calls. Only needed if you plan to abuse your node.
           type: number
           nullable: false
           default: 1
@@ -78,7 +78,7 @@ rpc:
           units: ~
         workqueue:
           name: Work Queue
-          description: Set the depth of the work queue to service RPC calls
+          description: Set the depth of the work queue to service RPC calls. Determines how long the backlog of RPC requests can get before it just rejects new ones.
           type: number
           nullable: false
           default: 16
@@ -139,12 +139,12 @@ advanced:
           default: false
         onlyonion:
           type: boolean
-          name: Disable Clearnet Connections
-          description: Only connect to peers over Tor
+          name: Disable Clearnet
+          description: Only connect to peers over Tor.
           default: false
         addnode:
           name: Add Nodes
-          description: Add addresses of nodes to connect to
+          description: Add addresses of nodes to connect to.
           type: list
           subtype: string
           default: []
@@ -156,7 +156,7 @@ advanced:
       type: number
       nullable: true
       name: "Database Cache"
-      description: "How much RAM to allocate for caching the TXO set. (Higher values improve syncing performance)"
+      description: "How much RAM to allocate for caching the TXO set. Higher values improve syncing performance."
       range: "(0,4096]"
       integral: true
       units: MiB
@@ -166,18 +166,18 @@ advanced:
       description: |
         Blockchain Pruning Options
         Reduce the blockchain size on disk
-      tag: mode
+      tag: "Pruning Mode"
       variants:
         automatic:
           size:
             type: number
             nullable: false
-            name: "Maximum Size"
+            name: "Max Chain Size"
             description: "Limit of blockchain size on disk (requires automatic pruning)."
-            changeWarning: "Increasing this value will require re-downloading the blockchain."
+            changeWarning: "Increasing this value will require re-syncing your node."
             default: 550
             range: "[550,100000)"
             integral: true
             units: MiB
         manual: {}
-      default: automatic
+        
