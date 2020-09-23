@@ -59,10 +59,9 @@ pub struct ChainInfo {
 }
 
 #[derive(Clone, Debug, serde::Serialize)]
-#[serde(tag = "version")]
-pub enum Stats {
-    #[serde(rename = "1")]
-    V1 { data: Vec<Stat> },
+pub struct Stats {
+    version: u8,
+    data: Vec<Stat>,
 }
 
 #[derive(Clone, Debug, serde::Serialize)]
@@ -144,7 +143,10 @@ fn sidecar(config: &serde_yaml::Mapping, addr: &str) -> Result<(), Box<dyn Error
     }
     serde_yaml::to_writer(
         std::fs::File::create("/root/.bitcoin/start9/.stats.yaml.tmp")?,
-        &Stats::V1 { data: stats },
+        &Stats {
+            version: 1,
+            data: stats,
+        },
     )?;
     std::fs::rename(
         "/root/.bitcoin/start9/.stats.yaml.tmp",
