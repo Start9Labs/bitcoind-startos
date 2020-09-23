@@ -12,7 +12,7 @@ Depending on your Internet bandwidth, your node should take approximately 5-7 da
 
 ### Using a Wallet
 
-Copy/paste your node's ".onion" URL, as well as your RPC username and password (located in config), into a compatible wallet. For a full list of compatible wallets, see https://github.com/start9labs/bitcoind-wrapper/blob/master/docs/wallets.md
+Copy/paste your node's ".onion" URL, as well as your RPC username and password (located in config), into any compatible wallet. For a full list of compatible wallets, see <a href="https://github.com/start9labs/bitcoind-wrapper/blob/master/docs/wallets.md" target="_blank">https://github.com/start9labs/bitcoind-wrapper/blob/master/docs/wallets.md</a> (this link will not work in the Consulate).
 
 ## Pruning
 
