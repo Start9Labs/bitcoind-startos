@@ -1,10 +1,11 @@
 ASSETS := $(shell yq r manifest.yaml assets.*.src)
+ASSET_PATHS := $(addprefix assets/,$(ASSETS))
 VERSION := $(shell yq r manifest.yaml version)
 
 all: bitcoind.s9pk
 
-bitcoind.s9pk: manifest.yaml config_spec.yaml config_rules.yaml image.tar $(ASSETS)
-	appmgr pack -vv $(shell pwd) -o bitcoind.s9pk
+bitcoind.s9pk: manifest.yaml config_spec.yaml config_rules.yaml image.tar $(ASSET_PATHS)
+	appmgr -vv pack $(shell pwd) -o bitcoind.s9pk
 	appmgr verify bitcoind.s9pk
 
 image.tar: Dockerfile docker_entrypoint.sh manager/target/armv7-unknown-linux-musleabihf/release/bitcoind-manager
