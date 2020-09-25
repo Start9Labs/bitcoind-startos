@@ -1,8 +1,9 @@
-backup-chaindata:
-  type: boolean
-  name: "Backup Chain Data"
-  description: "Optionally include blockchain data in backups. Backups will take significantly longer. This is off by default because this data can also be recovered by re-syncing"
-  default: false
+# Disabled until .backupignore is fixed
+#backup-chaindata:
+#  type: boolean
+#  name: "Backup Chain Data"
+#  description: "Optionally include blockchain data in backups. Backups will take significantly longer. This is off by default because this data can also be recovered by re-syncing"
+#  default: false
 rpc:
   type: object
   nullable: false

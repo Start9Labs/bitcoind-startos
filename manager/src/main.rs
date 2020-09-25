@@ -275,6 +275,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     {
         btc_args.push(format!("-proxy={}:9050", var("HOST_IP")?));
     }
+    /* re-enable once .backupignore is fixed
     if !config
         .get(&Value::String("backup-chaindata".to_owned()))
         .and_then(|v| v.as_bool())
@@ -284,9 +285,11 @@ fn main() -> Result<(), Box<dyn Error>> {
         writeln!(f, "blocks/")?;
         writeln!(f, "chainstate/")?;
         f.flush()?;
-    } else {
+    } else {*/
+    if std::path::Path::new("/root/.bitcoin/.backupignore").exists() {
         std::fs::remove_file("/root/.bitcoin/.backupignore")?;
     }
+    //}
     {
         // mutex guard
         let mut requires_reindex = REQUIRES_REINDEX.lock().unwrap();
