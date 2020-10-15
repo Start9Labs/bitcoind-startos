@@ -33,7 +33,7 @@ make
 ```
 Note: some parts of the make process must be run on armv7
 
-## Installing
+## Installing (on Embassy)
 
 SSH into an Embassy device.
 `scp` the `.s9pk` to any directory from your local machine.
