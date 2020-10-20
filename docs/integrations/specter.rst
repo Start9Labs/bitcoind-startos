@@ -71,7 +71,7 @@ This will display all hidden folders in that folder.
 
 The hidden folder will open, and you can right click the torrc file to open with a text editor:
 
-.. figure:: /docs/integrations/assets/specter/specter/edit-tor-config1.png
+.. figure:: /docs/integrations/assets/specter/edit-tor-config1.png
   :width: 90%
   :alt: Edit torrc file
 
