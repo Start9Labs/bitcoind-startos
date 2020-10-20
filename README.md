@@ -42,3 +42,6 @@ Run the following command to determine successful install:
 ```
 appmgr install bitcoind.s9pk
 ```
+## Integrations
+
+Documentation guides for integrating with external applications can be found under [docs/integrations](/docs/integrations).
