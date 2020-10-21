@@ -2,7 +2,7 @@
 Specter Desktop
 ***************
 
-Author: Community Member `@Chiefmonkey <https://twitter.com/HodlrDotRocks>`
+Author: Community Member `@Chiefmonkey <https://twitter.com/HodlrDotRocks>`_
 
 The Tor address provided by the Bitcoin service can be used in the configuration settings for `Specter Desktop <https://github.com/cryptoadvance/specter-desktop>`_.
 
