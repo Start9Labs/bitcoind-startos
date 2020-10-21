@@ -2,9 +2,11 @@
 Specter Desktop
 ***************
 
+Author: Community Member `@Chiefmonkey https://twitter.com/HodlrDotRocks`
+
 The Tor address provided by the Bitcoin service can be used in the configuration settings for `Specter Desktop <https://github.com/cryptoadvance/specter-desktop>`_.
 
-This guide was written for MacOS on Catalina 10.15.7 courtesy of @Chiefmonkey.
+This guide was written for MacOS on Catalina 10.15.7.
 
 Step 1 - Install Homebrew
 =========================
