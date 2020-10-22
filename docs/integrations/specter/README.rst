@@ -99,7 +99,11 @@ Reboot your machine.
 Step 5 - Configure Specter Desktop App
 ======================================
 
-`Download <https://specter.solutions/>`_ specter.
+`Download <https://specter.solutions/>`_ specter at the latest release version (currently v0.8.1).
+
+Drag and drop the Specter icon into Applications once downloaded. 
+
+Select "Use a local Specter server" when prompted.
 
 Under “Wallets” on the left click ``Configure``.
 
