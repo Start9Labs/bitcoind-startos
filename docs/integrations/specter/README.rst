@@ -101,7 +101,7 @@ Step 5 - Configure Specter Desktop App
 
 `Download <https://specter.solutions/>`_ specter at the latest release version (currently v0.8.1).
 
-Drag and drop the Specter icon into Applications once downloaded. 
+Drag and drop the Specter icon into Applications once downloaded. You might need to reboot to open Specter if the first load is taking a long time.
 
 Select "Use a local Specter server" when prompted.
 
