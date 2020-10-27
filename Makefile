@@ -1,6 +1,7 @@
 ASSETS := $(shell yq r manifest.yaml assets.*.src)
 ASSET_PATHS := $(addprefix assets/,$(ASSETS))
 VERSION := $(shell yq r manifest.yaml version)
+VERSION_STRIPPED := $(firstword $(subst +, ,$(VERSION)))
 MANAGER_SRC := $(shell find ./manager -name '*.rs') manager/Cargo.toml manager/Cargo.lock
 
 .DELETE_ON_ERROR:
@@ -15,7 +16,7 @@ bitcoind.s9pk: manifest.yaml config_spec.yaml config_rules.yaml image.tar instru
 	appmgr -vv verify bitcoind.s9pk
 
 image.tar: Dockerfile docker_entrypoint.sh manager/target/armv7-unknown-linux-musleabihf/release/bitcoind-manager manifest.yaml
-	DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --tag start9/bitcoind --build-arg BITCOIN_VERSION=$(VERSION) --platform=linux/arm/v7 -o type=docker,dest=image.tar .
+	DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --tag start9/bitcoind --build-arg BITCOIN_VERSION=$(VERSION_STRIPPED) --platform=linux/arm/v7 -o type=docker,dest=image.tar .
 	#test "$(shell uname -m)" = "aarch64"
 	#docker build -t start9/bitcoind --build-arg BITCOIN_VERSION=$(VERSION) .
 	#docker save start9/bitcoind > image.tar

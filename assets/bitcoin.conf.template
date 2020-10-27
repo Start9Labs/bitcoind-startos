@@ -4,8 +4,8 @@
 
 ## RPC
 {{#IF rpc.enable
-rpcbind=127.0.0.1:8332
-rpcallowip=127.0.0.1
+rpcbind=0.0.0.0:8332
+rpcallowip=0.0.0.0/0
 }}
 rpcuser={{rpc.username}}
 rpcpassword={{rpc.password}}
