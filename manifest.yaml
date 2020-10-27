@@ -1,6 +1,6 @@
 compat: v0
 id: bitcoind
-version: "0.20.1"
+version: "0.20.2"
 title: "Bitcoin Core"
 description:
   short: "Bitcoin Full Node by Bitcoin Core"
@@ -11,6 +11,10 @@ ports:
     tor: 8332
   - internal: 8333
     tor: 8333
+  - internal: 28332
+    tor: 28332
+  - internal: 28333
+    tor: 28333
 image:
   type: tar
 mount: /root/.bitcoin

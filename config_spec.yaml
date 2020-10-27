@@ -85,6 +85,11 @@ rpc:
           range: "[8,32]"
           integral: true
           units: requests
+zmq-enabled:
+  type: boolean
+  name: ZeroMQ Enabled
+  description: Enable the ZeroMQ interface
+  default: true
 wallet:
   type: object
   nullable: false

@@ -74,13 +74,6 @@ pub struct Stat {
 }
 
 fn sidecar(config: &serde_yaml::Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
-    let info: ChainInfo = serde_json::from_slice(
-        &std::process::Command::new("bitcoin-cli")
-            .arg("-conf=/root/.bitcoin/bitcoin.conf")
-            .arg("getblockchaininfo")
-            .output()?
-            .stdout,
-    )?;
     let mut stats = Vec::new();
     if let (Some(user), Some(pass)) = (
         config
@@ -100,46 +93,58 @@ fn sidecar(config: &serde_yaml::Mapping, addr: &str) -> Result<(), Box<dyn Error
             qr: true,
         });
     }
-    stats.push(Stat {
-        name: "Block Height",
-        value: format!("{}", info.headers),
-        description: Some("The current block height for the network"),
-        copyable: false,
-        qr: false,
-    });
-    stats.push(Stat {
-        name: "Synced Block Height",
-        value: format!("{}", info.blocks),
-        description: Some("The number of blocks the node has verified"),
-        copyable: false,
-        qr: false,
-    });
-    stats.push(Stat {
-        name: "Sync Progress",
-        value: if info.blocks < info.headers {
-            format!("{:.2}%", 100.0 * info.verificationprogress)
-        } else {
-            "100%".to_owned()
-        },
-        description: Some("The percentage of the blockchain that has been verified"),
-        copyable: false,
-        qr: false,
-    });
-    stats.push(Stat {
-        name: "Disk Usage",
-        value: format!("{:.2} GiB", info.size_on_disk as f64 / 1024_f64.powf(3_f64)),
-        description: Some("The blockchain size on disk"),
-        copyable: false,
-        qr: false,
-    });
-    if info.pruneheight > 0 {
+    let info_res = std::process::Command::new("bitcoin-cli")
+        .arg("-conf=/root/.bitcoin/bitcoin.conf")
+        .arg("getblockchaininfo")
+        .output()?;
+    if info_res.status.success() {
+        let info: ChainInfo = serde_json::from_slice(&info_res.stdout)?;
         stats.push(Stat {
-            name: "Prune Height",
-            value: format!("{}", info.pruneheight),
-            description: Some("The number of blocks that have been deleted from disk"),
+            name: "Block Height",
+            value: format!("{}", info.headers),
+            description: Some("The current block height for the network"),
             copyable: false,
             qr: false,
         });
+        stats.push(Stat {
+            name: "Synced Block Height",
+            value: format!("{}", info.blocks),
+            description: Some("The number of blocks the node has verified"),
+            copyable: false,
+            qr: false,
+        });
+        stats.push(Stat {
+            name: "Sync Progress",
+            value: if info.blocks < info.headers {
+                format!("{:.2}%", 100.0 * info.verificationprogress)
+            } else {
+                "100%".to_owned()
+            },
+            description: Some("The percentage of the blockchain that has been verified"),
+            copyable: false,
+            qr: false,
+        });
+        stats.push(Stat {
+            name: "Disk Usage",
+            value: format!("{:.2} GiB", info.size_on_disk as f64 / 1024_f64.powf(3_f64)),
+            description: Some("The blockchain size on disk"),
+            copyable: false,
+            qr: false,
+        });
+        if info.pruneheight > 0 {
+            stats.push(Stat {
+                name: "Prune Height",
+                value: format!("{}", info.pruneheight),
+                description: Some("The number of blocks that have been deleted from disk"),
+                copyable: false,
+                qr: false,
+            });
+        }
+    } else {
+        eprintln!(
+            "Error updating blockchain info: {}",
+            std::str::from_utf8(&info_res.stderr).unwrap_or("UNKNOWN ERROR")
+        )
     }
     serde_yaml::to_writer(
         std::fs::File::create("/root/.bitcoin/start9/.stats.yaml.tmp")?,
@@ -170,18 +175,6 @@ fn publish_notification(e: &Notification) -> std::io::Result<()> {
 }
 
 fn notification_handler(line: &str) -> std::io::Result<()> {
-    if line.starts_with("Error:") {
-        publish_notification(&Notification {
-            time: std::time::UNIX_EPOCH
-                .elapsed()
-                .map(|t| t.as_secs_f64())
-                .unwrap_or(0_f64),
-            level: Level::Error,
-            code: 0,
-            title: "General Error".to_owned(),
-            message: line[6..].trim().to_owned(),
-        })?;
-    }
     if line.contains("Prune: last wallet synchronisation goes beyond pruned data.") {
         publish_notification(&Notification {
             time: std::time::UNIX_EPOCH
@@ -197,7 +190,19 @@ fn notification_handler(line: &str) -> std::io::Result<()> {
             ),
         })?;
         *REQUIRES_REINDEX.lock().unwrap() = true;
+    } else if line.starts_with("Error:") {
+        publish_notification(&Notification {
+            time: std::time::UNIX_EPOCH
+                .elapsed()
+                .map(|t| t.as_secs_f64())
+                .unwrap_or(0_f64),
+            level: Level::Error,
+            code: 0,
+            title: "General Error".to_owned(),
+            message: line[6..].trim().to_owned(),
+        })?;
     }
+    eprintln!("{}", line);
     Ok(())
 }
 
