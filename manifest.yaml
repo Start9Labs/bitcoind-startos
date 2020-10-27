@@ -1,6 +1,6 @@
 compat: v0
 id: bitcoind
-version: "0.20.2"
+version: "0.20.1"
 title: "Bitcoin Core"
 description:
   short: "Bitcoin Full Node by Bitcoin Core"
