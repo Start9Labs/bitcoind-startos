@@ -37,7 +37,7 @@ mempoolexpiry={{advanced.mempool.mempoolexpiry}}
 listen=1
 bind=0.0.0.0:8333
 }}
-{{#IF !listen
+{{#IF !advanced.peers.listen
 listen=0
 }}
 {{#IF advanced.peers.onlyconnect
