@@ -127,6 +127,35 @@ advanced:
   name: "Advanced"
   description: "Advanced Settings"
   spec:
+    mempool:
+      type: object
+      nullable: false
+      name: "Mempool"
+      description: "Mempool Settings"
+      spec:
+        persistmempool:
+          type: boolean
+          name: "Persist Mempool"
+          description: "Save the mempool on shutdown and load on restart."
+          default: true
+        maxmempool:
+          type: number
+          nullable: false
+          name: "Max Mempool Size"
+          description: "Keep the transaction memory pool below <n> megabytes."
+          range: "[1,*)"
+          integral: true
+          units: MiB
+          default: 300
+        mempoolexpiry:
+          type: number
+          nullable: false
+          name: "Mempool Expiration"
+          description: "Do not keep transactions in the mempool longer than <n> hours."
+          range: "[1,*)"
+          integral: true
+          units: Hr
+          default: 336
     peers:
       type: object
       nullable: false
@@ -187,3 +216,4 @@ advanced:
             units: MiB
         manual: {}
       default: automatic
+      
