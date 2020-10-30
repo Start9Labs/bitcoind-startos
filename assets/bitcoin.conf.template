@@ -22,6 +22,16 @@ rpcservertimeout={{rpc.advanced.servertimeout}}
 rpcthreads={{rpc.advanced.threads}}
 rpcworkqueue={{rpc.advanced.workqueue}}
 
+## MEMPOOL
+{{#IF advanced.mempool.persistmempool
+persistmempool=1
+}}
+{{IF !persistmempool
+persistmempool=0
+}}
+maxmempool={{advanced.mempool.maxmempool}}
+mempoolexpiry={{advanced.mempool.mempoolexpiry}}
+
 ## PEERS
 {{#IF advanced.peers.listen
 listen=1
