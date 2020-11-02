@@ -73,7 +73,7 @@ pub struct Stat {
     qr: bool,
 }
 
-fn sidecar(config: &serde_yaml::Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
+fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
     let mut stats = Vec::new();
     if let (Some(user), Some(pass)) = (
         config
@@ -131,6 +131,25 @@ fn sidecar(config: &serde_yaml::Mapping, addr: &str) -> Result<(), Box<dyn Error
             copyable: false,
             qr: false,
         });
+        if info.size_on_disk as f64
+            > (|| -> Option<f64> {
+                let advanced = config.get(&Value::String("advanced".to_owned()))?;
+                let pruning = advanced.get(&Value::String("pruning".to_owned()))?;
+                if pruning.get(&Value::String("mode".to_owned()))? == "manual" {
+                    let size = pruning.get(&Value::String("size".to_owned()))?;
+                    Some(size.as_f64()?.powf(2_f64))
+                } else {
+                    None
+                }
+            })()
+            .unwrap_or(std::f64::INFINITY)
+        {
+            std::process::Command::new("bitcoin-cli")
+                .arg("-conf=/root/.bitcoin/bitcoin.conf")
+                .arg("pruneblockchain")
+                .arg(format!("{}", info.pruneheight + 10))
+                .status()?;
+        }
         if info.pruneheight > 0 {
             stats.push(Stat {
                 name: "Prune Height",
@@ -256,12 +275,7 @@ where
 fn main() -> Result<(), Box<dyn Error>> {
     let config: Mapping =
         serde_yaml::from_reader(std::fs::File::open("/root/.bitcoin/start9/config.yaml")?)?;
-    let sidecar_poll_interval = std::time::Duration::from_secs(
-        config
-            .get(&Value::String("sidecar_poll_interval".to_owned()))
-            .and_then(|a| a.as_u64())
-            .unwrap_or(5),
-    );
+    let sidecar_poll_interval = std::time::Duration::from_secs(5);
     let addr = var("TOR_ADDRESS")?;
     let mut btc_args = vec![
         format!("-onion={}:9050", var("HOST_IP")?),
