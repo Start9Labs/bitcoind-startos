@@ -1,7 +1,5 @@
 # Bitcoin Core
 
-<!-- this is a comment -->
-
 ## Getting Started
 
 ### Config
