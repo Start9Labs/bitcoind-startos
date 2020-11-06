@@ -137,7 +137,7 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
                 let pruning = advanced.get(&Value::String("pruning".to_owned()))?;
                 if pruning.get(&Value::String("mode".to_owned()))? == "manual" {
                     let size = pruning.get(&Value::String("size".to_owned()))?;
-                    Some(size.as_f64()?.powf(2_f64))
+                    Some(size.as_f64()? * 1024_f64.powf(2_f64))
                 } else {
                     None
                 }

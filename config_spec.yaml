@@ -15,6 +15,7 @@ rpc:
       name: "Username"
       description: "The username for connecting to Bitcoin over RPC."
       default: "bitcoin"
+      masked: true
       pattern: "^[a-zA-Z0-9_]+$"
       patternDescription: "Must be alphanumeric (can contain underscore)."
     password:
@@ -25,6 +26,8 @@ rpc:
       default:
         charset: "a-z,2-7"
         len: 20
+      copyable: true
+      masked: true
       pattern: '^[^\n"]*$'
       patternDescription: "Must not contain newline or quote characters."
       copyable: true

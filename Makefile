@@ -1,7 +1,7 @@
 ASSETS := $(shell yq r manifest.yaml assets.*.src)
 ASSET_PATHS := $(addprefix assets/,$(ASSETS))
 VERSION := $(shell yq r manifest.yaml version)
-VERSION_STRIPPED := $(firstword $(subst +, ,$(VERSION)))
+VERSION_STRIPPED := $(shell echo $(VERSION) | sed -E 's/([0-9]+\.[0-9]+\.[0-9]+).*/\1/g')
 MANAGER_SRC := $(shell find ./manager -name '*.rs') manager/Cargo.toml manager/Cargo.lock
 
 .DELETE_ON_ERROR:
