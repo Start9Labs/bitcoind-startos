@@ -26,8 +26,6 @@ rpc:
       default:
         charset: "a-z,2-7"
         len: 20
-      copyable: true
-      masked: true
       pattern: '^[^\n"]*$'
       patternDescription: "Must not contain newline or quote characters."
       copyable: true
