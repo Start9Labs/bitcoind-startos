@@ -12,7 +12,7 @@ Depending on your Internet bandwidth, your node should take approximately 5-7 da
 
 ### Using a Wallet
 
-Copy/paste (or QuickConnect QR code) your node's Tor address and RPC credentials (located in config), into any compatible wallet. For a full list of compatible wallets, see <a href="https://github.com/start9labs/bitcoind-wrapper/blob/master/docs/wallets.md" target="_blank">https://github.com/start9labs/bitcoind-wrapper/blob/master/docs/wallets.md</a> (this link will not work in the Consulate).
+Enter your QuickConnect QR code (located in `properties`) **OR** your raw RPC credentials (located in `Config`) into any wallet that supports connecting to a remote node over Tor. For a full list of compatible wallets, see <a href="https://github.com/start9labs/bitcoind-wrapper/blob/master/docs/wallets.md" target="_blank">https://github.com/start9labs/bitcoind-wrapper/blob/master/docs/wallets.md</a>.
 
 ## Pruning
 

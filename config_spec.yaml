@@ -27,6 +27,8 @@ rpc:
         len: 20
       pattern: '^[^\n"]*$'
       patternDescription: "Must not contain newline or quote characters."
+      copyable: true
+      masked: true
     advanced:
       type: object
       nullable: false
