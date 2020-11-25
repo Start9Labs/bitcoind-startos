@@ -58,7 +58,9 @@ Step 3 - Download and Configure Specter
 
 Drag and drop the Specter icon into Applications once downloaded.
 
-Select "Use a local Specter server" if prompted.
+Launch Specter.
+
+**Notice the Tor icon in the top right corner. *Do not turn it on*. You already have Tor running on your computer, there is no reason to also enable it in Specter.**
 
 Click ``Connect Specter to your Bitcoin node`` .
 
@@ -68,7 +70,7 @@ Click ``Connect Specter to your Bitcoin node`` .
 
 Disable "Auto-detect" and enter your Embassy Bitcoin node Tor address and RPC credentials as shown below. Your RPC credentials can be found in the `Config` section.
 
-.. figure:: /docs/integrations/specter/assets/specter-desktop.png
+.. figure:: /docs/integrations/specter/assets/add-node.png
   :width: 75%
   :alt: Add node
 
