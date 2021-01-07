@@ -2,7 +2,7 @@
 Specter Desktop - MacOS
 ***********************
 
-Author: Community Member `@Chiefmonkey <https://twitter.com/HodlrDotRocks>`_
+Original Author: Community Member `@Chiefmonkey <https://twitter.com/HodlrDotRocks>`_
 
 The Tor address provided by the Bitcoin service can be used in the configuration settings for `Specter Desktop <https://github.com/cryptoadvance/specter-desktop>`_.
 
@@ -21,7 +21,7 @@ It will ask you for your system password before it installs:
   :width: 90%
   :alt: Homebrew installation
 
-It will tell you which directories it’s going to create and hit ``return``:
+It will tell you which directories it is going to create and hit ``return``:
 
 .. figure:: /docs/integrations/specter/assets/install-homebrew1.png
   :width: 90%
@@ -36,107 +36,45 @@ Surprisingly, Homebrew uses Google Analytics to collect anonymous usage data. Yo
 Step 2 - Install Tor
 ====================
 
-.. note:: Close Tor Browser before you edit your ``torrc``, otherwise Tor Browser may erase your modifications.
+.. note:: If you have the Tor Browser is open, close it.
 
 In the command line type: ``brew install tor``
 
 See `the tor project <https://2019.www.torproject.org/docs/tor-doc-osx.html.en>`_ for more details.
 
-Once it’s finished you have the following options:
+Once it is finished you have the following options:
 
 .. figure:: /docs/integrations/specter/assets/install_tor.png
   :width: 90%
   :alt: Install Tor
 
-Step 3 - Edit torrc config file
-===============================
-
-Once tor is installed you will need to edit the tor config file. You can do this using Finder, or via the command line if you are a developer. Reference `these <https://support.torproject.org/tbb/tbb-editing-torrc/>`_ instructions for the Finder approach.
-
-Newer Macs hide certain files like torrc so you need to do do this:
-
-Open Finder and click Go menu > Go to Folder
-
-.. figure:: /docs/integrations/specter/assets/go-to-folder.png
-  :width: 40%
-  :alt: Mac go to folder menu
-
-Then enter:
-
-``~/Library/Application Support/TorBrowser-Data/Tor``
-
-.. figure:: /docs/integrations/specter/assets/go-to-folder2.png
-  :width: 70%
-  :alt: Mac go to folder submenu
-
-This will display all hidden folders in that folder.
-
-The hidden folder will open, and you can right click the torrc file to open with a text editor:
-
-.. figure:: /docs/integrations/specter/assets/edit-tor-config1.png
-  :width: 90%
-  :alt: Edit torrc file
-
-Copy the following lines into your torrc file if they do not exist already:
-
-.. code:: bash
-
-    ## The port on which Tor will listen for local connections from Tor
-    ## controller applications, as documented in control-spec.txt.
-    ControlPort 9051
-    CookieAuthentication 1
-    CookieAuthFileGroupReadable 1
+It is recommended to use `brew services start tor` so that Tor is always running, even after a restart of your computer.
 
 
-.. note:: For further help or reference, visit the `specter desktop docs <https://github.com/cryptoadvance/specter-desktop/blob/master/docs/tor.md#install-tor-service>`_ here. 
+Step 3 - Download and Configure Specter
+=======================================
 
+`Download <https://specter.solutions/>`_ specter at the latest release version (currently v0.10.1).
 
-Step 4 - Reboot
-================
+Drag and drop the Specter icon into Applications once downloaded.
 
-Reboot your machine.
+Launch Specter.
 
-Step 5 - Configure Specter Desktop App
-======================================
+**Notice the Tor icon in the top right corner. *Do not turn it on*. You already have Tor running on your computer, there is no reason to also enable it in Specter.**
 
-`Download <https://specter.solutions/>`_ specter at the latest release version (currently v0.8.1).
+Click ``Connect Specter to your Bitcoin node`` .
 
-Drag and drop the Specter icon into Applications once downloaded. You might need to reboot to open Specter if the first load is taking a long time.
-
-Select "Use a local Specter server" when prompted.
-
-Under “Wallets” on the left click ``Configure``.
-
-Turn off Auto-detect.
-
-.. figure:: /docs/integrations/specter/assets/specter-desktop.png
+.. figure:: /docs/integrations/specter/assets/welcome.png
   :width: 75%
-  :alt: Specter desktop
+  :alt: Welcome
 
-In a Tor enabled browser connected to your Embassy click: ``Services > Bitcoin Core`` and copy your Tor address.
+Disable "Auto-detect" and enter your Embassy Bitcoin node Tor address and RPC credentials as shown below. Your RPC credentials can be found in the `Config` section.
 
-.. figure:: /docs/integrations/specter/assets/embassy1.png
-  :width: 90%
-  :alt: Embassy Bitcoin service menu
-
-
-Paste it into Specter in the Host field.
-
-Go back to your Embassy to get your Username and Password by selecting: ``Config > RPC Settings``.
-
-Go back to Specter and fill it out like this:
-
-.. figure:: /docs/integrations/specter/assets/specter-desktop.png
+.. figure:: /docs/integrations/specter/assets/add-node.png
   :width: 75%
-  :alt: Specter desktop
+  :alt: Add node
 
-Click “Test”. It can take a few minutes.
-
-If all is well several green checkboxes will appear and some config settings:
-
-.. figure:: /docs/integrations/specter/assets/specter-desktop2.png
-  :width: 75%
-  :alt: Specter desktop config
+Click “Test”. It can take a few minutes. If all is well several green checkboxes will appear and some config settings.
 
 Click “Save”.
 
