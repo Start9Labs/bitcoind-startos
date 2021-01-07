@@ -1,6 +1,6 @@
-***************
-Specter Desktop
-***************
+***********************
+Specter Desktop - MacOS
+***********************
 
 Author: Community Member `@Chiefmonkey <https://twitter.com/HodlrDotRocks>`_
 
