@@ -92,6 +92,20 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
             copyable: true,
             qr: true,
         });
+        stats.push(Stat {
+            name: "RPC Username",
+            value: format!("{}", user),
+            description: Some("Bitcoin RPC Username"),
+            copyable: true,
+            qr: false,
+        });
+        stats.push(Stat {
+            name: "RPC Password",
+            value: format!("{}", pass),
+            description: Some("Bitcoin RPC Password"),
+            copyable: true,
+            qr: false,
+        });
     }
     let info_res = std::process::Command::new("bitcoin-cli")
         .arg("-conf=/root/.bitcoin/bitcoin.conf")
