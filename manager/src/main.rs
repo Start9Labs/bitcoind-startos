@@ -71,6 +71,7 @@ pub struct Stat {
     description: Option<&'static str>,
     copyable: bool,
     qr: bool,
+    masked: bool,
 }
 
 fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
@@ -97,6 +98,7 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
             value: format!("{}", user),
             description: Some("Bitcoin RPC Username"),
             copyable: true,
+            masked: true,
             qr: false,
         });
         stats.push(Stat {
@@ -104,6 +106,7 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
             value: format!("{}", pass),
             description: Some("Bitcoin RPC Password"),
             copyable: true,
+            masked: true,
             qr: false,
         });
     }
