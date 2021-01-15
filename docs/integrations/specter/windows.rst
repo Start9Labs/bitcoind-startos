@@ -11,18 +11,16 @@ Step 1 - Install Tor on Windows
 
 To install Tor and additionally setup Firefox to handle ``.onion`` addresses, see the instructions `here <https://docs.start9labs.com/misc-guides/tor-firefox/index.html>`_.
 
-Step 2 - Connect to Embassy, open Bitcoin Proxy, copy Tor address, create specter user
-======================================================================================
+Step 2 - Configure Specter RPC user in Bitcoin Proxy
+====================================================
 
 - Connect to your Embassy via browser on your Windows computer. 
 
 - Open the “Bitcoin Proxy” service
 
 .. figure:: /docs/integrations/specter/assets/bitcoin_proxy_service.png
-  :width: 90%
+  :width: 70%
   :alt: Bitcoin Proxy 
-
-  Open Bitcoin Proxy from the Services tab in the menu
 
 - (optional) Copy Tor address (this will be needed in upcoming steps)
 
@@ -40,24 +38,17 @@ Step 2 - Connect to Embassy, open Bitcoin Proxy, copy Tor address, create specte
   :width: 90%
   :alt: Bitcoin Proxy Config RPC User submenu
 
-  Select RPC Users from the Config Options
-
 - Click on the “+” symbol in the upper-right corner to add a new user
 
 .. figure:: /docs/integrations/specter/assets/bitcoin_proxy_add_rpc_user.png
   :width: 90%
   :alt: Bitcoin Proxy Config RPC submenu
 
-  Add RPC user to Bitcoin Proxy Config
-
 - Create a user for the Specter app
 - Replace default user, bitcoin, with name of choice, ex: specter
 - Save password (this will be needed in upcoming steps)
 - Go back twice, then save
-
-.. note::
-    Usernames can be duplicated
-    Having a default username pre-filled could cause confusion and the potential for multiple “bitcoin (default)” usernames
+- NOTE: ** Usernames can be duplicated. Having a default username pre-filled could cause confusion and the potential for multiple “bitcoin (default)” usernames **
 
 - Go back and check the current list of users to confirm your user has been created.
 
@@ -65,31 +56,24 @@ Step 2 - Connect to Embassy, open Bitcoin Proxy, copy Tor address, create specte
   :width: 90%
   :alt: RPC user confirmation
 
-  Confirm username has been added
-
-- Download Specter-Setup-v[*.*.*].exe `here <https://github.com/cryptoadvance/specter-desktop/releases>`_
+- Download Specter-Setup-v[*.*.*].exe `here <https://github.com/cryptoadvance/specter-desktop/releases>`_.
 - Install Specter
-- *If “Microsoft Defender SmartScreen” blocks the install, select “More info”
+- If “Microsoft Defender SmartScreen” blocks the install, select “More info”
 
 .. figure:: /docs/integrations/specter/assets/windows_smartscreen.png
-  :width: 90%
+  :width: 70%
   :alt: Windows Defender SmartScreen
 
-    Select "Don't run"
-
--Then, select “Run Anyway”
+- Then, select “Run Anyway”
 
 .. figure:: /docs/integrations/specter/assets/windows_smart_screen_run.png
-  :width: 90%
+  :width: 70%
   :alt: Windows Defender SmartScreen
-
-  Select "Run anyway"
-
-- After installation, run Specter
 
 Connect Specter to Bitcoin Proxy
 --------------------------------
 
+- After installation, run Specter
 - Click “Configure Node”
 
 .. figure:: /docs/integrations/specter/assets/specter_configure_node.png
@@ -112,17 +96,16 @@ Connect Specter to Bitcoin Proxy
 
 - Ensure all tests pass
 
-.. figure:: /docs/integrations/specter/assets/specter_test_results.ong
-  :width: 90%
+.. figure:: /docs/integrations/specter/assets/specter_test_results.png
+  :width: 60%
   :alt: Specter RPC configuration test results view
 
-That's it! Your Embassy's Bitcoin node is now connected to Specter. 
-
+*That's it!* Your Embassy's Bitcoin node is now connected to Specter. 
 
 If you notice this message:
 
 .. figure:: /docs/integrations/specter/assets/core_info_error.jpg
-  :width: 90%
+  :width: 60%
   :alt: Bitcoin Core Node info
 
 
