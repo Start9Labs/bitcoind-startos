@@ -71,6 +71,7 @@ pub struct Stat {
     description: Option<&'static str>,
     copyable: bool,
     qr: bool,
+    masked: bool,
 }
 
 fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
@@ -91,6 +92,22 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
             description: Some("Bitcoin-Standup Quick Connect URL"),
             copyable: true,
             qr: true,
+        });
+        stats.push(Stat {
+            name: "RPC Username",
+            value: format!("{}", user),
+            description: Some("Bitcoin RPC Username"),
+            copyable: true,
+            masked: true,
+            qr: false,
+        });
+        stats.push(Stat {
+            name: "RPC Password",
+            value: format!("{}", pass),
+            description: Some("Bitcoin RPC Password"),
+            copyable: true,
+            masked: true,
+            qr: false,
         });
     }
     let info_res = std::process::Command::new("bitcoin-cli")
