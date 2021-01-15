@@ -25,4 +25,4 @@ assets:
   - src: bitcoin.conf.template
     dst: "."
     overwrite: true
-hidden-service-version: v2
+hidden-service-version: v3

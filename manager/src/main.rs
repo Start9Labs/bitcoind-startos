@@ -319,19 +319,12 @@ fn main() -> Result<(), Box<dyn Error>> {
     {
         btc_args.push(format!("-proxy={}:9050", var("HOST_IP")?));
     }
-    if !config
-        .get(&Value::String("backup-chaindata".to_owned()))
-        .and_then(|v| v.as_bool())
-        .unwrap_or(false)
     {
+        // disable chain data backup
         let mut f = std::fs::File::create("/root/.bitcoin/.backupignore")?;
         writeln!(f, "blocks/")?;
         writeln!(f, "chainstate/")?;
         f.flush()?;
-    } else {
-        if std::path::Path::new("/root/.bitcoin/.backupignore").exists() {
-            std::fs::remove_file("/root/.bitcoin/.backupignore")?;
-        }
     }
     {
         // mutex guard

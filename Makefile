@@ -1,6 +1,6 @@
-ASSETS := $(shell yq r manifest.yaml assets.*.src)
+ASSETS := $(shell yq e ".assets.[].src" manifest.yaml)
 ASSET_PATHS := $(addprefix assets/,$(ASSETS))
-VERSION := $(shell yq r manifest.yaml version)
+VERSION := $(shell yq e ".version" manifest.yaml)
 VERSION_STRIPPED := $(shell echo $(VERSION) | sed -E 's/([0-9]+\.[0-9]+\.[0-9]+).*/\1/g')
 MANAGER_SRC := $(shell find ./manager -name '*.rs') manager/Cargo.toml manager/Cargo.lock
 

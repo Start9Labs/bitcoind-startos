@@ -118,11 +118,6 @@ wallet:
       range: "[0,.01]"
       integral: false
       units: BTC/kB
-backup-chaindata:
-  type: boolean
-  name: "Backup Chain Data"
-  description: "Optionally include blockchain data in backups. Backups will take significantly longer. This is off by default because this data can be recovered by re-syncing"
-  default: false
 advanced:
   type: object
   nullable: false
