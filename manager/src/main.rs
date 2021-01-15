@@ -92,13 +92,14 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
             description: Some("Bitcoin-Standup Quick Connect URL"),
             copyable: true,
             qr: true,
+            masked: true,
         });
         stats.push(Stat {
             name: "RPC Username",
             value: format!("{}", user),
             description: Some("Bitcoin RPC Username"),
             copyable: true,
-            masked: true,
+            masked: false,
             qr: false,
         });
         stats.push(Stat {
@@ -122,6 +123,7 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
             description: Some("The current block height for the network"),
             copyable: false,
             qr: false,
+            masked: false,
         });
         stats.push(Stat {
             name: "Synced Block Height",
@@ -129,6 +131,7 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
             description: Some("The number of blocks the node has verified"),
             copyable: false,
             qr: false,
+            masked: false,
         });
         stats.push(Stat {
             name: "Sync Progress",
@@ -140,6 +143,7 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
             description: Some("The percentage of the blockchain that has been verified"),
             copyable: false,
             qr: false,
+            masked: false,
         });
         stats.push(Stat {
             name: "Disk Usage",
@@ -147,6 +151,7 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
             description: Some("The blockchain size on disk"),
             copyable: false,
             qr: false,
+            masked: false,
         });
         if info.size_on_disk as f64
             > (|| -> Option<f64> {
@@ -174,6 +179,7 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
                 description: Some("The number of blocks that have been deleted from disk"),
                 copyable: false,
                 qr: false,
+                masked: false,
             });
         }
     } else {
@@ -211,7 +217,9 @@ fn publish_notification(e: &Notification) -> std::io::Result<()> {
 }
 
 fn notification_handler(line: &str) -> std::io::Result<()> {
-    if line.contains("Prune: last wallet synchronisation goes beyond pruned data.") {
+    if line.contains("Prune: last wallet synchronisation goes beyond pruned data.")
+        || line.contains("Please restart with -reindex or -reindex-chainstate to recover.")
+    {
         publish_notification(&Notification {
             time: std::time::UNIX_EPOCH
                 .elapsed()
