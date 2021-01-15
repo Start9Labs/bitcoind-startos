@@ -246,7 +246,6 @@ fn notification_handler(line: &str) -> std::io::Result<()> {
             message: line[6..].trim().to_owned(),
         })?;
     }
-    eprintln!("{}", line);
     Ok(())
 }
 
@@ -346,7 +345,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut child = std::process::Command::new("bitcoind")
         .args(btc_args)
         .stdout(std::process::Stdio::piped())
-        .stdout(std::process::Stdio::piped())
+        .stderr(std::process::Stdio::piped())
         .spawn()?;
     let raw_child = child.id();
     ctrlc::set_handler(move || {
