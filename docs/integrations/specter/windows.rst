@@ -48,7 +48,7 @@ Step 2 - Configure Specter RPC user in Bitcoin Proxy
 - Replace default user, bitcoin, with name of choice, ex: specter
 - Save password (this will be needed in upcoming steps)
 - Go back twice, then save
-- NOTE: ** Usernames can be duplicated. Having a default username pre-filled could cause confusion and the potential for multiple “bitcoin (default)” usernames **
+- NOTE: *Usernames can be duplicated. Having a default username pre-filled could cause confusion and the potential for multiple “bitcoin (default)” usernames*
 
 - Go back and check the current list of users to confirm your user has been created.
 
@@ -100,13 +100,12 @@ Connect Specter to Bitcoin Proxy
   :width: 60%
   :alt: Specter RPC configuration test results view
 
-*That's it!* Your Embassy's Bitcoin node is now connected to Specter. 
+**That's it!** Your Embassy's Bitcoin node is now connected to Specter. 
 
 If you notice this message:
 
 .. figure:: /docs/integrations/specter/assets/core_info_error.jpg
-  :width: 60%
+  :width: 30%
   :alt: Bitcoin Core Node info
-
 
 ``blockfilterindex`` is disabled for pruned Bitcoin Core nodes for now, so you won't be able to enable it on your embassy. Start9 is working on a workaround.
