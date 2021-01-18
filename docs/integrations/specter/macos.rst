@@ -48,7 +48,7 @@ Once it is finished you have the following options:
   :width: 90%
   :alt: Install Tor
 
-It is recommended to use `brew services start tor` so that Tor is always running, even after a restart of your computer.
+In the command line type ``brew services start tor``. This will start Tor and ensure that it is always running, even after a restart.
 
 
 Step 3 - Download and Configure Specter
