@@ -19,8 +19,17 @@ image:
   type: tar
 mount: /root/.bitcoin
 has-instructions: true
-os-version-required: ">=0.2.5"
-os-version-recommended: ">=0.2.5"
+os-version-required: ">=0.2.8"
+os-version-recommended: ">=0.2.8"
+install-alert: |
+  #TODO
+  Your tor address will change
+uninstall-alert: |
+  #TODO
+  You will lose money
+restore-alert: |
+  #TODO
+  You will lose tx history
 assets:
   - src: bitcoin.conf.template
     dst: "."
