@@ -1,13 +1,15 @@
-use std::env::var;
-use std::error::Error;
 use std::io::{Read, Write};
 use std::sync::Mutex;
+use std::{env::var, sync::atomic::AtomicBool};
+use std::{error::Error, sync::atomic::Ordering};
 
+use linear_map::LinearMap;
 use serde_yaml::{Mapping, Value};
 use tmpl::TemplatingReader;
 
 lazy_static::lazy_static! {
-    static ref REQUIRES_REINDEX: Mutex<bool> = Mutex::new(false);
+    static ref REQUIRES_REINDEX: AtomicBool = AtomicBool::new(false);
+    static ref CHILD_PID: Mutex<Option<u32>> = Mutex::new(None);
 }
 
 pub enum Level {
@@ -61,12 +63,13 @@ pub struct ChainInfo {
 #[derive(Clone, Debug, serde::Serialize)]
 pub struct Stats {
     version: u8,
-    data: Vec<Stat>,
+    data: LinearMap<&'static str, Stat>,
 }
 
 #[derive(Clone, Debug, serde::Serialize)]
 pub struct Stat {
-    name: &'static str,
+    #[serde(rename = "type")]
+    value_type: &'static str,
     value: String,
     description: Option<&'static str>,
     copyable: bool,
@@ -75,7 +78,7 @@ pub struct Stat {
 }
 
 fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
-    let mut stats = Vec::new();
+    let mut stats = LinearMap::new();
     if let (Some(user), Some(pass)) = (
         config
             .get(&Value::String("rpc".to_owned()))
@@ -86,30 +89,39 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
             .and_then(|v| v.get(&Value::String("password".to_owned())))
             .and_then(|v| v.as_str()),
     ) {
-        stats.push(Stat {
-            name: "Quick Connect",
-            value: format!("btcstandup://{}:{}@{}:8332", user, pass, addr),
-            description: Some("Bitcoin-Standup Quick Connect URL"),
-            copyable: true,
-            qr: true,
-            masked: true,
-        });
-        stats.push(Stat {
-            name: "RPC Username",
-            value: format!("{}", user),
-            description: Some("Bitcoin RPC Username"),
-            copyable: true,
-            masked: false,
-            qr: false,
-        });
-        stats.push(Stat {
-            name: "RPC Password",
-            value: format!("{}", pass),
-            description: Some("Bitcoin RPC Password"),
-            copyable: true,
-            masked: true,
-            qr: false,
-        });
+        stats.insert(
+            "Quick Connect",
+            Stat {
+                value_type: "string",
+                value: format!("btcstandup://{}:{}@{}:8332", user, pass, addr),
+                description: Some("Bitcoin-Standup Quick Connect URL"),
+                copyable: true,
+                qr: true,
+                masked: true,
+            },
+        );
+        stats.insert(
+            "RPC Username",
+            Stat {
+                value_type: "string",
+                value: format!("{}", user),
+                description: Some("Bitcoin RPC Username"),
+                copyable: true,
+                masked: false,
+                qr: false,
+            },
+        );
+        stats.insert(
+            "RPC Password",
+            Stat {
+                value_type: "string",
+                value: format!("{}", pass),
+                description: Some("Bitcoin RPC Password"),
+                copyable: true,
+                masked: true,
+                qr: false,
+            },
+        );
     }
     let info_res = std::process::Command::new("bitcoin-cli")
         .arg("-conf=/root/.bitcoin/bitcoin.conf")
@@ -117,42 +129,54 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
         .output()?;
     if info_res.status.success() {
         let info: ChainInfo = serde_json::from_slice(&info_res.stdout)?;
-        stats.push(Stat {
-            name: "Block Height",
-            value: format!("{}", info.headers),
-            description: Some("The current block height for the network"),
-            copyable: false,
-            qr: false,
-            masked: false,
-        });
-        stats.push(Stat {
-            name: "Synced Block Height",
-            value: format!("{}", info.blocks),
-            description: Some("The number of blocks the node has verified"),
-            copyable: false,
-            qr: false,
-            masked: false,
-        });
-        stats.push(Stat {
-            name: "Sync Progress",
-            value: if info.blocks < info.headers {
-                format!("{:.2}%", 100.0 * info.verificationprogress)
-            } else {
-                "100%".to_owned()
+        stats.insert(
+            "Block Height",
+            Stat {
+                value_type: "string",
+                value: format!("{}", info.headers),
+                description: Some("The current block height for the network"),
+                copyable: false,
+                qr: false,
+                masked: false,
             },
-            description: Some("The percentage of the blockchain that has been verified"),
-            copyable: false,
-            qr: false,
-            masked: false,
-        });
-        stats.push(Stat {
-            name: "Disk Usage",
-            value: format!("{:.2} GiB", info.size_on_disk as f64 / 1024_f64.powf(3_f64)),
-            description: Some("The blockchain size on disk"),
-            copyable: false,
-            qr: false,
-            masked: false,
-        });
+        );
+        stats.insert(
+            "Synced Block Height",
+            Stat {
+                value_type: "string",
+                value: format!("{}", info.blocks),
+                description: Some("The number of blocks the node has verified"),
+                copyable: false,
+                qr: false,
+                masked: false,
+            },
+        );
+        stats.insert(
+            "Sync Progress",
+            Stat {
+                value_type: "string",
+                value: if info.blocks < info.headers {
+                    format!("{:.2}%", 100.0 * info.verificationprogress)
+                } else {
+                    "100%".to_owned()
+                },
+                description: Some("The percentage of the blockchain that has been verified"),
+                copyable: false,
+                qr: false,
+                masked: false,
+            },
+        );
+        stats.insert(
+            "Disk Usage",
+            Stat {
+                value_type: "string",
+                value: format!("{:.2} GiB", info.size_on_disk as f64 / 1024_f64.powf(3_f64)),
+                description: Some("The blockchain size on disk"),
+                copyable: false,
+                qr: false,
+                masked: false,
+            },
+        );
         if info.size_on_disk as f64
             > (|| -> Option<f64> {
                 let advanced = config.get(&Value::String("advanced".to_owned()))?;
@@ -173,14 +197,17 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
                 .status()?;
         }
         if info.pruneheight > 0 {
-            stats.push(Stat {
-                name: "Prune Height",
-                value: format!("{}", info.pruneheight),
-                description: Some("The number of blocks that have been deleted from disk"),
-                copyable: false,
-                qr: false,
-                masked: false,
-            });
+            stats.insert(
+                "Prune Height",
+                Stat {
+                    value_type: "string",
+                    value: format!("{}", info.pruneheight),
+                    description: Some("The number of blocks that have been deleted from disk"),
+                    copyable: false,
+                    qr: false,
+                    masked: false,
+                },
+            );
         }
     } else {
         eprintln!(
@@ -191,7 +218,7 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
     serde_yaml::to_writer(
         std::fs::File::create("/root/.bitcoin/start9/.stats.yaml.tmp")?,
         &Stats {
-            version: 1,
+            version: 2,
             data: stats,
         },
     )?;
@@ -233,7 +260,7 @@ fn notification_handler(line: &str) -> std::io::Result<()> {
                 line
             ),
         })?;
-        *REQUIRES_REINDEX.lock().unwrap() = true;
+        REQUIRES_REINDEX.store(true, Ordering::SeqCst);
     } else if line.starts_with("Error:") {
         publish_notification(&Notification {
             time: std::time::UNIX_EPOCH
@@ -283,20 +310,28 @@ where
 {
     fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
         let res = self.inner.read(buf)?;
-        if let Some(idx) = buf[..res].iter().position(|a| a == &b'\n') {
+        if let Some(idx) = buf[..res].iter().position(|a| a == &b'\n').or_else(|| {
+            if res == 0 {
+                Some(0)
+            } else {
+                None
+            }
+        }) {
             self.line.extend_from_slice(&buf[..idx]);
             notification_handler(
                 std::str::from_utf8(&self.line)
                     .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))?,
             )?;
             self.line.clear();
-            self.line.extend_from_slice(&buf[idx..res]);
+            if idx + 1 <= res {
+                self.line.extend_from_slice(&buf[(idx + 1)..res]);
+            }
         }
         Ok(res)
     }
 }
 
-fn main() -> Result<(), Box<dyn Error>> {
+fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
     let config: Mapping =
         serde_yaml::from_reader(std::fs::File::open("/root/.bitcoin/start9/config.yaml")?)?;
     let sidecar_poll_interval = std::time::Duration::from_secs(5);
@@ -325,14 +360,10 @@ fn main() -> Result<(), Box<dyn Error>> {
         writeln!(f, "chainstate/")?;
         f.flush()?;
     }
-    {
-        // mutex guard
-        let mut requires_reindex = REQUIRES_REINDEX.lock().unwrap();
-        if *requires_reindex {
-            btc_args.push("-reindex".to_owned());
-            *requires_reindex = false;
-        }
+    if reindex {
+        btc_args.push("-reindex".to_owned());
     }
+
     std::io::copy(
         &mut TemplatingReader::new(
             std::fs::File::open("/root/.bitcoin/bitcoin.conf.template")?,
@@ -348,13 +379,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         .stderr(std::process::Stdio::piped())
         .spawn()?;
     let raw_child = child.id();
-    ctrlc::set_handler(move || {
-        use nix::{
-            sys::signal::{kill, SIGTERM},
-            unistd::Pid,
-        };
-        kill(Pid::from_raw(raw_child as i32), SIGTERM).unwrap();
-    })?;
+    *CHILD_PID.lock().unwrap() = Some(raw_child);
     let child_stdout = child.stdout.take();
     let _stdout_handle = std::thread::spawn(move || {
         if let Some(stdout) = child_stdout {
@@ -398,9 +423,13 @@ fn main() -> Result<(), Box<dyn Error>> {
             message: format!("Bitcoin Core has crashed with exit code: {}", code),
         })?;
     }
-    if *REQUIRES_REINDEX.lock().unwrap() {
-        main() // restart
+    if REQUIRES_REINDEX.fetch_and(false, Ordering::SeqCst) {
+        inner_main(true) // restart
     } else {
         std::process::exit(code)
     }
+}
+
+fn main() -> Result<(), Box<dyn Error>> {
+    inner_main(false)
 }
