@@ -4,7 +4,7 @@
 FROM lncm/berkeleydb as berkeleydb
 
 # Build stage for Bitcoin Core
-FROM arm32v7/alpine as bitcoin-core
+FROM arm32v7/alpine:3.12 as bitcoin-core
 
 COPY --from=berkeleydb /opt /opt
 
@@ -67,7 +67,7 @@ RUN strip ${BITCOIN_PREFIX}/lib/libbitcoinconsensus.a
 RUN strip ${BITCOIN_PREFIX}/lib/libbitcoinconsensus.so.0.0.0
 
 # Build stage for compiled artifacts
-FROM alpine:3.12
+FROM arm32v7/alpine:3.12
 
 LABEL maintainer.0="João Fonseca (@joaopaulofonseca)" \
   maintainer.1="Pedro Branco (@pedrobranco)" \
