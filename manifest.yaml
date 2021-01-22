@@ -22,14 +22,11 @@ has-instructions: true
 os-version-required: ">=0.2.8"
 os-version-recommended: ">=0.2.8"
 install-alert: |
-  #TODO
-  Your tor address will change
+  Bitcoin Core to version 0.21.0 introduces support for Tor V3 addresses, which is great for privacy! If you ALREADY have Bitcoin Core installed, your TOR ADDRESS WILL CHANGE as a result of this update, and you will need to update your address in any remote wallets that use it, such as Specter or Fully Noded.
 uninstall-alert: |
-  #TODO
-  You will lose money
+  Uninstalling Bitcoin Core will result in permanent loss of data. Without a backup, any funds stored on your node's default hot wallet will be lost forever. If you are unsure, we recommend making a backup, just to be safe.
 restore-alert: |
-  #TODO
-  You will lose tx history
+  Restoring Bitcoin Core will overwrite its current data. You will lose any transactions recorded in watch-only wallets, and any funds you have received to the hot wallet, since the last backup.
 assets:
   - src: bitcoin.conf.template
     dst: "."
