@@ -1,6 +1,6 @@
-***********************
+*************************
 Specter Desktop - Windows
-***********************
+*************************
 
 Original Author: Community Member @julian
 
@@ -9,7 +9,8 @@ Original Author: Community Member @julian
 Step 1 - Install Tor on Windows
 ===============================
 
-To install Tor and additionally setup Firefox to handle ``.onion`` addresses, see the instructions `here <https://docs.start9labs.com/misc-guides/tor-firefox/index.html>`_.
+.. warning:: 
+  DO NOT PROCEED before `installing Tor on your machine <https://docs.start9labs.com/misc-guides/tor-os/index.html>`_
 
 Step 2 - Configure Specter RPC user in Bitcoin Proxy
 ====================================================
