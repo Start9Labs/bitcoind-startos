@@ -23,7 +23,7 @@ Install the following system dependencies to build this project by following the
 - [rust-musl-cross](https://github.com/Start9Labs/rust-musl-cross)
 - [yq](https://mikefarah.gitbook.io/yq)
 - [rust](https://rustup.rs)
-- [appmgr](https://github.com/Start9Labs/appmgr)
+- [appmgr](https://github.com/Start9Labs/embassy-os/tree/master/appmgr)
 - [make](https://www.gnu.org/software/make/)
 
 ## Cloning
