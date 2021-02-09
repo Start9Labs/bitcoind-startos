@@ -68,8 +68,6 @@ Surprisingly, Homebrew uses Google Analytics to collect anonymous usage data. Yo
 
 - Launch Specter.
 
-- **Notice the Tor icon in the top right corner. *Do not turn it on*. You already have Tor running on your computer, there is no reason to also enable it in Specter.**
-
 - Click ``Connect Specter to your Bitcoin node``
 
 ![Welcome](./assets/welcome.png "Welcome")
