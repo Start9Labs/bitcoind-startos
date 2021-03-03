@@ -1,4 +1,4 @@
-use std::io::{Read, Write};
+use std::{fs, io::{Read, Write}, path::Path};
 use std::sync::Mutex;
 use std::{env::var, sync::atomic::AtomicBool};
 use std::{error::Error, sync::atomic::Ordering};
@@ -8,7 +8,9 @@ use serde_yaml::{Mapping, Value};
 use tmpl::TemplatingReader;
 
 lazy_static::lazy_static! {
-    static ref REQUIRES_REINDEX: AtomicBool = AtomicBool::new(false);
+    static ref REQUIRES_REINDEX: AtomicBool = AtomicBool::new({
+        Path::new("/root/.bitcoin/requires.reindex").exists()
+    });
     static ref CHILD_PID: Mutex<Option<u32>> = Mutex::new(None);
 }
 
@@ -208,6 +210,14 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
                     masked: false,
                 },
             );
+        }
+        if REQUIRES_REINDEX.load(Ordering::SeqCst) {
+            if match fs::remove_file("/root/.bitcoin/requires.reindex") {
+                Ok(()) => true,
+                Err(_) => false,
+            } {
+                REQUIRES_REINDEX.store(false, Ordering::SeqCst);
+            }
         }
     } else {
         eprintln!(
@@ -423,7 +433,7 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
             message: format!("Bitcoin Core has crashed with exit code: {}", code),
         })?;
     }
-    if REQUIRES_REINDEX.fetch_and(false, Ordering::SeqCst) {
+    if REQUIRES_REINDEX.load(Ordering::SeqCst) {
         inner_main(true) // restart
     } else {
         std::process::exit(code)
@@ -431,5 +441,5 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-    inner_main(false)
+    inner_main(REQUIRES_REINDEX.load(Ordering::SeqCst))
 }

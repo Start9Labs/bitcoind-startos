@@ -95,6 +95,8 @@ ADD ./manager/target/armv7-unknown-linux-musleabihf/release/bitcoind-manager /us
 RUN chmod a+x /usr/local/bin/bitcoind-manager
 ADD ./docker_entrypoint.sh /usr/local/bin/docker_entrypoint.sh
 RUN chmod a+x /usr/local/bin/docker_entrypoint.sh
+ADD ./actions/reindex.sh /usr/local/bin/reindex.sh
+RUN chmod a+x /usr/local/bin/reindex.sh
 
 EXPOSE 8332 8333
 
