@@ -9,6 +9,9 @@ release-notes: https://github.com/bitcoin/bitcoin/blob/master/doc/release-notes/
 ports:
   - internal: 8332
     tor: 8332
+    lan:
+      custom:
+        port: 8332
   - internal: 8333
     tor: 8333
   - internal: 28332
