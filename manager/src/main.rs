@@ -1,7 +1,11 @@
-use std::{fs, io::{Read, Write}, path::Path};
 use std::sync::Mutex;
 use std::{env::var, sync::atomic::AtomicBool};
 use std::{error::Error, sync::atomic::Ordering};
+use std::{
+    fs,
+    io::{Read, Write},
+    path::Path,
+};
 
 use linear_map::LinearMap;
 use serde_yaml::{Mapping, Value};
@@ -441,5 +445,14 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
+    ctrlc::set_handler(move || {
+        if let Some(raw_child) = *CHILD_PID.lock().unwrap() {
+            use nix::{
+                sys::signal::{kill, SIGTERM},
+                unistd::Pid,
+            };
+            kill(Pid::from_raw(raw_child as i32), SIGTERM).unwrap();
+        }
+    })?;
     inner_main(REQUIRES_REINDEX.load(Ordering::SeqCst))
 }
