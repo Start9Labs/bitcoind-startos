@@ -20,6 +20,8 @@ RUN apk --no-cache add libevent-dev
 RUN apk --no-cache add libressl
 RUN apk --no-cache add libtool
 RUN apk --no-cache add linux-headers
+# RUN apk --no-cache add sqlite-libs
+RUN apk --no-cache add sqlite-dev
 RUN apk --no-cache add zeromq-dev
 RUN set -ex \
   && for key in \
@@ -76,12 +78,13 @@ LABEL maintainer.0="João Fonseca (@joaopaulofonseca)" \
 
 RUN apk update
 RUN apk --no-cache add \
+  bash \
   boost-filesystem=1.72.0-r6 \
   boost-system=1.72.0-r6 \
   boost-thread=1.72.0-r6 \
   libevent \
   libzmq \
-  bash \
+  sqlite-libs \
   su-exec
 
 ENV BITCOIN_DATA=/root/.bitcoin
@@ -95,6 +98,8 @@ ADD ./manager/target/armv7-unknown-linux-musleabihf/release/bitcoind-manager /us
 RUN chmod a+x /usr/local/bin/bitcoind-manager
 ADD ./docker_entrypoint.sh /usr/local/bin/docker_entrypoint.sh
 RUN chmod a+x /usr/local/bin/docker_entrypoint.sh
+ADD ./actions/reindex.sh /usr/local/bin/reindex.sh
+RUN chmod a+x /usr/local/bin/reindex.sh
 
 EXPOSE 8332 8333
 
