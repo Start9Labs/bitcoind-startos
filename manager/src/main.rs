@@ -106,7 +106,7 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
                 masked: true,
             },
         );
-        let addr_local = format!("{}.local", addr.split(".").next().unwrap());
+        let addr_local = format!("{}local", addr.strip_suffix("onion").unwrap());
         stats.insert(
             "LAN Quick Connect",
             Stat {
