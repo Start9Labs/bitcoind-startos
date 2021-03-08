@@ -96,11 +96,23 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
             .and_then(|v| v.as_str()),
     ) {
         stats.insert(
-            "Quick Connect",
+            "Tor Quick Connect",
             Stat {
                 value_type: "string",
                 value: format!("btcstandup://{}:{}@{}:8332", user, pass, addr),
-                description: Some("Bitcoin-Standup Quick Connect URL"),
+                description: Some("Bitcoin-Standup Tor Quick Connect URL"),
+                copyable: true,
+                qr: true,
+                masked: true,
+            },
+        );
+        let addr_local = format!("{}local", addr.strip_suffix("onion").unwrap());
+        stats.insert(
+            "LAN Quick Connect",
+            Stat {
+                value_type: "string",
+                value: format!("btcstandup://{}:{}@{}:8332", user, pass, addr_local),
+                description: Some("Bitcoin-Standup LAN Quick Connect URL"),
                 copyable: true,
                 qr: true,
                 masked: true,

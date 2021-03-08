@@ -1,11 +1,14 @@
 compat: v0
 id: bitcoind
-version: "0.21.0.1"
+version: "0.21.0.2"
 title: "Bitcoin Core"
 description:
   short: "A Bitcoin Full Node by Bitcoin Core"
   long: "Bitcoin is an innovative payment network and a new kind of money. Bitcoin uses peer-to-peer technology to operate with no central authority or banks; managing transactions and the issuing of bitcoins is carried out collectively by the network. Bitcoin is open-source; its design is public, nobody owns or controls Bitcoin and everyone can take part. Through many of its unique properties, Bitcoin allows exciting uses that could not be covered by any previous payment system."
-release-notes: https://github.com/bitcoin/bitcoin/blob/master/doc/release-notes/release-notes-0.21.0.md
+release-notes: |
+  - New action: Reindex
+  - Support for Descriptor Wallets
+  - Support for .local URL access
 ports:
   - internal: 8332
     tor: 8332
@@ -22,9 +25,8 @@ image:
   type: tar
 mount: /root/.bitcoin
 has-instructions: true
-os-version-required: ">=0.2.8"
-os-version-recommended: ">=0.2.8"
-install-alert: Bitcoin Core version 0.21.0 introduces support for Tor V3 addresses, which is great for privacy! If you ALREADY have Bitcoin Core installed, your TOR ADDRESS WILL CHANGE as a result of this update, and you will need to update your address in any remote wallets that use it, such as Specter or Fully Noded.
+os-version-required: ">=0.2.9"
+os-version-recommended: ">=0.2.9"
 uninstall-alert: Uninstalling Bitcoin Core will result in permanent loss of data. Without a backup, any funds stored on your node's default hot wallet will be lost forever. If you are unsure, we recommend making a backup, just to be safe.
 restore-alert: Restoring Bitcoin Core will overwrite its current data. You will lose any transactions recorded in watch-only wallets, and any funds you have received to the hot wallet, since the last backup.
 assets:
@@ -36,8 +38,7 @@ actions:
   - id: "reindex"
     name: "Reindex Blockchain"
     description: "Rebuilds the block and chainstate databases starting from genesis. If blocks already exist on disk, these are used rather than being redownloaded. However, since embassy bitcoin nodes are pruned by default, this usually means downloading the entire blockchain over again."
-    warning: |
-      "Blocks not stored on disk will be redownloaded in order to rebuild the database. If your node is pruned (embasssy nodes are pruned by default), this action is equivalent to syncing the node from scratch, so this process could take a couple of weeks."
+    warning: Blocks not stored on disk will be redownloaded in order to rebuild the database. If your node is pruned (embasssy nodes are pruned by default), this action is equivalent to syncing the node from scratch, so this process could take a couple of weeks.
     allowed-statuses: 
       - "RUNNING"
       - "STOPPED"
