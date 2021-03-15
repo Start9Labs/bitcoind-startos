@@ -24,7 +24,7 @@ The Tor address provided by the Embassy's Bitcoin service can be used in the con
 
 ### For macOS Big Sur/Catalina:
 
-- If you do not have Homebrew installed, follow the installation instructions here [here](https://brew.sh/).
+- If you do not have Homebrew installed, follow the installation instructions [here](https://brew.sh/).
 
 - tldr; Open the command line editor (Terminal) and paste the following line:
 
