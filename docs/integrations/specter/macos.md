@@ -47,7 +47,7 @@ Surprisingly, Homebrew uses Google Analytics to collect anonymous usage data. Yo
 
 ## Step 2 - Install Tor
 
-:warning: If you have the Tor Browser is open, close it and quit the application.
+:warning: If you have the Tor Browser open, close it and quit the application.
 
 - For macOS machines prior to December 2020 (pre-ARM chips), in the command line type: ``brew install tor``
 - For macOS with ARM chips, in the command line type: ``arch -x86_64 brew install tor``
