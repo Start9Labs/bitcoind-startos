@@ -16,7 +16,7 @@ bitcoind.s9pk: manifest.yaml config_spec.yaml config_rules.yaml image.tar instru
 	appmgr -vv verify bitcoind.s9pk
 
 image.tar: Dockerfile docker_entrypoint.sh manager/target/armv7-unknown-linux-musleabihf/release/bitcoind-manager manifest.yaml
-	DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --tag start9/bitcoind --build-arg BITCOIN_VERSION=$(VERSION_STRIPPED) --platform=linux/arm/v7 -o type=docker,dest=image.tar .
+	DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --tag start9/bitcoind --build-arg BITCOIN_VERSION=$(VERSION_STRIPPED) --build-arg N_PROC=$(shell nproc) --platform=linux/arm/v7 -o type=docker,dest=image.tar .
 
 manager/target/armv7-unknown-linux-musleabihf/release/bitcoind-manager: $(MANAGER_SRC)
 	docker run --rm -it -v ~/.cargo/registry:/root/.cargo/registry -v "$(shell pwd)"/manager:/home/rust/src start9/rust-musl-cross:armv7-musleabihf cargo build --release

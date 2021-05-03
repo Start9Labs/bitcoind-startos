@@ -35,11 +35,13 @@ RUN set -ex \
   done
 
 ARG BITCOIN_VERSION
+ARG N_PROC
 RUN test -n "$BITCOIN_VERSION"
+RUN test -n "$N_PROC"
 ENV BITCOIN_PREFIX=/opt/bitcoin-${BITCOIN_VERSION}
 
-RUN wget https://bitcoin.org/bin/bitcoin-core-${BITCOIN_VERSION}/SHA256SUMS.asc
-RUN wget https://bitcoin.org/bin/bitcoin-core-${BITCOIN_VERSION}/bitcoin-${BITCOIN_VERSION}.tar.gz
+RUN wget https://bitcoincore.org/bin/bitcoin-core-${BITCOIN_VERSION}/SHA256SUMS.asc
+RUN wget https://bitcoincore.org/bin/bitcoin-core-${BITCOIN_VERSION}/bitcoin-${BITCOIN_VERSION}.tar.gz
 RUN gpg --verify SHA256SUMS.asc
 RUN grep " bitcoin-${BITCOIN_VERSION}.tar.gz\$" SHA256SUMS.asc | sha256sum -c -
 RUN tar -xzf *.tar.gz
@@ -60,7 +62,7 @@ RUN ./configure LDFLAGS=-L`ls -d /opt/db*`/lib/ CPPFLAGS=-I`ls -d /opt/db*`/incl
   --with-utils \
   --with-libs \
   --with-daemon
-RUN make -j4
+RUN make -j${N_PROC}
 RUN make install
 RUN strip ${BITCOIN_PREFIX}/bin/bitcoin-cli
 RUN strip ${BITCOIN_PREFIX}/bin/bitcoin-tx
