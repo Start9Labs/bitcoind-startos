@@ -8,6 +8,10 @@ MANAGER_SRC := $(shell find ./manager -name '*.rs') manager/Cargo.toml manager/C
 
 all: bitcoind.s9pk
 
+clean:
+	rm bitcoind.s9pk
+	rm image.tar
+
 install: bitcoind.s9pk
 	appmgr install bitcoind.s9pk
 
