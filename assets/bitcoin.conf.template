@@ -54,6 +54,11 @@ addnode={{advanced.peers.addnode}}
 onlynet=onion
 }}
 
+## WHITELIST
+{{#FOREACH advanced.whitelist
+whitelist={{advanced.whitelist}}
+}}
+
 ## PRUNING
 {{#IF advanced.pruning.mode = "manual"
 prune=1
