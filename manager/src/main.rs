@@ -563,8 +563,6 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
         .and_then(|v| v.get(&Value::String("peers".to_owned())))
         .and_then(|v| v.as_mapping())
         .and_then(|v| v.get(&Value::String("onlyonion".to_owned())))
-        .and_then(|v| v.as_mapping())
-        .and_then(|v| v.get(&Value::String("whitelist".to_owned())))
         .and_then(|v| v.as_bool())
         .unwrap_or(false)
     {
