@@ -231,13 +231,3 @@ advanced:
             integral: true
             units: MiB
       default: automatic
-    whitelist:
-      name: Whitelist
-      description: Whitelist peers connecting from the given netmask or IP address. Defaults to the subnet of all services.
-      type: list
-      subtype: string
-      default: ['172.18.0.0/16']
-      # spec:
-      #   pattern: "(^(([12]?[0-9]{1,2}|2[0-4][0-9]|25[0-5])(\\.|\/)){4}([1-2]?[0-9]|3[0-2])$)"
-      #   patternDescription: Must be either an IPv4 or IPv6 address or domain name
-      range: "[0,*)"

@@ -55,9 +55,8 @@ onlynet=onion
 }}
 
 ## WHITELIST
-{{#FOREACH advanced.whitelist
-whitelist={{advanced.whitelist}}
-}}
+## whitelist all services subnet
+whitelist=172.18.0.0/16
 
 ## PRUNING
 {{#IF advanced.pruning.mode = "manual"
