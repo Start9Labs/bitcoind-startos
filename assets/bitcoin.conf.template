@@ -54,6 +54,10 @@ addnode={{advanced.peers.addnode}}
 onlynet=onion
 }}
 
+## WHITELIST
+## whitelist all services subnet
+whitelist=172.18.0.0/16
+
 ## PRUNING
 {{#IF advanced.pruning.mode = "manual"
 prune=1
