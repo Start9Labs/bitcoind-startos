@@ -1,12 +1,77 @@
-compat: v0
 id: bitcoind
-version: "0.21.1.1"
 title: "Bitcoin Core"
+version: 0.21.1.2
+release-notes: Upgrade to EmbassyOS v0.3.0
+license: MIT
+wrapper-repo: https://github.com/Start9Labs/bitcoind-wrapper
+upstream-repo: https://github.com/bitcoin/bitcoin
+build: ["make"]
+min-os-version: 0.3.0
 description:
-  short: "A Bitcoin Full Node by Bitcoin Core"
-  long: "Bitcoin is an innovative payment network and a new kind of money. Bitcoin uses peer-to-peer technology to operate with no central authority or banks; managing transactions and the issuing of bitcoins is carried out collectively by the network. Bitcoin is open-source; its design is public, nobody owns or controls Bitcoin and everyone can take part. Through many of its unique properties, Bitcoin allows exciting uses that could not be covered by any previous payment system."
-release-notes: |
-  Whitelists service IP addresses.
+  short: A Bitcoin Full Node by Bitcoin Core
+  long: Bitcoin is an innovative payment network and a new kind of money. Bitcoin uses peer-to-peer technology to operate with no central authority or banks; managing transactions and the issuing of bitcoins is carried out collectively by the network. Bitcoin is open-source; its design is public, nobody owns or controls Bitcoin and everyone can take part. Through many of its unique properties, Bitcoin allows exciting uses that could not be covered by any previous payment system.
+assets:
+  license: LICENSE
+  icon: icon.png
+  instructions: instructions.md
+  docker-images: image.tar
+  icon-type: png
+main:
+  type: docker
+  image: main
+  entrypoint: "/usr/local/bin/docker_entrypoint.sh"
+  args: []
+  mounts: {}
+  io-format: yaml
+health-checks: {}
+config:
+  get:
+    type: docker
+    image: compat
+    system: true
+    entrypoint: main
+    args: 
+      - "get"
+      - "/root"
+    mounts: {}
+    io-format: yaml
+  set:
+    type: docker
+    image: compat
+    system: true
+    entrypoint: main
+    args:
+      - "set"
+      - "/root"
+    mounts: {}
+    io-format: yaml
+dependencies: {}
+volumes: {}
+interfaces:
+  main:
+    tor-config:
+      port-mapping:
+        80: "80"
+        59001: "59001"
+    ui: true
+    protocols:
+      - tcp
+      - http
+backup:
+  create:
+    type: docker
+    image: compat
+    system: true
+    entrypoint: "true"
+    args: []
+    mounts: {}
+  restore:
+    type: docker
+    image: compat
+    system: true
+    entrypoint: "true"
+    args: []
+    mounts: {} 
 ports:
   - internal: 8332
     tor: 8332
@@ -23,22 +88,21 @@ image:
   type: tar
 mount: /root/.bitcoin
 has-instructions: true
-os-version-required: "^0.2.9"
-os-version-recommended: "^0.2.9"
 uninstall-alert: Uninstalling Bitcoin Core will result in permanent loss of data. Without a backup, any funds stored on your node's default hot wallet will be lost forever. If you are unsure, we recommend making a backup, just to be safe.
 restore-alert: Restoring Bitcoin Core will overwrite its current data. You will lose any transactions recorded in watch-only wallets, and any funds you have received to the hot wallet, since the last backup.
-assets:
-  - src: bitcoin.conf.template
-    dst: "."
-    overwrite: true
 hidden-service-version: v3
 actions:
-  - id: "reindex"
+  reindex:
     name: "Reindex Blockchain"
     description: "Rebuilds the block and chainstate databases starting from genesis. If blocks already exist on disk, these are used rather than being redownloaded. However, since embassy bitcoin nodes are pruned by default, this usually means downloading the entire blockchain over again."
     warning: Blocks not stored on disk will be redownloaded in order to rebuild the database. If your node is pruned (embasssy nodes are pruned by default), this action is equivalent to syncing the node from scratch, so this process could take a couple of weeks.
     allowed-statuses:
-      - "RUNNING"
-      - "STOPPED"
-    command:
-      - reindex.sh
+      - running
+      - stopped
+    implementation:
+      type: docker
+      image: compat
+      system: true
+      entrypoint: reindex.sh
+      args: []
+      mounts: {} 
