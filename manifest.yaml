@@ -29,7 +29,7 @@ config:
     type: docker
     image: compat
     system: true
-    entrypoint: main
+    entrypoint: config
     args: 
       - "get"
       - "/root"
@@ -39,7 +39,7 @@ config:
     type: docker
     image: compat
     system: true
-    entrypoint: main
+    entrypoint: config
     args:
       - "set"
       - "/root"
