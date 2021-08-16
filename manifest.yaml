@@ -49,11 +49,20 @@ dependencies: {}
 volumes: {}
 interfaces:
   main:
+    name: "Main interface"
+    description: "Main interface"
     tor-config:
       port-mapping:
-        80: "80"
-        59001: "59001"
-    ui: true
+        8332: "8332"
+        8333: "8333"
+    lan-config:
+      8332:
+        ssl: false
+        mapping: 8332
+      8333:
+        ssl: false
+        mapping: 8333
+    ui: false
     protocols:
       - tcp
       - http

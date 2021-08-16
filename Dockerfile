@@ -102,8 +102,6 @@ ADD ./docker_entrypoint.sh /usr/local/bin/docker_entrypoint.sh
 RUN chmod a+x /usr/local/bin/docker_entrypoint.sh
 ADD ./actions/reindex.sh /usr/local/bin/reindex.sh
 RUN chmod a+x /usr/local/bin/reindex.sh
-ADD ./config.sh /usr/local/bin/config
-RUN chmod a+x /usr/local/bin/config
 
 EXPOSE 8332 8333
 
