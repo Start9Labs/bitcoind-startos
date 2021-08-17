@@ -107,7 +107,9 @@ backup:
     # arguments to pass into the entrypoint ie. duplicity in this case
     # thus, the full commamnd run will be: `duplicity /root file:///mnt/backup`
     args:
-      - /root
+      - "--exclude /root/.bitcoin/chainstate"
+      - "--exclude /root/.bitcoin/blocks"
+      - /root/.bitcoin
       - file:///mnt/backup
     mounts:
       # BACKUP is the default volume that is used for backups - this is whatever backup drive is mounted to the device, or a network filesystem
