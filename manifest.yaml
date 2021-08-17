@@ -124,7 +124,7 @@ backup:
     entrypoint: duplicity
     args:
       - file:///mnt/backup
-      - /root
+      - /root/.bitcoin
     mounts:
       BACKUP: "/mnt/backup"
       main: "/root/.bitcoin" 
