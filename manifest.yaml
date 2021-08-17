@@ -37,7 +37,7 @@ config:
       - "/mnt/assets/config_spec.yaml"
     mounts:
       compat: "/mnt/assets"
-      main: "/root"
+      main: "/root/.bitcoin"
     io-format: yaml
   set:
     type: docker
@@ -49,7 +49,7 @@ config:
       - "set"
       - "/root/.bitcoin/start9/config.yaml"
     mounts:
-      main: "/root"
+      main: "/root/.bitcoin"
     io-format: yaml
 dependencies: {}
 volumes:
@@ -141,8 +141,8 @@ actions:
       - stopped
     implementation:
       type: docker
-      image: compat
-      system: true
+      image: main
+      system: false
       entrypoint: reindex.sh
       args: []
       mounts: {} 
