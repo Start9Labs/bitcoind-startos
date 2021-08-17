@@ -17,6 +17,9 @@ bitcoind.s9pk: manifest.yaml config_spec.yaml config_rules.yaml image.tar instru
 verify: bitcoind.s9pk $(S9PK_PATH)
 	embassy-sdk verify $(S9PK_PATH)
 
+install: bitcoind.s9pk
+	embassy-cli package install bitcoind.s9pk
+
 image.tar: Dockerfile docker_entrypoint.sh manager/target/aarch64-unknown-linux-musl/release/bitcoind-manager manifest.yaml
 	DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --tag start9/bitcoind --build-arg BITCOIN_VERSION=$(VERSION_STRIPPED) --build-arg N_PROC=$(shell nproc) --platform=linux/arm64 -o type=docker,dest=image.tar .
 

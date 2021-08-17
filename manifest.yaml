@@ -29,77 +29,106 @@ config:
     type: docker
     image: compat
     system: true
-    entrypoint: config
+    entrypoint: compat
     args: 
+      - "config"
       - "get"
-      - "/root"
-    mounts: {}
+      - "/root/.bitcoin/start9/config.yaml"
+      - "/mnt/assets/config_spec.yaml"
+    mounts:
+      compat: "/mnt/assets"
+      main: "/root"
     io-format: yaml
   set:
     type: docker
     image: compat
     system: true
-    entrypoint: config
+    entrypoint: compat
     args:
+      - "config"
       - "set"
-      - "/root"
-    mounts: {}
+      - "/root/.bitcoin/start9/config.yaml"
+    mounts:
+      main: "/root"
     io-format: yaml
 dependencies: {}
-volumes: {}
-interfaces:
+volumes:
+  # this is the image where data will go from 0.2.x
   main:
-    name: "Main interface"
-    description: "Main interface"
+    type: data
+  # this is the image where files from the project asset directory will go
+  compat:
+    type: assets
+interfaces:
+  rpc:
+    name: RPC Interface
+    description: Listens for JSON-RPC commands
     tor-config:
       port-mapping:
         8332: "8332"
-        8333: "8333"
     lan-config:
       8332:
         ssl: false
         mapping: 8332
-      8333:
-        ssl: false
-        mapping: 8333
     ui: false
     protocols:
       - tcp
       - http
+      - json-rpc
+  peer:
+    name: Peer Interface
+    description: Listens for incoming connections from peers on the bitcoin network
+    tor-config:
+      port-mapping:
+        8333: "8333"
+    ui: false
+    protocols:
+      - tcp
+      - bitcoin
+  zmq:
+    name: ZeroMQ Interface
+    description: Listens for subscriptions to the ZeroMQ raw block and raw transaction event streams
+    tor-config:
+      port-mapping:
+        28332: "28332"
+        28333: "28333"
+    ui: false
+    protocols:
+      - tcp
+      - zmq
 backup:
   create:
     type: docker
-    image: compat
+    # default backup process is duplicity - EOS will have access to this image
+    image: duplicity
     system: true
-    entrypoint: "true"
-    args: []
-    mounts: {}
+    # command to run the backup executable, in this case, duplicity
+    entrypoint: duplicity
+    # arguments to pass into the entrypoint ie. duplicity in this case
+    # thus, the full commamnd run will be: `duplicity /root file:///mnt/backup`
+    args:
+      - /root
+      - file:///mnt/backup
+    mounts:
+      # BACKUP is the default volume that is used for backups - this is whatever backup drive is mounted to the device, or a network filesystem
+      # the value here denotes where the data mount point will be
+      # mounts backup drive to this location, which contains previous backups
+      BACKUP: "/mnt/backup"
+      main: "/root/.lnd"
   restore:
     type: docker
-    image: compat
+    image: duplicity
     system: true
-    entrypoint: "true"
-    args: []
-    mounts: {} 
-ports:
-  - internal: 8332
-    tor: 8332
-    lan:
-      custom:
-        port: 8332
-  - internal: 8333
-    tor: 8333
-  - internal: 28332
-    tor: 28332
-  - internal: 28333
-    tor: 28333
-image:
-  type: tar
-mount: /root/.bitcoin
-has-instructions: true
-uninstall-alert: Uninstalling Bitcoin Core will result in permanent loss of data. Without a backup, any funds stored on your node's default hot wallet will be lost forever. If you are unsure, we recommend making a backup, just to be safe.
-restore-alert: Restoring Bitcoin Core will overwrite its current data. You will lose any transactions recorded in watch-only wallets, and any funds you have received to the hot wallet, since the last backup.
-hidden-service-version: v3
+    entrypoint: duplicity
+    args:
+      - file:///mnt/backup
+      - /root
+    mounts:
+      BACKUP: "/mnt/backup"
+      main: "/root/.lnd" 
+alert:
+  uninstall: Uninstalling Bitcoin Core will result in permanent loss of data. Without a backup, any funds stored on your node's default hot wallet will be lost forever. If you are unsure, we recommend making a backup, just to be safe.
+  restore: Restoring Bitcoin Core will overwrite its current data. You will lose any transactions recorded in watch-only wallets, and any funds you have received to the hot wallet, since the last backup.
 actions:
   reindex:
     name: "Reindex Blockchain"
