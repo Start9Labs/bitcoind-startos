@@ -11,7 +11,7 @@ clean:
 	rm bitcoind.s9pk
 	rm image.tar
 
-bitcoind.s9pk: manifest.yaml config_spec.yaml config_rules.yaml image.tar instructions.md
+bitcoind.s9pk: manifest.yaml assets/compat/config_spec.yaml assets/compat/config_rules.yaml image.tar instructions.md
 	embassy-sdk pack
 
 verify: bitcoind.s9pk $(S9PK_PATH)

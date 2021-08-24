@@ -23,7 +23,17 @@ main:
   args: []
   mounts: {}
   io-format: yaml
-health-checks: {}
+health-checks:
+  rpc:
+    type: docker
+    image: main
+    system: true
+    entrypoint: bitcoin-cli
+    args:
+      - "-getinfo"
+    mounts: {}
+    io-format: yaml
+    critical: false
 config:
   get:
     type: docker
