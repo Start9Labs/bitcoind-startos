@@ -547,13 +547,17 @@ where
 }
 
 fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
+    while !Path::new("/root/.bitcoin/start9/config.yaml").exists() {
+        std::thread::sleep(std::time::Duration::from_secs(1));
+    }
     let config: Mapping =
         serde_yaml::from_reader(std::fs::File::open("/root/.bitcoin/start9/config.yaml")?)?;
     let sidecar_poll_interval = std::time::Duration::from_secs(5);
-    let addr = var("TOR_ADDRESS")?;
+    let peer_addr = var("PEER_TOR_ADDRESS")?;
+    let rpc_addr = var("RPC_TOR_ADDRESS")?;
     let mut btc_args = vec![
         format!("-onion={}:9050", var("HOST_IP")?),
-        format!("-externalip={}", addr),
+        format!("-externalip={}", peer_addr),
         "-datadir=/root/.bitcoin".to_owned(),
         "-conf=/root/.bitcoin/bitcoin.conf".to_owned(),
     ];
@@ -581,7 +585,7 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
 
     std::io::copy(
         &mut TemplatingReader::new(
-            std::fs::File::open("/root/.bitcoin/bitcoin.conf.template")?,
+            std::fs::File::open("/mnt/assets/bitcoin.conf.template")?,
             &config,
             &"{{var}}".parse()?,
             b'%',
@@ -620,7 +624,7 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
         }
     });
     let _sidecar_handle = std::thread::spawn(move || loop {
-        sidecar(&config, &addr)
+        sidecar(&config, &rpc_addr)
             .err()
             .map(|e| eprintln!("ERROR IN SIDECAR: {}", e));
         std::thread::sleep(sidecar_poll_interval);

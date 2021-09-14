@@ -71,7 +71,7 @@ RUN strip ${BITCOIN_PREFIX}/lib/libbitcoinconsensus.a
 RUN strip ${BITCOIN_PREFIX}/lib/libbitcoinconsensus.so.0.0.0
 
 # Build stage for compiled artifacts
-FROM arm64v8/alpine:3.12
+FROM arm64v8/alpine:3.13
 
 LABEL maintainer.0="João Fonseca (@joaopaulofonseca)" \
   maintainer.1="Pedro Branco (@pedrobranco)" \
@@ -88,6 +88,8 @@ RUN apk --no-cache add \
   libzmq \
   sqlite-libs \
   su-exec
+RUN wget -O /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.12.2/yq_linux_arm \
+    && chmod a+x /usr/local/bin/yq
 
 ENV BITCOIN_DATA=/root/.bitcoin
 ARG BITCOIN_VERSION

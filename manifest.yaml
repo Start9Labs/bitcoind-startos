@@ -2,9 +2,11 @@ id: bitcoind
 title: "Bitcoin Core"
 version: 0.21.1.2
 release-notes: Upgrade to EmbassyOS v0.3.0
-license: MIT
+license: mit
 wrapper-repo: https://github.com/Start9Labs/bitcoind-wrapper
 upstream-repo: https://github.com/bitcoin/bitcoin
+support-site: https://github.com/bitcoin/bitcoin/issues
+marketing-site: https://bitcoincore.org/
 build: ["make"]
 min-os-version: 0.3.0
 description:
@@ -15,22 +17,23 @@ assets:
   icon: icon.png
   instructions: instructions.md
   docker-images: image.tar
-  icon-type: png
 main:
   type: docker
   image: main
-  entrypoint: "/usr/local/bin/docker_entrypoint.sh"
+  entrypoint: "docker_entrypoint.sh"
   args: []
-  mounts: {}
+  mounts:
+    main: /root/.bitcoin
+    compat: /mnt/assets
   io-format: yaml
 health-checks:
   rpc:
     type: docker
     image: main
-    system: true
+    system: false
     entrypoint: bitcoin-cli
-    args:
-      - "-getinfo"
+    args: []
+      # - "-getinfo"
     mounts: {}
     io-format: yaml
     critical: false
@@ -41,13 +44,13 @@ config:
     system: true
     entrypoint: compat
     args: 
-      - "config"
-      - "get"
-      - "/root/.bitcoin/start9/config.yaml"
+      - config
+      - get
+      - /root/.bitcoin
       - "/mnt/assets/config_spec.yaml"
     mounts:
-      compat: "/mnt/assets"
-      main: "/root/.bitcoin"
+      compat: /mnt/assets
+      main: /root/.bitcoin
     io-format: yaml
   set:
     type: docker
@@ -55,20 +58,34 @@ config:
     system: true
     entrypoint: compat
     args:
-      - "config"
-      - "set"
-      - "/root/.bitcoin/start9/config.yaml"
+      - config
+      - set
+      - bitcoind
+      - /root/.bitcoin
+      - "/mnt/assets/config_rules.yaml"
     mounts:
+      compat: /mnt/assets
       main: "/root/.bitcoin"
     io-format: yaml
-dependencies: {}
+properties:
+  type: docker
+  image: compat
+  system: true
+  entrypoint: compat
+  args:
+    - properties
+    - /root/.bitcoin
+  mounts:
+    main: /root/.bitcoin
+  io-format: yaml
 volumes:
-  # this is the image where data will go from 0.2.x
   main:
     type: data
-  # this is the image where files from the project asset directory will go
   compat:
     type: assets
+alerts:
+  uninstall: Uninstalling Bitcoin Core will result in permanent loss of data. Without a backup, any funds stored on your node's default hot wallet will be lost forever. If you are unsure, we recommend making a backup, just to be safe.
+  restore: Restoring Bitcoin Core will overwrite its current data. You will lose any transactions recorded in watch-only wallets, and any funds you have received to the hot wallet, since the last backup.
 interfaces:
   rpc:
     name: RPC Interface
@@ -106,41 +123,38 @@ interfaces:
     protocols:
       - tcp
       - zmq
+dependencies: {}
 backup:
   create:
     type: docker
-    # default backup process is duplicity - EOS will have access to this image
-    image: duplicity
+    image: compat
     system: true
-    # command to run the backup executable, in this case, duplicity
-    entrypoint: duplicity
-    # arguments to pass into the entrypoint ie. duplicity in this case
-    # thus, the full commamnd run will be: `duplicity /root file:///mnt/backup`
+    entrypoint: compat
     args:
+      - duplicity
+      - create
+      - bitcoind
+      - /mnt/backup
+      - /root/.bitcoin
       - "--exclude /root/.bitcoin/chainstate"
       - "--exclude /root/.bitcoin/blocks"
-      - /root/.bitcoin
-      - file:///mnt/backup
     mounts:
-      # BACKUP is the default volume that is used for backups - this is whatever backup drive is mounted to the device, or a network filesystem
-      # the value here denotes where the data mount point will be
-      # mounts backup drive to this location, which contains previous backups
-      BACKUP: "/mnt/backup"
-      main: "/root/.lnd"
+      backup: /mnt/backup
+      main: /root/.bitcoind
   restore:
     type: docker
-    image: duplicity
+    image: compat
     system: true
-    entrypoint: duplicity
+    entrypoint: /mnt/assets/backup-restore.sh
     args:
-      - file:///mnt/backup
+      - restore
+      - bitcoind
       - /root/.bitcoin
+      - /mnt/backup
     mounts:
-      BACKUP: "/mnt/backup"
+      backup: "/mnt/backup"
       main: "/root/.bitcoin" 
-alert:
-  uninstall: Uninstalling Bitcoin Core will result in permanent loss of data. Without a backup, any funds stored on your node's default hot wallet will be lost forever. If you are unsure, we recommend making a backup, just to be safe.
-  restore: Restoring Bitcoin Core will overwrite its current data. You will lose any transactions recorded in watch-only wallets, and any funds you have received to the hot wallet, since the last backup.
+      compat: /mnt/assets
 actions:
   reindex:
     name: "Reindex Blockchain"

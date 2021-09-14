@@ -1,3 +1,19 @@
+peer-tor-address:
+  name: Peer Tor Address
+  description: The Tor address of the peer interface
+  type: pointer
+  subtype: package
+  package-id: bitcoind
+  target: tor-address
+  interface: peer
+rpc-tor-address:
+  name: RPC Tor Address
+  description: The Tor address of the RPC interface
+  type: pointer
+  subtype: package
+  package-id: bitcoind
+  target: tor-address
+  interface: rpc
 rpc:
   type: object
   nullable: false
@@ -198,14 +214,14 @@ advanced:
       description: |
         Blockchain Pruning Options
         Reduce the blockchain size on disk
-      changeWarning: If you set pruning to Manual, you MUST have something running that prunes these blocks or you may overfill your disk!
+      change-warning: If you set pruning to Manual, you MUST have something running that prunes these blocks or you may overfill your disk!
       tag:
         id: mode
         name: Pruning Mode
         description: |
           - Automatic: Limit blockchain size on disk to a certain number of megabytes
           - Manual: Prune blockchain with the "pruneblockchain" RPC
-        variantNames:
+        variant-names:
           automatic: Automatic
           manual: Manual
       variants:
@@ -215,7 +231,7 @@ advanced:
             nullable: false
             name: "Max Chain Size"
             description: "Limit of blockchain size on disk."
-            changeWarning: "Increasing this value will require re-syncing your node."
+            change-warning: "Increasing this value will require re-syncing your node."
             default: 550
             range: "[550,100000)"
             integral: true

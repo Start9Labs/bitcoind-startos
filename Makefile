@@ -21,7 +21,7 @@ install: bitcoind.s9pk
 	embassy-cli package install bitcoind.s9pk
 
 image.tar: Dockerfile docker_entrypoint.sh manager/target/aarch64-unknown-linux-musl/release/bitcoind-manager manifest.yaml
-	DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --tag start9/bitcoind --build-arg BITCOIN_VERSION=$(VERSION_STRIPPED) --build-arg N_PROC=$(shell nproc) --platform=linux/arm64 -o type=docker,dest=image.tar .
+	DOCKER_CLI_EXPERIMENTAL=enabled docker buildx build --tag start9/bitcoind/main:0.21.1.2 --build-arg BITCOIN_VERSION=$(VERSION_STRIPPED) --build-arg N_PROC=$(shell nproc) --platform=linux/arm64 -o type=docker,dest=image.tar .
 
 manager/target/aarch64-unknown-linux-musl/release/bitcoind-manager: $(MANAGER_SRC)
 	docker run --rm -it -v ~/.cargo/registry:/root/.cargo/registry -v "$(shell pwd)"/manager:/home/rust/src start9/rust-musl-cross:aarch64-musl cargo build --release
