@@ -32,9 +32,10 @@ health-checks:
     image: main
     system: false
     entrypoint: bitcoin-cli
-    args: []
-      # - "-getinfo"
-    mounts: {}
+    args:
+      - "-getinfo"
+    mounts:
+      main: /root/.bitcoin
     io-format: yaml
     critical: false
 config:
@@ -169,4 +170,5 @@ actions:
       system: false
       entrypoint: reindex.sh
       args: []
-      mounts: {} 
+      mounts:
+        main: /root/.bitcoin
