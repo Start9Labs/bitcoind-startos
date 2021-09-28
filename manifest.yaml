@@ -33,6 +33,7 @@ health-checks:
     system: false
     entrypoint: bitcoin-cli
     args:
+      - "-rpcconnect=bitcoind.embassy"
       - "-getinfo"
     mounts:
       main: /root/.bitcoin
@@ -140,7 +141,7 @@ backup:
       - "--exclude /root/.bitcoin/chainstate"
       - "--exclude /root/.bitcoin/blocks"
     mounts:
-      backup: /mnt/backup
+      BACKUP: /mnt/backup
       main: /root/.bitcoind
   restore:
     type: docker
@@ -153,7 +154,7 @@ backup:
       - /root/.bitcoin
       - /mnt/backup
     mounts:
-      backup: "/mnt/backup"
+      BACKUP: "/mnt/backup"
       main: "/root/.bitcoin" 
       compat: /mnt/assets
 actions:
@@ -172,3 +173,4 @@ actions:
       args: []
       mounts:
         main: /root/.bitcoin
+      io-format: json
