@@ -39,6 +39,17 @@ health-checks:
       main: /root/.bitcoin
     io-format: yaml
     critical: false
+  synced:
+    type: docker
+    image: utils
+    system: true
+    entrypoint: /mnt/assets/check-synced.sh
+    args: []
+    mounts:
+      main: /root/.bitcoin
+      utils: /mnt/assets
+    io-format: yaml
+    critical: false
 config:
   get:
     type: docker
@@ -84,6 +95,8 @@ volumes:
   main:
     type: data
   compat:
+    type: assets
+  utils:
     type: assets
 alerts:
   uninstall: Uninstalling Bitcoin Core will result in permanent loss of data. Without a backup, any funds stored on your node's default hot wallet will be lost forever. If you are unsure, we recommend making a backup, just to be safe.
