@@ -53,7 +53,7 @@ Connect Specter to Bitcoin Proxy
 
 - After installation, run Specter
 - Click “Configure Node”
-
+- Note: for version 1.7 onward - click the Specter icon in the bottom left, then "Continue setup", then "Connect to a node"
 ![Specter Configure Node](./assets/specter_configure_node.png "Specter Configure Node")
 
 - Uncheck Auto-detect

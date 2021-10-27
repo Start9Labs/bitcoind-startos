@@ -70,6 +70,8 @@ Surprisingly, Homebrew uses Google Analytics to collect anonymous usage data. Yo
 
 - Click ``Connect Specter to your Bitcoin node``
 
+- Note: for version 1.7 onward - click the Specter icon in the bottom left, then "Continue setup", then "Connect to a node"
+
 ![Welcome](./assets/welcome.png "Welcome")
 
 - Disable `Auto-detect`
