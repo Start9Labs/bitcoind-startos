@@ -35,10 +35,10 @@ health-checks:
     args:
       - "-rpcconnect=bitcoind.embassy"
       - "-getinfo"
-    mounts:
-      main: /root/.bitcoin
+    mounts: {}
     io-format: yaml
     critical: false
+    inject: true
   synced:
     type: docker
     image: utils
@@ -151,25 +151,23 @@ backup:
       - bitcoind
       - /mnt/backup
       - /root/.bitcoin
-      - "--exclude /root/.bitcoin/chainstate"
-      - "--exclude /root/.bitcoin/blocks"
     mounts:
       BACKUP: /mnt/backup
-      main: /root/.bitcoind
+      main: /root/.bitcoin
   restore:
     type: docker
     image: compat
     system: true
-    entrypoint: /mnt/assets/backup-restore.sh
+    entrypoint: compat
     args:
+      - duplicity
       - restore
       - bitcoind
-      - /root/.bitcoin
       - /mnt/backup
+      - /root/.bitcoin
     mounts:
-      BACKUP: "/mnt/backup"
-      main: "/root/.bitcoin" 
-      compat: /mnt/assets
+      BACKUP: /mnt/backup
+      main: /root/.bitcoin
 actions:
   reindex:
     name: "Reindex Blockchain"

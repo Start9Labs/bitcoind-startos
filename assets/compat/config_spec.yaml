@@ -214,17 +214,20 @@ advanced:
       description: |
         Blockchain Pruning Options
         Reduce the blockchain size on disk
-      change-warning: If you set pruning to Manual, you MUST have something running that prunes these blocks or you may overfill your disk!
+      change-warning: If you set pruning to Manual and your disk is smaller than the total size of the blockchain, you MUST have something running that prunes these blocks or you may overfill your disk!
       tag:
         id: mode
         name: Pruning Mode
         description: |
+          - Disabled: Disable pruning
           - Automatic: Limit blockchain size on disk to a certain number of megabytes
           - Manual: Prune blockchain with the "pruneblockchain" RPC
         variant-names:
+          disabled: Disabled
           automatic: Automatic
           manual: Manual
       variants:
+        disabled: {}
         automatic:
           size:
             type: number
@@ -233,7 +236,7 @@ advanced:
             description: "Limit of blockchain size on disk."
             change-warning: "Increasing this value will require re-syncing your node."
             default: 550
-            range: "[550,100000)"
+            range: "[550,1000000)"
             integral: true
             units: MiB
         manual:
@@ -243,7 +246,7 @@ advanced:
             name: "Failsafe Chain Size"
             description: "Prune blockchain if size expands beyond this."
             default: 65536
-            range: "[550,100000)"
+            range: "[550,1000000)"
             integral: true
             units: MiB
-      default: automatic
+      default: disabled
