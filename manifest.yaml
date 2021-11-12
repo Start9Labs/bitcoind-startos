@@ -148,7 +148,6 @@ backup:
     args:
       - duplicity
       - create
-      - bitcoind
       - /mnt/backup
       - /root/.bitcoin
     mounts:
@@ -162,7 +161,6 @@ backup:
     args:
       - duplicity
       - restore
-      - bitcoind
       - /mnt/backup
       - /root/.bitcoin
     mounts:
