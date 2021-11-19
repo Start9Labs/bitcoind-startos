@@ -577,6 +577,8 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
         let mut f = std::fs::File::create("/root/.bitcoin/.backupignore")?;
         writeln!(f, "blocks/")?;
         writeln!(f, "chainstate/")?;
+        writeln!(f, "indexes/")?;
+        writeln!(f, "testnet3/")?;
         f.flush()?;
     }
     if reindex {
