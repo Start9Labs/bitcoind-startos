@@ -1,6 +1,6 @@
 id: bitcoind
 title: "Bitcoin Core"
-version: 0.21.1.2
+version: 22.0.0
 release-notes: Upgrade to EmbassyOS v0.3.0
 license: mit
 wrapper-repo: https://github.com/Start9Labs/bitcoind-wrapper
