@@ -23,15 +23,29 @@ RUN apk --no-cache add linux-headers
 # RUN apk --no-cache add sqlite-libs
 RUN apk --no-cache add sqlite-dev
 RUN apk --no-cache add zeromq-dev
-RUN set -ex \
+RUN set -x \
   && for key in \
   90C8019E36C2E964 \
+  E2FFD5B1D88CA97D \
+  17565732E08E5E41 \
+  D7CC770B81FD22A8 \
+  E13FC145CD3F4304 \
+  ED357015286A333D \
+  3152347D07DA627C \
+  2EEB9F5CC09526C1 \
+  03DB6322267C373B \
+  410108112E7EA81F \
+  796C4109063D4EAF \
+  1E4AED62986CD25D \
+  0A41BDC3F4FAFF1C \
+  099BAD163C70FBFA \
   ; do \
   gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" || \
   gpg --batch --keyserver pgp.mit.edu --recv-keys "$key" || \
   gpg --batch --keyserver keyserver.pgp.com --recv-keys "$key" || \
   gpg --batch --keyserver ha.pool.sks-keyservers.net --recv-keys "$key" || \
   gpg --batch --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys "$key" ; \
+  gpg --batch --keyserver keys.openpgp.org --recv-keys "$key" ; \
   done
 
 ARG BITCOIN_VERSION
@@ -40,10 +54,11 @@ RUN test -n "$BITCOIN_VERSION"
 RUN test -n "$N_PROC"
 ENV BITCOIN_PREFIX=/opt/bitcoin-${BITCOIN_VERSION}
 
+RUN wget https://bitcoincore.org/bin/bitcoin-core-${BITCOIN_VERSION}/SHA256SUMS
 RUN wget https://bitcoincore.org/bin/bitcoin-core-${BITCOIN_VERSION}/SHA256SUMS.asc
 RUN wget https://bitcoincore.org/bin/bitcoin-core-${BITCOIN_VERSION}/bitcoin-${BITCOIN_VERSION}.tar.gz
 RUN gpg --verify SHA256SUMS.asc
-RUN grep " bitcoin-${BITCOIN_VERSION}.tar.gz\$" SHA256SUMS.asc | sha256sum -c -
+RUN grep " bitcoin-${BITCOIN_VERSION}.tar.gz\$" SHA256SUMS | sha256sum -c -
 RUN tar -xzf *.tar.gz
 
 WORKDIR /bitcoin-${BITCOIN_VERSION}
