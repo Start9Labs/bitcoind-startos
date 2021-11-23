@@ -227,8 +227,8 @@ advanced:
           automatic: Automatic
           manual: Manual
       variants:
-        disabled:
-          change-warning: "Disabling pruning will convert your node into a full archival node. This requires a resync of the entire blockchain, a process that may take several days. Make sure you have enough free disk space or you may fill up your disk."
+        disabled: {}
+          # change-warning: "Disabling pruning will convert your node into a full archival node. This requires a resync of the entire blockchain, a process that may take several days. Make sure you have enough free disk space or you may fill up your disk."
         automatic:
           size:
             type: number

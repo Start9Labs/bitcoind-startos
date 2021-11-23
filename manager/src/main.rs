@@ -263,7 +263,7 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
                     height: _,
                 } => continue,
                 SoftFork::Bip9 { bip9, active: _ } => {
-                    let (status, start, end, since) = match bip9 {
+                    let (status, start, end, _since) = match bip9 {
                         Bip9::Defined {
                             start_time,
                             timeout,
@@ -556,7 +556,7 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
     let peer_addr = var("PEER_TOR_ADDRESS")?;
     let rpc_addr = var("RPC_TOR_ADDRESS")?;
     let mut btc_args = vec![
-        format!("-onion={}:9050", var("HOST_IP")?),
+        format!("-onion={}:9050", var("EMBASSY_IP")?),
         format!("-externalip={}", peer_addr),
         "-datadir=/root/.bitcoin".to_owned(),
         "-conf=/root/.bitcoin/bitcoin.conf".to_owned(),
@@ -570,7 +570,7 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
         .and_then(|v| v.as_bool())
         .unwrap_or(false)
     {
-        btc_args.push(format!("-proxy={}:9050", var("HOST_IP")?));
+        btc_args.push(format!("-proxy={}:9050", var("EMBASSY_IP")?));
     }
     {
         // disable chain data backup
