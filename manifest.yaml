@@ -31,10 +31,8 @@ health-checks:
     type: docker
     image: main
     system: false
-    entrypoint: bitcoin-cli
-    args:
-      - "-rpcconnect=bitcoind.embassy"
-      - "-getinfo"
+    entrypoint: check-rpc.sh
+    args: []
     mounts: {}
     io-format: yaml
     critical: false

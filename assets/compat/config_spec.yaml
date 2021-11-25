@@ -214,7 +214,9 @@ advanced:
       description: |
         Blockchain Pruning Options
         Reduce the blockchain size on disk
-      change-warning: If you set pruning to Manual and your disk is smaller than the total size of the blockchain, you MUST have something running that prunes these blocks or you may overfill your disk!
+      change-warning: |
+        If you set pruning to Manual and your disk is smaller than the total size of the blockchain, you MUST have something running that prunes these blocks or you may overfill your disk!
+        Disabling pruning will convert your node into a full archival node. This requires a resync of the entire blockchain, a process that may take several days. Make sure you have enough free disk space or you may fill up your disk.
       tag:
         id: mode
         name: Pruning Mode
@@ -228,7 +230,6 @@ advanced:
           manual: Manual
       variants:
         disabled: {}
-          # change-warning: "Disabling pruning will convert your node into a full archival node. This requires a resync of the entire blockchain, a process that may take several days. Make sure you have enough free disk space or you may fill up your disk."
         automatic:
           size:
             type: number
