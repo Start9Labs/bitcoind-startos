@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
 
@@ -17,6 +17,8 @@ if [[ "$res" == "null" ]]; then
 elif [ $(echo "$res" | yq e '.initialblockdownload' -) = "false" ]; then
     exit 0
 else
-    echo "Syncing blockchain. This may take several days..." >&2
+    progress=$(echo "$res" | yq e '.verificationprogress' -)
+    progress_pct=$( bc -l <<<"100*$progress" )
+    echo "Syncing blockchain. This may take several days. Progress: $(printf "%.2f" $progress_pct)%" >&2
     exit 61
 fi
