@@ -28,6 +28,8 @@ main:
   io-format: yaml
 health-checks:
   rpc:
+    name: RPC
+    description: Indicates when the RPC server is alive and listening for commands. Dependent services that need the RPC interface will not work until this health check passes.
     type: docker
     image: main
     system: false
@@ -35,9 +37,11 @@ health-checks:
     args: []
     mounts: {}
     io-format: yaml
-    critical: false
+    severity: warning
     inject: true
   synced:
+    name: Synced
+    description: Indicates sync progress. Once your node is fully synced to the tip (most recent block) of the blockchain, this health check will pass.
     type: docker
     image: utils
     system: true
@@ -47,7 +51,7 @@ health-checks:
       main: /root/.bitcoin
       utils: /mnt/assets
     io-format: yaml
-    critical: false
+    severity: warning
 config:
   get:
     type: docker
