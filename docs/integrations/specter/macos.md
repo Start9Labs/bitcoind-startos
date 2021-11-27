@@ -50,7 +50,7 @@ Surprisingly, Homebrew uses Google Analytics to collect anonymous usage data. Yo
 :warning: If you have the Tor Browser open, close it and quit the application.
 
 - For macOS machines prior to December 2020 (pre-ARM chips), in the command line type: ``brew install tor``
-- For macOS with ARM chips, in the command line type: ``arch -x86_64 brew install tor``
+- For macOS with ARM chips, in the command line type: ``arch -arm64 brew install tor``
 
 - See [the tor project](https://2019.www.torproject.org/docs/tor-doc-osx.html.en) for more details.
 
