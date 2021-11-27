@@ -18,6 +18,9 @@ elif [ $(echo "$res" | yq e '.initialblockdownload' -) = "false" ]; then
     exit 0
 else
     progress=$(echo "$res" | yq e '.verificationprogress' -)
+    if [[ "$progress" = *"e"* ]]; then
+        progress="0"
+    fi
     progress_pct=$( bc -l <<<"100*$progress" )
     echo "Syncing blockchain. This may take several days. Progress: $(printf "%.2f" $progress_pct)%" >&2
     exit 61
