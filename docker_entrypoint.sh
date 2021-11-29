@@ -7,4 +7,5 @@ export PEER_TOR_ADDRESS=$(yq e '.peer-tor-address' /root/.bitcoin/start9/config.
 export RPC_TOR_ADDRESS=$(yq e '.rpc-tor-address' /root/.bitcoin/start9/config.yaml)
 
 # lighttpd -f /root/.bitcoin/httpd.conf
-exec /usr/local/bin/bitcoind-manager
+# exec /usr/local/bin/bitcoind-manager
+exec tini -p SIGTERM -- bitcoind-manager

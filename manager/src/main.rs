@@ -201,7 +201,6 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
     let info_res = std::process::Command::new("bitcoin-cli")
         .arg("-conf=/root/.bitcoin/bitcoin.conf")
         .arg("getblockchaininfo")
-        .arg("2>&1")
         .output()?;
     if info_res.status.success() {
         let info: ChainInfo = serde_json::from_slice(&info_res.stdout)?;

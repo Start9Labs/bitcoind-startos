@@ -87,7 +87,8 @@ RUN apk --no-cache add \
   libevent \
   libzmq \
   sqlite-libs \
-  su-exec
+  su-exec \
+  tini
 RUN wget https://github.com/mikefarah/yq/releases/download/v4.12.2/yq_linux_arm.tar.gz -O - |\
     tar xz && mv yq_linux_arm /usr/bin/yq
 
