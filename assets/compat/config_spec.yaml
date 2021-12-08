@@ -205,7 +205,7 @@ advanced:
       nullable: true
       name: "Database Cache"
       description: "How much RAM to allocate for caching the TXO set. Higher values improve syncing performance."
-      range: "(0,4096]"
+      range: "(0,8192]"
       integral: true
       units: MiB
     pruning:
