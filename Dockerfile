@@ -81,6 +81,7 @@ LABEL maintainer.0="João Fonseca (@joaopaulofonseca)" \
 RUN apk update
 RUN apk --no-cache add \
   bash \
+  curl \
   boost-filesystem=1.72.0-r6 \
   boost-system=1.72.0-r6 \
   boost-thread=1.72.0-r6 \
@@ -107,6 +108,8 @@ ADD ./actions/reindex.sh /usr/local/bin/reindex.sh
 RUN chmod a+x /usr/local/bin/reindex.sh
 ADD ./check-rpc.sh /usr/local/bin/check-rpc.sh
 RUN chmod a+x /usr/local/bin/check-rpc.sh
+ADD ./check-synced.sh /usr/local/bin/check-synced.sh
+RUN chmod a+x /usr/local/bin/check-synced.sh
 
 EXPOSE 8332 8333
 

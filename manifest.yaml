@@ -37,21 +37,18 @@ health-checks:
     args: []
     mounts: {}
     io-format: yaml
-    severity: warning
     inject: true
   synced:
     name: Synced
     description: Indicates sync progress. Once your node is fully synced to the tip (most recent block) of the blockchain, this health check will pass.
     type: docker
-    image: utils
-    system: true
-    entrypoint: /mnt/assets/check-synced.sh
+    image: main
+    system: false
+    entrypoint: check-synced.sh
     args: []
-    mounts:
-      main: /root/.bitcoin
-      utils: /mnt/assets
+    mounts: {}
     io-format: yaml
-    severity: warning
+    inject: true
 config:
   get:
     type: docker
@@ -97,8 +94,6 @@ volumes:
   main:
     type: data
   compat:
-    type: assets
-  utils:
     type: assets
 alerts:
   uninstall: Uninstalling Bitcoin Core will result in permanent loss of data. Without a backup, any funds stored on your node's default hot wallet will be lost forever. If you are unsure, we recommend making a backup, just to be safe.
