@@ -5,7 +5,7 @@
 gi_result=$(bitcoin-cli -getinfo 2>&1)
 error_code=$?
 
-if [[ "$error_code" == "28" ]]; then
+if [ "$error_code" -eq 28 ]; then
     # Starting
     exit 60
 else
