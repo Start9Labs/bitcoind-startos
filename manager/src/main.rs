@@ -1,3 +1,4 @@
+use std::sync::Arc;
 use std::{borrow::Cow, sync::Mutex};
 use std::{env::var, sync::atomic::AtomicBool};
 use std::{error::Error, sync::atomic::Ordering};
@@ -599,6 +600,7 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
         .stdout(std::process::Stdio::piped())
         .stderr(std::process::Stdio::piped())
         .spawn()?;
+    let child_running = Arc::new(AtomicBool::new(true));
     let raw_child = child.id();
     *CHILD_PID.lock().unwrap() = Some(raw_child);
     let child_stdout = child.stdout.take();
@@ -614,11 +616,13 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
         }
     });
     let child_stderr = child.stderr.take();
-    let _stderr_handle = std::thread::spawn(move || {
+    let thread_child_running = child_running.clone();
+    let stderr_handle = std::thread::spawn(move || {
         if let Some(stderr) = child_stderr {
             let mut r = StdErrReader::new(stderr);
             let mut w = std::io::stderr();
-            loop {
+            while thread_child_running.load(Ordering::SeqCst) {
+                // exit when child terminates
                 std::io::copy(&mut r, &mut w)
                     .err()
                     .map(|e| eprintln!("ERROR IN LOG PARSER: {}", e));
@@ -632,6 +636,8 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
         std::thread::sleep(sidecar_poll_interval);
     });
     let code = child.wait()?.code().unwrap_or(0);
+    child_running.store(false, Ordering::SeqCst);
+    stderr_handle.join().unwrap();
     if code != 0 {
         publish_notification(&Notification {
             time: std::time::UNIX_EPOCH
