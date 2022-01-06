@@ -17,4 +17,4 @@ action_result_stopped="    {
     \"copyable\": false,
     \"qr\": false
 }"
-bitcoin-cli -rpcconnect=bitcoind.embassy stop 2>/dev/null && echo $action_result_running || echo $action_result_stopped
+bitcoin-cli -rpcconnect=bitcoind.embassy stop >/dev/null 2>/dev/null && echo $action_result_running || echo $action_result_stopped
