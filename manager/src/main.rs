@@ -651,7 +651,12 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
         })?;
     }
     if REQUIRES_REINDEX.load(Ordering::SeqCst) {
-        inner_main(true) // restart
+        if reindex {
+            REQUIRES_REINDEX.store(false, Ordering::SeqCst);
+            std::process::exit(code)
+        } else {
+            inner_main(true) // restart
+        }
     } else {
         std::process::exit(code)
     }
