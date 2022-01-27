@@ -299,6 +299,10 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
                             timeout,
                             since,
                         } => {
+                            // stop showing soft fork info when it's been active for ~12 weeks
+                            if info.blocks >= since + 12096 {
+                                continue;
+                            }
                             let start_time_pretty = human_readable_timestamp(start_time);
                             let end_time_pretty = human_readable_timestamp(timeout);
                             ("Active", start_time_pretty, end_time_pretty, since)
