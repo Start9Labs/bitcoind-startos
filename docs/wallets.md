@@ -1,4 +1,13 @@
-# Compatible Wallets
+# Tested Bitcoin Wallets
+
+## Blockstream Green
+
+**Not Possible at this time - No ability to connect to a Bitcoin node**
+
+## BlueWallet
+
+**Not Possible at this time - Requires Electrum Server**
+
 ## Fully Noded
 
 ### Available For
@@ -9,19 +18,17 @@
 1. In Fully Noded, go to `Settings > Node Manager > +`
 2. Enter your Bitcoin Core credentials. You can do this in one of two ways: (1) Use Fully Noded to scan your QuickConnect QR code (located in `Services > Bitcoin Core > properties`); or (2) copy/paste your Bitcoin Core Tor Address (located in `Services > Bitcoin Core`) _with :8332 appended_, as well as you rpc username and password (located in `Services > Bitcoin Core > Config > RPC Settings`).
 
-Ledger Live
-===========
+## Ledger Live
 
-.. tip:: Built for use with Ledger hardware devices
-
-**UNTESTED**
-
-Samourai
-========
-
-.. note:: Android only
+**NOTE:** Built for use with Ledger hardware devices
 
 **UNTESTED**
+
+## Samourai
+
+**NOTE:** Android only
+
+**Not Possible at this time - Requires Dojo Stack**
 
 ## Sparrow
 
@@ -31,24 +38,22 @@ Samourai
 - Windows
 
 ### Instructions
-Follow the [guide](/docs/integrations/sparrow) for your OS
+Follow the [guide](/docs/integrations/sparrow/guide.md)
 
 ## Specter
 
 ### Available for
+- Linux
 - MacOS
 - Windows
-- Linux (x86_64)
 
 ### Instructions
-Follow this [tutorial](/docs/integrations/specter)
+Follow the [guide](/docs/integrations/specter) for your OS
 
 **UNTESTED**
 
-Trezor Suite
-============
+## Trezor Suite
 
-.. tip:: Built for use with Trezor hardware devices
+**NOTE:** Built for use with Trezor hardware devices
 
 **UNTESTED**
-
