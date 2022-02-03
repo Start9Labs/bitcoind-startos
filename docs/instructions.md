@@ -16,6 +16,8 @@ Enter your QuickConnect QR code **OR** your raw RPC credentials (both located in
 
 ## Pruning
 
+By default, Bitcoin is now set to be an "archival" node.  This means that it will download and verify the entire blockchain, and will not prune.  Be aware that this takes approximately 400GB as of early 2022.
+
 Pruning is a process by which your node discards old blocks and transactions after it verifies them. Pruned nodes and archival nodes are both "full nodes" in that they are fully validating - they validate every block and transaction. Archival nodes store the entire blockchain and are useful to people interested in doing general or historical analysis, or being a provider of blockchain data to others (eg. a blockexplorer). 
 
 The target of pruning on your Embassy is configurable and set by default to the minimum of 550MB (0.55 GB!), meaning the resulting blockchain will occupy a negligible amount of storage space. The maximum amount of blockchain data you can retain depends on the storage capacity your device. The config menu will not permit you to select a target that exceeds a certain percentage of your device's available capacity.
