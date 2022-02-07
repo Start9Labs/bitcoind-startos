@@ -2,7 +2,7 @@
 
 # set -e
 
-gi_result=$(bitcoin-cli -getinfo 2>&1)
+gi_result=$(bitcoin-cli getrpcinfo 2>&1)
 error_code=$?
 
 if [ "$error_code" -eq 28 ]; then
