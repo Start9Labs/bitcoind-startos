@@ -91,3 +91,8 @@ discardfee={{wallet.discardfee}}
 zmqpubrawblock=tcp://0.0.0.0:28332
 zmqpubrawtx=tcp://0.0.0.0:28333
 }}
+
+## TXINDEX
+{{#IF txindex
+txindex=1
+}}

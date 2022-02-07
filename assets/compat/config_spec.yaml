@@ -104,6 +104,11 @@ zmq-enabled:
   name: ZeroMQ Enabled
   description: Enable the ZeroMQ interface
   default: true
+txindex:
+  type: boolean
+  name: Transaction Index
+  description: Enable the Transaction Index (txindex)
+  default: false
 wallet:
   type: object
   nullable: false
