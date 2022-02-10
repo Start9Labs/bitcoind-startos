@@ -14,7 +14,7 @@ bitcoind.s9pk: manifest.yaml assets/compat/config_spec.yaml assets/compat/config
 	embassy-sdk pack
 
 verify: bitcoind.s9pk
-	embassy-sdk verify bitcoind.s9pk
+	embassy-sdk verify s9pk bitcoind.s9pk
 
 install: bitcoind.s9pk
 	embassy-cli package install bitcoind.s9pk
