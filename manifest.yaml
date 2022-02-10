@@ -107,8 +107,8 @@ interfaces:
       port-mapping:
         8332: "8332"
     lan-config:
-      8332:
-        ssl: false
+      443:
+        ssl: true
         internal: 8332
     ui: false
     protocols:
