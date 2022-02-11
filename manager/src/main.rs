@@ -465,7 +465,9 @@ fn publish_notification(e: &Notification) -> std::io::Result<()> {
 
 fn notification_handler(line: &str) -> std::io::Result<()> {
     if line.contains("Prune: last wallet synchronisation goes beyond pruned data.")
-        || line.contains("Please restart with -reindex or -reindex-chainstate to recover.")
+        || !line
+            .contains("The block database contains a block which appears to be from the future.")
+            && line.contains("Please restart with -reindex or -reindex-chainstate to recover.")
     {
         publish_notification(&Notification {
             time: std::time::UNIX_EPOCH
