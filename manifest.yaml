@@ -1,44 +1,183 @@
-compat: v0
 id: bitcoind
-version: "0.21.1.1"
 title: "Bitcoin Core"
+version: 0.21.1.2
+release-notes: Upgrade to EmbassyOS v0.3.0
+license: mit
+wrapper-repo: https://github.com/Start9Labs/bitcoind-wrapper
+upstream-repo: https://github.com/bitcoin/bitcoin
+support-site: https://github.com/bitcoin/bitcoin/issues
+marketing-site: https://bitcoincore.org/
+build: ["make"]
+min-os-version: 0.3.0
 description:
-  short: "A Bitcoin Full Node by Bitcoin Core"
-  long: "Bitcoin is an innovative payment network and a new kind of money. Bitcoin uses peer-to-peer technology to operate with no central authority or banks; managing transactions and the issuing of bitcoins is carried out collectively by the network. Bitcoin is open-source; its design is public, nobody owns or controls Bitcoin and everyone can take part. Through many of its unique properties, Bitcoin allows exciting uses that could not be covered by any previous payment system."
-release-notes: |
-  Whitelists service IP addresses.
-ports:
-  - internal: 8332
-    tor: 8332
-    lan:
-      custom:
-        port: 8332
-  - internal: 8333
-    tor: 8333
-  - internal: 28332
-    tor: 28332
-  - internal: 28333
-    tor: 28333
-image:
-  type: tar
-mount: /root/.bitcoin
-has-instructions: true
-os-version-required: "^0.2.9"
-os-version-recommended: "^0.2.9"
-uninstall-alert: Uninstalling Bitcoin Core will result in permanent loss of data. Without a backup, any funds stored on your node's default hot wallet will be lost forever. If you are unsure, we recommend making a backup, just to be safe.
-restore-alert: Restoring Bitcoin Core will overwrite its current data. You will lose any transactions recorded in watch-only wallets, and any funds you have received to the hot wallet, since the last backup.
+  short: A Bitcoin Full Node by Bitcoin Core
+  long: Bitcoin is an innovative payment network and a new kind of money. Bitcoin uses peer-to-peer technology to operate with no central authority or banks; managing transactions and the issuing of bitcoins is carried out collectively by the network. Bitcoin is open-source; its design is public, nobody owns or controls Bitcoin and everyone can take part. Through many of its unique properties, Bitcoin allows exciting uses that could not be covered by any previous payment system.
 assets:
-  - src: bitcoin.conf.template
-    dst: "."
-    overwrite: true
-hidden-service-version: v3
+  license: LICENSE
+  icon: icon.png
+  instructions: instructions.md
+  docker-images: image.tar
+main:
+  type: docker
+  image: main
+  entrypoint: "docker_entrypoint.sh"
+  args: []
+  mounts:
+    main: /root/.bitcoin
+    compat: /mnt/assets
+  io-format: yaml
+  sigterm-timeout: 5m
+health-checks:
+  rpc:
+    name: RPC
+    description: Indicates when the RPC server is alive and listening for commands. Dependent services that need the RPC interface will not work until this health check passes.
+    type: docker
+    image: main
+    system: false
+    entrypoint: check-rpc.sh
+    args: []
+    mounts: {}
+    io-format: yaml
+    inject: true
+  synced:
+    name: Synced
+    description: Indicates sync progress. Once your node is fully synced to the tip (most recent block) of the blockchain, this health check will pass.
+    type: docker
+    image: main
+    system: false
+    entrypoint: check-synced.sh
+    args: []
+    mounts: {}
+    io-format: yaml
+    inject: true
+config:
+  get:
+    type: docker
+    image: compat
+    system: true
+    entrypoint: compat
+    args:
+      - config
+      - get
+      - /root/.bitcoin
+      - "/mnt/assets/config_spec.yaml"
+    mounts:
+      compat: /mnt/assets
+      main: /root/.bitcoin
+    io-format: yaml
+  set:
+    type: docker
+    image: compat
+    system: true
+    entrypoint: compat
+    args:
+      - config
+      - set
+      - bitcoind
+      - /root/.bitcoin
+      - "/mnt/assets/config_rules.yaml"
+    mounts:
+      compat: /mnt/assets
+      main: "/root/.bitcoin"
+    io-format: yaml
+properties:
+  type: docker
+  image: compat
+  system: true
+  entrypoint: compat
+  args:
+    - properties
+    - /root/.bitcoin
+  mounts:
+    main: /root/.bitcoin
+  io-format: yaml
+volumes:
+  main:
+    type: data
+  compat:
+    type: assets
+alerts:
+  uninstall: Uninstalling Bitcoin Core will result in permanent loss of data. Without a backup, any funds stored on your node's default hot wallet will be lost forever. If you are unsure, we recommend making a backup, just to be safe.
+  restore: Restoring Bitcoin Core will overwrite its current data. You will lose any transactions recorded in watch-only wallets, and any funds you have received to the hot wallet, since the last backup.
+interfaces:
+  rpc:
+    name: RPC Interface
+    description: Listens for JSON-RPC commands
+    tor-config:
+      port-mapping:
+        8332: "8332"
+    lan-config:
+      443:
+        ssl: true
+        internal: 8332
+    ui: false
+    protocols:
+      - tcp
+      - http
+      - json-rpc
+  peer:
+    name: Peer Interface
+    description: Listens for incoming connections from peers on the bitcoin network
+    tor-config:
+      port-mapping:
+        8333: "8333"
+    ui: false
+    protocols:
+      - tcp
+      - bitcoin
+  zmq:
+    name: ZeroMQ Interface
+    description: Listens for subscriptions to the ZeroMQ raw block and raw transaction event streams
+    tor-config:
+      port-mapping:
+        28332: "28332"
+        28333: "28333"
+    ui: false
+    protocols:
+      - tcp
+      - zmq
+dependencies: {}
+backup:
+  create:
+    type: docker
+    image: compat
+    system: true
+    entrypoint: compat
+    args:
+      - duplicity
+      - create
+      - /mnt/backup
+      - /root/.bitcoin
+    mounts:
+      BACKUP: /mnt/backup
+      main: /root/.bitcoin
+  restore:
+    type: docker
+    image: compat
+    system: true
+    entrypoint: compat
+    args:
+      - duplicity
+      - restore
+      - /mnt/backup
+      - /root/.bitcoin
+    mounts:
+      BACKUP: /mnt/backup
+      main: /root/.bitcoin
 actions:
-  - id: "reindex"
+  reindex:
     name: "Reindex Blockchain"
     description: "Rebuilds the block and chainstate databases starting from genesis. If blocks already exist on disk, these are used rather than being redownloaded. However, since embassy bitcoin nodes are pruned by default, this usually means downloading the entire blockchain over again."
     warning: Blocks not stored on disk will be redownloaded in order to rebuild the database. If your node is pruned (embasssy nodes are pruned by default), this action is equivalent to syncing the node from scratch, so this process could take a couple of weeks.
     allowed-statuses:
-      - "RUNNING"
-      - "STOPPED"
-    command:
-      - reindex.sh
+      - running
+      - stopped
+    implementation:
+      type: docker
+      image: main
+      system: false
+      entrypoint: reindex.sh
+      args: []
+      mounts:
+        main: /root/.bitcoin
+      io-format: json

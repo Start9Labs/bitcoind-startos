@@ -1,3 +1,19 @@
+peer-tor-address:
+  name: Peer Tor Address
+  description: The Tor address of the peer interface
+  type: pointer
+  subtype: package
+  package-id: bitcoind
+  target: tor-address
+  interface: peer
+rpc-tor-address:
+  name: RPC Tor Address
+  description: The Tor address of the RPC interface
+  type: pointer
+  subtype: package
+  package-id: bitcoind
+  target: tor-address
+  interface: rpc
 rpc:
   type: object
   nullable: false
@@ -17,7 +33,7 @@ rpc:
       default: "bitcoin"
       masked: true
       pattern: "^[a-zA-Z0-9_]+$"
-      patternDescription: "Must be alphanumeric (can contain underscore)."
+      pattern-description: "Must be alphanumeric (can contain underscore)."
     password:
       type: string
       nullable: false
@@ -27,7 +43,7 @@ rpc:
         charset: "a-z,2-7"
         len: 20
       pattern: '^[^\n"]*$'
-      patternDescription: "Must not contain newline or quote characters."
+      pattern-description: "Must not contain newline or quote characters."
       copyable: true
       masked: true
     advanced:
@@ -46,7 +62,7 @@ rpc:
           default: []
           spec:
             pattern: "^[a-zA-Z0-9_-]+:([0-9a-fA-F]{2})+\\$([0-9a-fA-F]{2})+$"
-            patternDescription: 'Each item must be of the form "<USERNAME>:<SALT>$<HASH>".'
+            pattern-description: 'Each item must be of the form "<USERNAME>:<SALT>$<HASH>".'
           range: "[0,*)"
         serialversion:
           name: Serialization Version
@@ -88,6 +104,11 @@ zmq-enabled:
   name: ZeroMQ Enabled
   description: Enable the ZeroMQ interface
   default: true
+txindex:
+  type: boolean
+  name: Transaction Index
+  description: Enable the Transaction Index (txindex)
+  default: false
 wallet:
   type: object
   nullable: false
@@ -182,14 +203,15 @@ advanced:
           default: []
           spec:
             pattern: "(^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$)|((^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$)|(^[a-z2-7]{16}\\.onion$)|(^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$))"
-            patternDescription: Must be either an IPv4 or IPv6 address or domain name
+            pattern-description: Must be either an IPv4 or IPv6 address or domain name
           range: "[0,*)"
     dbcache:
       type: number
       nullable: true
       name: "Database Cache"
-      description: "How much RAM to allocate for caching the TXO set. Higher values improve syncing performance."
-      range: "(0,4096]"
+      description: "How much RAM to allocate for caching the TXO set. Higher values improve syncing performance, but increase your chance of using up all your system's memory or corrupting your database in the event of an ungraceful shutdown. Set this high but comfortably below your system's total RAM during IBD, then turn down to 450 (or leave blank) once the sync completes."
+      warning: "WARNING: Increasing this value results in a higher chance of ungraceful shutdowns, which can leave your node unusable if it happens during the initial block download. Use this setting with caution. Be sure to set this back to the default (450 or leave blank) once your node is synced."
+      range: "(0,1024]"
       integral: true
       units: MiB
     pruning:
@@ -198,26 +220,31 @@ advanced:
       description: |
         Blockchain Pruning Options
         Reduce the blockchain size on disk
-      changeWarning: If you set pruning to Manual, you MUST have something running that prunes these blocks or you may overfill your disk!
+      warning: |
+        If you set pruning to Manual and your disk is smaller than the total size of the blockchain, you MUST have something running that prunes these blocks or you may overfill your disk!
+        Disabling pruning will convert your node into a full archival node. This requires a resync of the entire blockchain, a process that may take several days. Make sure you have enough free disk space or you may fill up your disk.
       tag:
         id: mode
         name: Pruning Mode
         description: |
+          - Disabled: Disable pruning
           - Automatic: Limit blockchain size on disk to a certain number of megabytes
           - Manual: Prune blockchain with the "pruneblockchain" RPC
-        variantNames:
+        variant-names:
+          disabled: Disabled
           automatic: Automatic
           manual: Manual
       variants:
+        disabled: {}
         automatic:
           size:
             type: number
             nullable: false
             name: "Max Chain Size"
             description: "Limit of blockchain size on disk."
-            changeWarning: "Increasing this value will require re-syncing your node."
+            warning: "Increasing this value will require re-syncing your node."
             default: 550
-            range: "[550,100000)"
+            range: "[550,1000000)"
             integral: true
             units: MiB
         manual:
@@ -227,7 +254,7 @@ advanced:
             name: "Failsafe Chain Size"
             description: "Prune blockchain if size expands beyond this."
             default: 65536
-            range: "[550,100000)"
+            range: "[550,1000000)"
             integral: true
             units: MiB
-      default: automatic
+      default: disabled

@@ -1,3 +1,4 @@
+use std::sync::Arc;
 use std::{borrow::Cow, sync::Mutex};
 use std::{env::var, sync::atomic::AtomicBool};
 use std::{error::Error, sync::atomic::Ordering};
@@ -263,7 +264,7 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
                     height: _,
                 } => continue,
                 SoftFork::Bip9 { bip9, active: _ } => {
-                    let (status, start, end, since) = match bip9 {
+                    let (status, start, end, _since) = match bip9 {
                         Bip9::Defined {
                             start_time,
                             timeout,
@@ -298,6 +299,10 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
                             timeout,
                             since,
                         } => {
+                            // stop showing soft fork info when it's been active for ~12 weeks
+                            if info.blocks >= since + 12096 {
+                                continue;
+                            }
                             let start_time_pretty = human_readable_timestamp(start_time);
                             let end_time_pretty = human_readable_timestamp(timeout);
                             ("Active", start_time_pretty, end_time_pretty, since)
@@ -547,13 +552,17 @@ where
 }
 
 fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
+    while !Path::new("/root/.bitcoin/start9/config.yaml").exists() {
+        std::thread::sleep(std::time::Duration::from_secs(1));
+    }
     let config: Mapping =
         serde_yaml::from_reader(std::fs::File::open("/root/.bitcoin/start9/config.yaml")?)?;
     let sidecar_poll_interval = std::time::Duration::from_secs(5);
-    let addr = var("TOR_ADDRESS")?;
+    let peer_addr = var("PEER_TOR_ADDRESS")?;
+    let rpc_addr = var("RPC_TOR_ADDRESS")?;
     let mut btc_args = vec![
-        format!("-onion={}:9050", var("HOST_IP")?),
-        format!("-externalip={}", addr),
+        format!("-onion={}:9050", var("EMBASSY_IP")?),
+        format!("-externalip={}", peer_addr),
         "-datadir=/root/.bitcoin".to_owned(),
         "-conf=/root/.bitcoin/bitcoin.conf".to_owned(),
     ];
@@ -566,13 +575,15 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
         .and_then(|v| v.as_bool())
         .unwrap_or(false)
     {
-        btc_args.push(format!("-proxy={}:9050", var("HOST_IP")?));
+        btc_args.push(format!("-proxy={}:9050", var("EMBASSY_IP")?));
     }
     {
         // disable chain data backup
         let mut f = std::fs::File::create("/root/.bitcoin/.backupignore")?;
         writeln!(f, "blocks/")?;
         writeln!(f, "chainstate/")?;
+        writeln!(f, "indexes/")?;
+        writeln!(f, "testnet3/")?;
         f.flush()?;
     }
     if reindex {
@@ -581,7 +592,7 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
 
     std::io::copy(
         &mut TemplatingReader::new(
-            std::fs::File::open("/root/.bitcoin/bitcoin.conf.template")?,
+            std::fs::File::open("/mnt/assets/bitcoin.conf.template")?,
             &config,
             &"{{var}}".parse()?,
             b'%',
@@ -593,6 +604,7 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
         .stdout(std::process::Stdio::piped())
         .stderr(std::process::Stdio::piped())
         .spawn()?;
+    let child_running = Arc::new(AtomicBool::new(true));
     let raw_child = child.id();
     *CHILD_PID.lock().unwrap() = Some(raw_child);
     let child_stdout = child.stdout.take();
@@ -608,11 +620,13 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
         }
     });
     let child_stderr = child.stderr.take();
-    let _stderr_handle = std::thread::spawn(move || {
+    let thread_child_running = child_running.clone();
+    let stderr_handle = std::thread::spawn(move || {
         if let Some(stderr) = child_stderr {
             let mut r = StdErrReader::new(stderr);
             let mut w = std::io::stderr();
-            loop {
+            while thread_child_running.load(Ordering::SeqCst) {
+                // exit when child terminates
                 std::io::copy(&mut r, &mut w)
                     .err()
                     .map(|e| eprintln!("ERROR IN LOG PARSER: {}", e));
@@ -620,12 +634,14 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
         }
     });
     let _sidecar_handle = std::thread::spawn(move || loop {
-        sidecar(&config, &addr)
+        sidecar(&config, &rpc_addr)
             .err()
             .map(|e| eprintln!("ERROR IN SIDECAR: {}", e));
         std::thread::sleep(sidecar_poll_interval);
     });
     let code = child.wait()?.code().unwrap_or(0);
+    child_running.store(false, Ordering::SeqCst);
+    stderr_handle.join().unwrap();
     if code != 0 {
         publish_notification(&Notification {
             time: std::time::UNIX_EPOCH
@@ -639,7 +655,12 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
         })?;
     }
     if REQUIRES_REINDEX.load(Ordering::SeqCst) {
-        inner_main(true) // restart
+        if reindex {
+            REQUIRES_REINDEX.store(false, Ordering::SeqCst);
+            std::process::exit(code)
+        } else {
+            inner_main(true) // restart
+        }
     } else {
         std::process::exit(code)
     }

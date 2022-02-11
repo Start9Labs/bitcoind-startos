@@ -4,7 +4,7 @@
 FROM lncm/berkeleydb as berkeleydb
 
 # Build stage for Bitcoin Core
-FROM arm32v7/alpine:3.12 as bitcoin-core
+FROM arm64v8/alpine:3.12 as bitcoin-core
 
 COPY --from=berkeleydb /opt /opt
 
@@ -71,7 +71,7 @@ RUN strip ${BITCOIN_PREFIX}/lib/libbitcoinconsensus.a
 RUN strip ${BITCOIN_PREFIX}/lib/libbitcoinconsensus.so.0.0.0
 
 # Build stage for compiled artifacts
-FROM arm32v7/alpine:3.12
+FROM arm64v8/alpine:3.13
 
 LABEL maintainer.0="João Fonseca (@joaopaulofonseca)" \
   maintainer.1="Pedro Branco (@pedrobranco)" \
@@ -81,13 +81,17 @@ LABEL maintainer.0="João Fonseca (@joaopaulofonseca)" \
 RUN apk update
 RUN apk --no-cache add \
   bash \
+  curl \
   boost-filesystem=1.72.0-r6 \
   boost-system=1.72.0-r6 \
   boost-thread=1.72.0-r6 \
   libevent \
   libzmq \
   sqlite-libs \
-  su-exec
+  su-exec \
+  tini
+RUN wget https://github.com/mikefarah/yq/releases/download/v4.12.2/yq_linux_arm.tar.gz -O - |\
+    tar xz && mv yq_linux_arm /usr/bin/yq
 
 ENV BITCOIN_DATA=/root/.bitcoin
 ARG BITCOIN_VERSION
@@ -96,12 +100,16 @@ ENV BITCOIN_PREFIX=/opt/bitcoin-${BITCOIN_VERSION}
 ENV PATH=${BITCOIN_PREFIX}/bin:$PATH
 
 COPY --from=bitcoin-core /opt /opt
-ADD ./manager/target/armv7-unknown-linux-musleabihf/release/bitcoind-manager /usr/local/bin/bitcoind-manager
+ADD ./manager/target/aarch64-unknown-linux-musl/release/bitcoind-manager /usr/local/bin/bitcoind-manager
 RUN chmod a+x /usr/local/bin/bitcoind-manager
 ADD ./docker_entrypoint.sh /usr/local/bin/docker_entrypoint.sh
 RUN chmod a+x /usr/local/bin/docker_entrypoint.sh
 ADD ./actions/reindex.sh /usr/local/bin/reindex.sh
 RUN chmod a+x /usr/local/bin/reindex.sh
+ADD ./check-rpc.sh /usr/local/bin/check-rpc.sh
+RUN chmod a+x /usr/local/bin/check-rpc.sh
+ADD ./check-synced.sh /usr/local/bin/check-synced.sh
+RUN chmod a+x /usr/local/bin/check-synced.sh
 
 EXPOSE 8332 8333
 
