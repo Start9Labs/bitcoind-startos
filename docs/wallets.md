@@ -22,7 +22,7 @@
 
 **NOTE:** Built for use with Ledger hardware devices
 
-**UNTESTED**
+Verification still needed.
 
 ## Samourai
 
@@ -50,10 +50,10 @@ Follow the [guide](/docs/integrations/sparrow/guide.md)
 ### Instructions
 Follow the [guide](/docs/integrations/specter) for your OS
 
-**UNTESTED**
+Verification still needed.
 
 ## Trezor Suite
 
 **NOTE:** Built for use with Trezor hardware devices
 
-**UNTESTED**
+Verification still needed.
