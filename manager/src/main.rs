@@ -18,6 +18,7 @@ lazy_static::lazy_static! {
         Path::new("/root/.bitcoin/requires.reindex").exists()
     });
     static ref CHILD_PID: Mutex<Option<u32>> = Mutex::new(None);
+    static ref PREV_LINE: Mutex<String> = Mutex::new(String::new());
 }
 
 pub enum Level {
@@ -465,9 +466,7 @@ fn publish_notification(e: &Notification) -> std::io::Result<()> {
 
 fn notification_handler(line: &str) -> std::io::Result<()> {
     if line.contains("Prune: last wallet synchronisation goes beyond pruned data.")
-        || !line
-            .contains("The block database contains a block which appears to be from the future.")
-            && line.contains("Please restart with -reindex or -reindex-chainstate to recover.")
+        || line.contains("Please restart with -reindex or -reindex-chainstate to recover.")
     {
         publish_notification(&Notification {
             time: std::time::UNIX_EPOCH
@@ -482,7 +481,13 @@ fn notification_handler(line: &str) -> std::io::Result<()> {
                 line
             ),
         })?;
-        REQUIRES_REINDEX.store(true, Ordering::SeqCst);
+        let mut last = PREV_LINE.lock().unwrap();
+        if !last
+            .contains("The block database contains a block which appears to be from the future.")
+        {
+            REQUIRES_REINDEX.store(true, Ordering::SeqCst);
+        }
+        *last = String::from(line);
     } else if line.starts_with("Error:") {
         publish_notification(&Notification {
             time: std::time::UNIX_EPOCH
