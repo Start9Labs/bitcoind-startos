@@ -30,7 +30,7 @@ main:
 health-checks:
   rpc:
     name: RPC
-    description: Indicates when the RPC server is alive and listening for commands. Dependent services that need the RPC interface will not work until this health check passes.
+    success-message: The RPC server is ready for connections
     type: docker
     image: main
     system: false
@@ -41,7 +41,7 @@ health-checks:
     inject: true
   synced:
     name: Synced
-    description: Indicates sync progress. Once your node is fully synced to the tip (most recent block) of the blockchain, this health check will pass.
+    success-message: Bitcoin Core is synced with the network
     type: docker
     image: main
     system: false

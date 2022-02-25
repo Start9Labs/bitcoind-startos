@@ -14,49 +14,7 @@ use serde_yaml::{Mapping, Value};
 use tmpl::TemplatingReader;
 
 lazy_static::lazy_static! {
-    static ref REQUIRES_REINDEX: AtomicBool = AtomicBool::new({
-        Path::new("/root/.bitcoin/requires.reindex").exists()
-    });
     static ref CHILD_PID: Mutex<Option<u32>> = Mutex::new(None);
-    static ref PREV_LINE: Mutex<String> = Mutex::new(String::new());
-}
-
-pub enum Level {
-    Error,
-    Warn,
-    Success,
-    Info,
-}
-impl std::fmt::Display for Level {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Level::Error => write!(f, "ERROR"),
-            Level::Warn => write!(f, "WARN"),
-            Level::Success => write!(f, "SUCCESS"),
-            Level::Info => write!(f, "INFO"),
-        }
-    }
-}
-
-pub struct Notification {
-    time: f64,
-    level: Level,
-    code: usize,
-    title: String,
-    message: String,
-}
-
-fn write_to_replacing<W: Write>(s: &str, rmc: char, add: &str, w: &mut W) -> std::io::Result<()> {
-    let mut buf = [0; 4];
-    for c in s.chars() {
-        if c != rmc {
-            let s = c.encode_utf8(&mut buf);
-            w.write_all(s.as_bytes())?;
-        } else {
-            w.write_all(add.as_bytes())?;
-        }
-    }
-    Ok(())
 }
 
 #[derive(Clone, Debug, serde::Deserialize)]
@@ -422,19 +380,13 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
                 },
             );
         }
-        if REQUIRES_REINDEX.load(Ordering::SeqCst) {
-            if match fs::remove_file("/root/.bitcoin/requires.reindex") {
-                Ok(()) => true,
-                Err(_) => false,
-            } {
-                REQUIRES_REINDEX.store(false, Ordering::SeqCst);
-            }
-        }
+    } else if info_res.status.code() == Some(28) {
+        return Ok(());
     } else {
         eprintln!(
             "Error updating blockchain info: {}",
             std::str::from_utf8(&info_res.stderr).unwrap_or("UNKNOWN ERROR")
-        )
+        );
     }
     serde_yaml::to_writer(
         std::fs::File::create("/root/.bitcoin/start9/.stats.yaml.tmp")?,
@@ -448,114 +400,6 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
         "/root/.bitcoin/start9/stats.yaml",
     )?;
     Ok(())
-}
-
-fn publish_notification(e: &Notification) -> std::io::Result<()> {
-    let mut f = std::fs::OpenOptions::new()
-        .write(true)
-        .create(true)
-        .append(true)
-        .open("/root/.bitcoin/start9/notifications.log")?;
-    f.write_all(format!("{}:{}:{}:", e.time, e.level, e.code).as_bytes())?;
-    write_to_replacing(&e.title, ':', "\u{A789}", &mut f)?;
-    f.write_all(b":")?;
-    write_to_replacing(&e.message, '\n', "\u{2026}", &mut f)?;
-    f.write_all(b"\n")?;
-    f.flush()
-}
-
-fn notification_handler(line: &str) -> std::io::Result<()> {
-    if line.contains("Prune: last wallet synchronisation goes beyond pruned data.")
-        || line.contains("Please restart with -reindex or -reindex-chainstate to recover.")
-    {
-        publish_notification(&Notification {
-            time: std::time::UNIX_EPOCH
-                .elapsed()
-                .map(|t| t.as_secs_f64())
-                .unwrap_or(0_f64),
-            level: Level::Error,
-            code: 0,
-            title: "General Error".to_owned(),
-            message: format!(
-                "{}\nBitcoin Core will now be restarted with -reindex.",
-                line
-            ),
-        })?;
-        let mut last = PREV_LINE.lock().unwrap();
-        if !last
-            .contains("The block database contains a block which appears to be from the future.")
-        {
-            REQUIRES_REINDEX.store(true, Ordering::SeqCst);
-        }
-        *last = String::from(line);
-    } else if line.starts_with("Error:") {
-        publish_notification(&Notification {
-            time: std::time::UNIX_EPOCH
-                .elapsed()
-                .map(|t| t.as_secs_f64())
-                .unwrap_or(0_f64),
-            level: Level::Error,
-            code: 0,
-            title: "General Error".to_owned(),
-            message: line[6..].trim().to_owned(),
-        })?;
-    }
-    Ok(())
-}
-
-pub struct StdOutReader<R: Read> {
-    inner: R,
-}
-impl<R: Read> StdOutReader<R> {
-    pub fn new(rdr: R) -> Self {
-        StdOutReader { inner: rdr }
-    }
-}
-impl<R> Read for StdOutReader<R>
-where
-    R: Read,
-{
-    fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
-        self.inner.read(buf)
-    }
-}
-pub struct StdErrReader<R: Read> {
-    inner: R,
-    line: Vec<u8>,
-}
-impl<R: Read> StdErrReader<R> {
-    pub fn new(rdr: R) -> Self {
-        StdErrReader {
-            inner: rdr,
-            line: Vec::new(),
-        }
-    }
-}
-impl<R> Read for StdErrReader<R>
-where
-    R: Read,
-{
-    fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
-        let res = self.inner.read(buf)?;
-        if let Some(idx) = buf[..res].iter().position(|a| a == &b'\n').or_else(|| {
-            if res == 0 {
-                Some(0)
-            } else {
-                None
-            }
-        }) {
-            self.line.extend_from_slice(&buf[..idx]);
-            notification_handler(
-                std::str::from_utf8(&self.line)
-                    .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))?,
-            )?;
-            self.line.clear();
-            if idx + 1 <= res {
-                self.line.extend_from_slice(&buf[(idx + 1)..res]);
-            }
-        }
-        Ok(res)
-    }
 }
 
 fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
@@ -608,38 +452,16 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
     )?;
     let mut child = std::process::Command::new("bitcoind")
         .args(btc_args)
-        .stdout(std::process::Stdio::piped())
-        .stderr(std::process::Stdio::piped())
         .spawn()?;
-    let child_running = Arc::new(AtomicBool::new(true));
+    if reindex {
+        match fs::remove_file("/root/.bitcoin/requires.reindex") {
+            Ok(()) => (),
+            Err(e) if e.kind() == std::io::ErrorKind::NotFound => (),
+            a => a?,
+        }
+    }
     let raw_child = child.id();
     *CHILD_PID.lock().unwrap() = Some(raw_child);
-    let child_stdout = child.stdout.take();
-    let _stdout_handle = std::thread::spawn(move || {
-        if let Some(stdout) = child_stdout {
-            let mut r = StdOutReader::new(stdout);
-            let mut w = std::io::stdout();
-            loop {
-                std::io::copy(&mut r, &mut w)
-                    .err()
-                    .map(|e| eprintln!("ERROR IN LOG PARSER: {}", e));
-            }
-        }
-    });
-    let child_stderr = child.stderr.take();
-    let thread_child_running = child_running.clone();
-    let stderr_handle = std::thread::spawn(move || {
-        if let Some(stderr) = child_stderr {
-            let mut r = StdErrReader::new(stderr);
-            let mut w = std::io::stderr();
-            while thread_child_running.load(Ordering::SeqCst) {
-                // exit when child terminates
-                std::io::copy(&mut r, &mut w)
-                    .err()
-                    .map(|e| eprintln!("ERROR IN LOG PARSER: {}", e));
-            }
-        }
-    });
     let _sidecar_handle = std::thread::spawn(move || loop {
         sidecar(&config, &rpc_addr)
             .err()
@@ -647,33 +469,12 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
         std::thread::sleep(sidecar_poll_interval);
     });
     let code = child.wait()?.code().unwrap_or(0);
-    child_running.store(false, Ordering::SeqCst);
-    stderr_handle.join().unwrap();
-    if code != 0 {
-        publish_notification(&Notification {
-            time: std::time::UNIX_EPOCH
-                .elapsed()
-                .map(|t| t.as_secs_f64())
-                .unwrap_or(0_f64),
-            level: Level::Error,
-            code: code as usize,
-            title: "Fatal Error".to_owned(),
-            message: format!("Bitcoin Core has crashed with exit code: {}", code),
-        })?;
-    }
-    if REQUIRES_REINDEX.load(Ordering::SeqCst) {
-        if reindex {
-            REQUIRES_REINDEX.store(false, Ordering::SeqCst);
-            std::process::exit(code)
-        } else {
-            inner_main(true) // restart
-        }
-    } else {
-        std::process::exit(code)
-    }
+
+    std::process::exit(code)
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
+    let reindex = Path::new("/root/.bitcoin/requires.reindex").exists();
     ctrlc::set_handler(move || {
         if let Some(raw_child) = *CHILD_PID.lock().unwrap() {
             use nix::{
@@ -681,9 +482,11 @@ fn main() -> Result<(), Box<dyn Error>> {
                 unistd::Pid,
             };
             kill(Pid::from_raw(raw_child as i32), SIGTERM).unwrap();
+        } else {
+            std::process::exit(143)
         }
     })?;
-    inner_main(REQUIRES_REINDEX.load(Ordering::SeqCst))
+    inner_main(reindex)
 }
 
 fn human_readable_timestamp(unix_time: u64) -> String {
