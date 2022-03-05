@@ -23,7 +23,7 @@ RUN apk --no-cache add linux-headers
 # RUN apk --no-cache add sqlite-libs
 RUN apk --no-cache add sqlite-dev
 RUN apk --no-cache add zeromq-dev
-RUN set -x \
+RUN set -ex \
   && for key in \
   90C8019E36C2E964 \
   E2FFD5B1D88CA97D \
@@ -44,7 +44,7 @@ RUN set -x \
   gpg --batch --keyserver pgp.mit.edu --recv-keys "$key" || \
   gpg --batch --keyserver keyserver.pgp.com --recv-keys "$key" || \
   gpg --batch --keyserver ha.pool.sks-keyservers.net --recv-keys "$key" || \
-  gpg --batch --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys "$key" ; \
+  gpg --batch --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys "$key" || \
   gpg --batch --keyserver keys.openpgp.org --recv-keys "$key" ; \
   done
 
