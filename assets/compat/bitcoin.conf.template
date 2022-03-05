@@ -96,3 +96,11 @@ zmqpubrawtx=tcp://0.0.0.0:28333
 {{#IF txindex
 txindex=1
 }}
+
+## BIP157
+{{#IF advanced.blockfilters.blockfilterindex
+blockfilterindex=basic
+}}
+{{#IF advanced.blockfilters.peerblockfilters
+peerblockfilters=1
+}}
