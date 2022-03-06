@@ -1,6 +1,6 @@
 # Sparrow Wallet Setup Guide
 
-You have several options for connecting Sparrow to your Embassy.  You may connect via the Bitcoin Proxy service, which will allow you to make an RPC user and password specifically for Sparrow.  This is the recommended method.  THe next option is to use your Bitcoin Core service directly.  In future, Embassy will also have an Electrum Server service for even greater flexibility.  This guide will be added when available.
+You have several options for connecting Sparrow to your Embassy.  You may connect via the Bitcoin Proxy service, which will allow you to make an RPC user and password specifically for Sparrow.  This is the recommended method.  The next option is to use your Bitcoin Core service directly.  In future, Embassy will also have an Electrum Server service for even greater flexibility.  This guide will be added when available.
 
 ## Using Bitcoin Proxy
 
