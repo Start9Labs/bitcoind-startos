@@ -68,13 +68,8 @@ config:
     type: docker
     image: compat
     system: true
-    entrypoint: compat
-    args:
-      - config
-      - set
-      - bitcoind
-      - /root/.bitcoin
-      - "/mnt/assets/config_rules.yaml"
+    entrypoint: /mnt/assets/config-set.sh
+    args: []
     mounts:
       compat: /mnt/assets
       main: "/root/.bitcoin"

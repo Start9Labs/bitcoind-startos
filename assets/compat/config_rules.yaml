@@ -3,3 +3,5 @@
   description: "RPC must be enabled for manual pruning."
 - rule: '!(txindex?) OR ''advanced.pruning.mode = "disabled"'
   description: "Txindex not allowed on pruned nodes."
+- rule: "!(advanced.blockfilters.peerblockfilters?) OR advanced.blockfilters.blockfilterindex?"
+  description: "'Compute Compact Block Filters' must be enabled if 'Serve Comopact Block Filters to Peers' is enabled."
