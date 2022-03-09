@@ -6,9 +6,9 @@ You have several options for connecting Sparrow to your Embassy.  You may connec
 
 You will need to have Tor running natively on your device in order to use Sparrow.  You can find the relevant setup documentation in the Resources section at the bottom of this page.
 
-1. First install the Bitcoin Core and Bitcoin Proxy services to your Embassy from the Marketplace.  (Alternatively, you may use Bitcoin Proxy to point to another Bitcoin node that you control)
+1. First install the Bitcoin Core and Bitcoin Proxy services to your Embassy from the Marketplace.  (Alternatively, you may use Bitcoin Proxy to point to another Bitcoin node that you control).
 
-2. Configure Bitcoin Core and allow it to begin the Initial Blockchain Download if you have not already.  You may continue even if this is still in progress, but you will need to let the sync complete before creating your first transaction.
+2. Configure Bitcoin Core and allow it to begin the Initial Blockchain Download if you have not already.  You may continue even if this is still in progress, but you will need to let the sync complete before creating your first transaction.  Bitcoin Core MUST have the "Enable Wallet" feature turned on.  This is found in *Bitcoin Core > Config > Wallet*.
 
 3. Configure Bitcoin Proxy and create a new user.  You may call it "sparrow," for example, or anything you will remember for use with your Sparrow wallet.  Embassy will generate a unique password for you, but you may change it if you wish (this will always be available to view or change as you wish).  Make sure the option for "Fetch Blocks" is turned off.
 
