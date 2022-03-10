@@ -221,8 +221,7 @@ advanced:
         Blockchain Pruning Options
         Reduce the blockchain size on disk
       warning: |
-        If you set pruning to Manual and your disk is smaller than the total size of the blockchain, you MUST have something running that prunes these blocks or you may overfill your disk!
-        
+        If you set pruning to Manual and your disk is smaller than the total size of the blockchain, you MUST have something running that prunes these blocks or you may overfill your disk!  
         Disabling pruning will convert your node into a full archival node. This requires a resync of the entire blockchain, a process that may take several days. Once disabled, you will need to return to the Bitcoin Core service page, select the Actions menu, and select Reindex Blockchain before restarting the service. Make sure you have enough free disk space or you may fill up your disk.
       tag:
         id: mode
