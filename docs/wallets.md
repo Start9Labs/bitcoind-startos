@@ -2,11 +2,11 @@
 
 ## Blockstream Green
 
-**Not Possible at this time - No ability to connect to a Bitcoin node**
+**Not possible at this time - No ability to connect to a Bitcoin node**
 
 ## BlueWallet
 
-**Not Possible at this time - Requires Electrum Server**
+**Not possible at this time - Requires Electrum Server**
 
 ## Fully Noded
 
@@ -22,13 +22,14 @@
 
 **NOTE:** Built for use with Ledger hardware devices
 
-Verification still needed.
+**Not possible at this time - Requires Tor support**
+Track here: https://github.com/LedgerHQ/ledger-live-desktop/issues/3547
 
 ## Samourai
 
 **NOTE:** Android only
 
-**Not Possible at this time - Requires Dojo Stack**
+**Not possible at this time - Requires Dojo Stack**
 
 ## Sparrow
 
@@ -50,10 +51,9 @@ Follow the [guide](/docs/integrations/sparrow/guide.md)
 ### Instructions
 Follow the [guide](/docs/integrations/specter) for your OS
 
-Verification still needed.
-
 ## Trezor Suite
 
 **NOTE:** Built for use with Trezor hardware devices
 
-Verification still needed.
+**Not possible at this time - Requires Electrum server and support**
+Track here: https://github.com/trezor/trezor-suite/issues/2737
