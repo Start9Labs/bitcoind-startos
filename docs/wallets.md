@@ -23,6 +23,7 @@
 **NOTE:** Built for use with Ledger hardware devices
 
 **Not possible at this time - Requires Tor support**
+
 Track here: https://github.com/LedgerHQ/ledger-live-desktop/issues/3547
 
 ## Samourai
@@ -56,4 +57,5 @@ Follow the [guide](/docs/integrations/specter) for your OS
 **NOTE:** Built for use with Trezor hardware devices
 
 **Not possible at this time - Requires Electrum server and support**
+
 Track here: https://github.com/trezor/trezor-suite/issues/2737
