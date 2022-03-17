@@ -26,7 +26,7 @@ if [ "$OLD_PRUNING_TL" = "disabled" ]
 then
     >&2 echo No reindex required
 # if they are the same, and the new prune cache size is reduced, no action required
-elif [ "$OLD_PRUNING_TL" = "$NEW_PRUNING_TL" ] && [ "$OLD_PRUNING_SIZE" -gt "$NEW_PRUNING_SIZE" ]
+elif [ "$OLD_PRUNING_TL" = "$NEW_PRUNING_TL" ] && [ "$OLD_PRUNING_SIZE" -ge "$NEW_PRUNING_SIZE" ]
 then
     >&2 echo No reindex required
 else
