@@ -52,6 +52,6 @@ Coming soon.
 
 ## Resources
 
-[Run Tor on Your Device](https://start9.com/support/user-manual/configuration/tor-setup/tor-os/)
+[Run Tor on Your Device](https://start9.com/latest/user-manual/connecting/connecting-tor/tor-os/)
 
 [Sparrow Wallet](https://sparrowwallet.com/)
