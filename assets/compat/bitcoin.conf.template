@@ -40,14 +40,26 @@ bind=0.0.0.0:8333
 {{#IF !advanced.peers.listen
 listen=0
 }}
+
 {{#IF advanced.peers.onlyconnect
 {{#FOREACH advanced.peers.addnode
-connect={{advanced.peers.addnode}}
+{{#IF advanced.peers.addnode.port
+connect={{advanced.peers.addnode.hostname}}:{{advanced.peers.addnode.port}}
+}}
+{{#IF !advanced.peers.addnode.port
+connect={{advanced.peers.addnode.hostname}}
 }}
 }}
+}}
+
 {{#IF !advanced.peers.onlyconnect
 {{#FOREACH advanced.peers.addnode
-addnode={{advanced.peers.addnode}}
+{{#IF advanced.peers.addnode.port
+addnode={{advanced.peers.addnode.hostname}}:{{advanced.peers.addnode.port}}
+}}
+{{#IF !advanced.peers.addnode.port
+addnode={{advanced.peers.addnode.hostname}}
+}}
 }}
 }}
 {{#IF advanced.peers.onlyonion
