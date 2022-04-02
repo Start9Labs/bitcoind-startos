@@ -175,3 +175,26 @@ actions:
       mounts:
         main: /root/.bitcoin
       io-format: json
+migrations:
+  from:
+    "<22.0.0":
+      type: docker
+      image: main
+      system: false
+      entrypoint: "migration-v22.sh"
+      args: ["from"]
+      io-format: json
+      mounts:
+        main: /root/.bitcoin
+      inject: false
+  to:
+    "<22.0.0":
+      type: docker
+      image: main
+      system: false
+      entrypoint: "migration-v22.sh"
+      args: ["to"]
+      io-format: json
+      mounts:
+        main: /root/.bitcoin
+      inject: false
