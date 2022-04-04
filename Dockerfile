@@ -4,7 +4,7 @@
 FROM lncm/berkeleydb as berkeleydb
 
 # Build stage for Bitcoin Core
-FROM arm64v8/alpine:3.12 as bitcoin-core
+FROM alpine:3.12 as bitcoin-core
 
 COPY --from=berkeleydb /opt /opt
 
@@ -135,7 +135,7 @@ RUN strip ${BITCOIN_PREFIX}/lib/libbitcoinconsensus.a
 RUN strip ${BITCOIN_PREFIX}/lib/libbitcoinconsensus.so.0.0.0
 
 # Build stage for compiled artifacts
-FROM arm64v8/alpine:3.13
+FROM alpine:3.13
 
 LABEL maintainer.0="João Fonseca (@joaopaulofonseca)" \
   maintainer.1="Pedro Branco (@pedrobranco)" \
@@ -154,8 +154,8 @@ RUN apk --no-cache add \
   sqlite-libs \
   su-exec \
   tini
-RUN wget https://github.com/mikefarah/yq/releases/download/v4.23.1/yq_linux_arm.tar.gz -O - |\
-    tar xz && mv yq_linux_arm /usr/bin/yq
+RUN wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64.tar.gz -O - |\
+    tar xz && mv yq_linux_amd64 /usr/bin/yq
 
 ENV BITCOIN_DATA=/root/.bitcoin
 ARG BITCOIN_VERSION
