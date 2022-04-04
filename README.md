@@ -23,7 +23,7 @@ Install the following system dependencies to build this project by following the
 - [rust-musl-cross](https://github.com/Start9Labs/rust-musl-cross)
 - [yq](https://mikefarah.gitbook.io/yq)
 - [rust](https://rustup.rs)
-- [appmgr](https://github.com/Start9Labs/embassy-os/tree/master/appmgr)
+- [embassy-sdk](https://github.com/Start9Labs/embassy-os/blob/master/backend/install-sdk.sh)
 - [make](https://www.gnu.org/software/make/)
 
 ## Cloning
@@ -38,21 +38,17 @@ git submodule update --init
 
 ## Building
 
-To build the project, run the following commands:
-
 ```
 make
 ```
-Note: some parts of the make process must be run on armv7
 
 ## Installing (on Embassy)
 
-SSH into an Embassy device.
-`scp` the `.s9pk` to any directory from your local machine.
-Run the following command to determine successful install:
-
 ```
-appmgr install bitcoind.s9pk
+scp bitcoind.s9pk root@embassy-<id>.local:/embassy-data/package-data/tmp # Copy S9PK to the external disk. Make sure to create the directory if it doesn't already exist
+ssh root@embassy-<id>.local
+embassy-cli auth login
+embassy-cli package install /embassy-data/pacakge-data/tmp/bitcoind.s9pk # Install the sideloaded package
 ```
 ## Integrations
 
