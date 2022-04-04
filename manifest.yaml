@@ -181,7 +181,7 @@ migrations:
       type: docker
       image: main
       system: false
-      entrypoint: "migration-v22.sh"
+      entrypoint: /usr/local/bin/migrations/lt_22_0_0.sh
       args: ["from"]
       io-format: json
       mounts:
@@ -192,7 +192,7 @@ migrations:
       type: docker
       image: main
       system: false
-      entrypoint: "migration-v22.sh"
+      entrypoint: /usr/local/bin/migrations/lt_22_0_0.sh
       args: ["to"]
       io-format: json
       mounts:

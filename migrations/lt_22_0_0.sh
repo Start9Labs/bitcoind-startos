@@ -13,6 +13,6 @@ elif [ $1 = "to" ]; then
     echo '{"configured": true }'
     exit 0
 else
-    echo "FATAL: Migration failed." >&2
+    echo "FATAL: Invalid argument: {from, to}. Migration failed." >&2
     exit 1
 fi
