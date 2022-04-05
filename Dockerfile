@@ -68,6 +68,8 @@ RUN sed -i '/AX_PROG_CC_FOR_BUILD/a\AR_FLAGS=cr' src/secp256k1/configure.ac
 RUN sed -i s:sys/fcntl.h:fcntl.h: src/compat.h
 RUN ./autogen.sh
 RUN ./configure LDFLAGS=-L`ls -d /opt/db*`/lib/ CPPFLAGS=-I`ls -d /opt/db*`/include/ \
+  # If building on Mac make sure to increase Docker VM memory, or uncomment this line. See https://github.com/bitcoin/bitcoin/issues/6658 for more info.
+  # CXXFLAGS="--param ggc-min-expand=1 --param ggc-min-heapsize=32768" \
   --prefix=${BITCOIN_PREFIX} \
   --mandir=/usr/share/man \
   --disable-tests \
@@ -105,7 +107,7 @@ RUN apk --no-cache add \
   sqlite-libs \
   su-exec \
   tini
-RUN wget https://github.com/mikefarah/yq/releases/download/v4.12.2/yq_linux_arm.tar.gz -O - |\
+RUN wget https://github.com/mikefarah/yq/releases/download/v4.23.1/yq_linux_arm.tar.gz -O - |\
     tar xz && mv yq_linux_arm /usr/bin/yq
 
 ENV BITCOIN_DATA=/root/.bitcoin
@@ -125,6 +127,8 @@ ADD ./check-rpc.sh /usr/local/bin/check-rpc.sh
 RUN chmod a+x /usr/local/bin/check-rpc.sh
 ADD ./check-synced.sh /usr/local/bin/check-synced.sh
 RUN chmod a+x /usr/local/bin/check-synced.sh
+ADD ./migrations /usr/local/bin/migrations
+RUN chmod a+x /usr/local/bin/migrations/*
 
 EXPOSE 8332 8333
 
