@@ -1,7 +1,10 @@
 id: bitcoind
 title: "Bitcoin Core"
 version: 22.0.0
-release-notes: Upgrade to EmbassyOS v0.3.0
+release-notes: |
+  * Update to Bitcoin Core v22.0
+  * Add `blockfilterindex` and `peerblockfilters` config options
+  * allow user to specify ports on manully added peers
 license: mit
 wrapper-repo: https://github.com/Start9Labs/bitcoind-wrapper
 upstream-repo: https://github.com/bitcoin/bitcoin
