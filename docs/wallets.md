@@ -6,7 +6,12 @@
 
 ## BlueWallet
 
-**Not possible at this time - Requires Electrum Server**
+### Available For
+- Android
+
+Can connect using an Electrum Server.
+
+See [electrs integrations](https://github.com/Start9Labs/electrs-wrapper/tree/master/docs/integrations/bluewallet)
 
 ## Fully Noded
 
