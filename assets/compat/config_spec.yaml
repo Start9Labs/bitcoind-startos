@@ -275,12 +275,21 @@ advanced:
             integral: true
             units: MiB
       default: disabled
-    blockfilters:
+    filters:
       type: object
       nullable: false
-      name: "Block Filters"
-      description: "Settings for storing and serving compact block filters"
+      name: "Filters"
+      description: "Settings for storing and serving compact block filters or bloom filters"
       spec:
+        peerbloomfilters:
+          type: boolean
+          name: "Serve Bloom Filters to Peers (BIP37)"
+          description: >-
+            Peers have the option of setting filters on each connection they make after the version handshake has completed.
+            Bloom filters are for clients implementing SPV (Simplified Pament Verification) that want to check that block headers 
+            connect together correctly, without needing to verify the full blockchain.  The client must trust that the transactions
+            in the chain are in fact valid.
+          default: false
         blockfilterindex:
           type: boolean
           name: "Compute Compact Block Filters (BIP158)"
