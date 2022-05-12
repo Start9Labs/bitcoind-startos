@@ -25,6 +25,7 @@ pub struct ChainInfo {
     size_on_disk: u64,
     #[serde(default)]
     pruneheight: usize,
+    #[serde(default)]
     softforks: LinearMap<String, SoftFork>,
 }
 

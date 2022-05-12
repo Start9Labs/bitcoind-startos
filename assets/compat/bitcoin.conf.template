@@ -109,6 +109,11 @@ zmqpubrawtx=tcp://0.0.0.0:28333
 txindex=1
 }}
 
+## BIP37
+{{#IF advanced.bloomfilters.peerbloomfilters
+peerbloomfilters=1
+}}
+
 ## BIP157
 {{#IF advanced.blockfilters.blockfilterindex
 blockfilterindex=basic

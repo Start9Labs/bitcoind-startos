@@ -86,7 +86,7 @@ rpc:
           description: Set the number of threads for handling RPC calls. Only needed if you plan to abuse your node.
           type: number
           nullable: false
-          default: 1
+          default: 4
           range: "[1,4]"
           integral: true
           units: ~
@@ -95,8 +95,8 @@ rpc:
           description: Set the depth of the work queue to service RPC calls. Determines how long the backlog of RPC requests can get before it just rejects new ones.
           type: number
           nullable: false
-          default: 16
-          range: "[8,32]"
+          default: 128
+          range: "[8,256]"
           integral: true
           units: requests
 zmq-enabled:
@@ -295,4 +295,19 @@ advanced:
             Serve Compact Block Filters as a peer service to other nodes on the network. This is useful if you wish to
             connect an SPV client to your node to make it efficient to scan transactions without having to download all
             block data.
+          default: false
+    bloomfilters:
+      type: object
+      nullable: false
+      name: "Bloom Filters (BIP37)"
+      description: "Setting for serving Bloom Filters"
+      spec:
+        peerbloomfilters:
+          type: boolean
+          name: "Serve Bloom Filters to Peers"
+          description: >-
+            Peers have the option of setting filters on each connection they make after the version handshake has completed.
+            Bloom filters are for clients implementing SPV (Simplified Pament Verification) that want to check that block headers 
+            connect together correctly, without needing to verify the full blockchain.  The client must trust that the transactions
+            in the chain are in fact valid.  It is HIGHLY RECOMMENDED TO NOT USE THIS for anything except Bisq integration.
           default: false

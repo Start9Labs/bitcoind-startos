@@ -1,5 +1,5 @@
-VERSION_CORE := "22.0"
-VERSION_S9 := "22.0.1"
+VERSION_CORE := "23.0"
+VERSION_S9 := "23.0.0"
 MANAGER_SRC := $(shell find ./manager -name '*.rs') manager/Cargo.toml manager/Cargo.lock
 
 .DELETE_ON_ERROR:

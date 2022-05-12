@@ -1,4 +1,13 @@
-# Tested Bitcoin Wallets
+# Tested Bitcoin Integrations
+
+## Bisq
+
+### Available For
+- Linux
+- Mac
+- Windows
+
+Follow the [guide](./integrations/bisq/guide.md)
 
 ## Blockstream Green
 
@@ -11,7 +20,7 @@
 
 Can connect using an Electrum Server.
 
-See [electrs integrations](https://github.com/Start9Labs/electrs-wrapper/tree/master/docs/integrations/bluewallet)
+See [electrs integrations](https://github.com/Start9Labs/electrs-wrapper/tree/master/docs/integrations/bluewallet/guide.md)
 
 ## Fully Noded
 
@@ -49,7 +58,7 @@ Follow the [guide](/docs/integrations/sparrow/guide.md)
 
 ## Specter
 
-### Available for
+### Available For
 - Linux
 - MacOS
 - Windows
@@ -61,6 +70,10 @@ Follow the [guide](/docs/integrations/specter) for your OS
 
 **NOTE:** Built for use with Trezor hardware devices
 
-**Not possible at this time - Requires Electrum server and support**
+### Available For
+- Linux
+- Mac
+- Windows
 
-Track here: https://github.com/trezor/trezor-suite/issues/2737
+### Instructions
+Requires Electrs, find the guide [here](https://github.com/Start9Labs/electrs-wrapper/tree/master/docs/integrations/trezor/guide.md)
