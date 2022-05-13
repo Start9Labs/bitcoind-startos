@@ -1,8 +1,8 @@
 id: bitcoind
 title: "Bitcoin Core"
-version: 22.0.1
+version: 22.0.2
 release-notes: |
-  * Fix migration bug in 22.0.0
+  * Add support for Bloom Filters, as required for Bisq integration
 license: mit
 wrapper-repo: https://github.com/Start9Labs/bitcoind-wrapper
 upstream-repo: https://github.com/bitcoin/bitcoin
