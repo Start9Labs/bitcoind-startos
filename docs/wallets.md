@@ -1,4 +1,13 @@
-# Tested Bitcoin Wallets
+# Tested Bitcoin Integrations
+
+## Bisq
+
+### Available For
+- Linux
+- Mac
+- Windows
+
+Follow the [guide](./integrations/bisq/guide.md)
 
 ## Blockstream Green
 
