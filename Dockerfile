@@ -82,14 +82,14 @@ AEC1884398647C47413C1C3FB1179EB7347DC10D \
 71A3B16735405025D447E8F274810B012346C9A6 \
 287AE4CA1187C68C08B49CB2D11BD4F33F1DB499 \
 F9A8737BF4FF5C89C903DF31DD78544CF91B1514 \
-C388F6961FB972A95678E327F62711DBDCA8AE56 \
+# C388F6961FB972A95678E327F62711DBDCA8AE56 \
 4DAF18FE948E7A965B30F9457E296D555E7F63A7 \
 28E72909F1717FE9607754F8A7BEB2621678D37D \
   ; do \
   gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" || \
   gpg --batch --keyserver pgp.mit.edu --recv-keys "$key" || \
-  # gpg --batch --keyserver keyserver.pgp.com --recv-keys "$key" || \
-  # gpg --batch --keyserver ha.pool.sks-keyservers.net --recv-keys "$key" || \
+  gpg --batch --keyserver keyserver.pgp.com --recv-keys "$key" || \
+  gpg --batch --keyserver ha.pool.sks-keyservers.net --recv-keys "$key" || \
   gpg --batch --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys "$key" || \
   gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$key" ; \
   done
@@ -103,6 +103,7 @@ ENV BITCOIN_PREFIX=/opt/bitcoin-${BITCOIN_VERSION}
 RUN wget https://bitcoincore.org/bin/bitcoin-core-${BITCOIN_VERSION}/SHA256SUMS
 RUN wget https://bitcoincore.org/bin/bitcoin-core-${BITCOIN_VERSION}/SHA256SUMS.asc
 RUN wget https://bitcoincore.org/bin/bitcoin-core-${BITCOIN_VERSION}/bitcoin-${BITCOIN_VERSION}.tar.gz
+RUN sed '145,151d' SHA256SUMS.asc > temp && mv temp SHA256SUMS.asc
 RUN gpg --verify SHA256SUMS.asc
 RUN grep " bitcoin-${BITCOIN_VERSION}.tar.gz\$" SHA256SUMS | sha256sum -c -
 RUN tar -xzf *.tar.gz
