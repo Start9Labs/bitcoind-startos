@@ -86,12 +86,12 @@ F9A8737BF4FF5C89C903DF31DD78544CF91B1514 \
 4DAF18FE948E7A965B30F9457E296D555E7F63A7 \
 28E72909F1717FE9607754F8A7BEB2621678D37D \
   ; do \
-  gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" || \
-  gpg --batch --keyserver pgp.mit.edu --recv-keys "$key" || \
-  gpg --batch --keyserver keyserver.pgp.com --recv-keys "$key" || \
-  gpg --batch --keyserver ha.pool.sks-keyservers.net --recv-keys "$key" || \
-  gpg --batch --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys "$key" || \
-  gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$key" ; \
+  gpg --batch --keyserver hkps://keyserver.ubuntu.com --recv-keys "$key" || \
+  gpg --batch --keyserver hkps://pgp.mit.edu --recv-keys "$key" || \
+  # gpg --batch --keyserver keyserver.pgp.com --recv-keys "$key" || \
+  gpg --batch --keyserver hkps://ipv4.pool.sks-keyservers.net --recv-keys "$key" || \
+  # gpg --batch --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys "$key" || \
+  gpg --batch --keyserver keys.openpgp.org --recv-keys "$key" ; \
   done
 
 ARG BITCOIN_VERSION

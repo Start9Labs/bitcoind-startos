@@ -95,8 +95,8 @@ rpc:
           description: Set the depth of the work queue to service RPC calls. Determines how long the backlog of RPC requests can get before it just rejects new ones.
           type: number
           nullable: false
-          default: 16
-          range: "[8,32]"
+          default: 64
+          range: "[8,256]"
           integral: true
           units: requests
 zmq-enabled:
