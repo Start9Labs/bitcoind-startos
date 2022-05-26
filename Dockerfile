@@ -8,6 +8,8 @@ FROM arm64v8/alpine:3.12 as bitcoin-core
 
 COPY --from=berkeleydb /opt /opt
 
+COPY ./SHA256SUMS.asc.patch SHA256SUMS.asc.patch
+
 RUN sed -i 's/http\:\/\/dl-cdn.alpinelinux.org/https\:\/\/alpine.global.ssl.fastly.net/g' /etc/apk/repositories
 RUN apk --no-cache add autoconf
 RUN apk --no-cache add automake
@@ -88,11 +90,13 @@ F9A8737BF4FF5C89C903DF31DD78544CF91B1514 \
   ; do \
   gpg --batch --keyserver hkps://keyserver.ubuntu.com --recv-keys "$key" || \
   gpg --batch --keyserver hkps://pgp.mit.edu --recv-keys "$key" || \
-  # gpg --batch --keyserver keyserver.pgp.com --recv-keys "$key" || \
+  gpg --batch --keyserver keyserver.pgp.com --recv-keys "$key" || \
   gpg --batch --keyserver hkps://ipv4.pool.sks-keyservers.net --recv-keys "$key" || \
-  # gpg --batch --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys "$key" || \
+  gpg --batch --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys "$key" || \
   gpg --batch --keyserver keys.openpgp.org --recv-keys "$key" ; \
   done
+
+# RUN gpg --refresh-keys
 
 ARG BITCOIN_VERSION
 ARG N_PROC
@@ -103,7 +107,7 @@ ENV BITCOIN_PREFIX=/opt/bitcoin-${BITCOIN_VERSION}
 RUN wget https://bitcoincore.org/bin/bitcoin-core-${BITCOIN_VERSION}/SHA256SUMS
 RUN wget https://bitcoincore.org/bin/bitcoin-core-${BITCOIN_VERSION}/SHA256SUMS.asc
 RUN wget https://bitcoincore.org/bin/bitcoin-core-${BITCOIN_VERSION}/bitcoin-${BITCOIN_VERSION}.tar.gz
-RUN sed '145,151d' SHA256SUMS.asc > temp && mv temp SHA256SUMS.asc
+RUN patch -u SHA256SUMS.asc -i SHA256SUMS.asc.patch
 RUN gpg --verify SHA256SUMS.asc
 RUN grep " bitcoin-${BITCOIN_VERSION}.tar.gz\$" SHA256SUMS | sha256sum -c -
 RUN tar -xzf *.tar.gz
