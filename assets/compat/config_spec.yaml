@@ -86,7 +86,7 @@ rpc:
           description: Set the number of threads for handling RPC calls. Only needed if you plan to abuse your node.
           type: number
           nullable: false
-          default: 1
+          default: 4
           range: "[1,4]"
           integral: true
           units: ~
@@ -95,8 +95,8 @@ rpc:
           description: Set the depth of the work queue to service RPC calls. Determines how long the backlog of RPC requests can get before it just rejects new ones.
           type: number
           nullable: false
-          default: 16
-          range: "[8,32]"
+          default: 128
+          range: "[8,256]"
           integral: true
           units: requests
 zmq-enabled:
