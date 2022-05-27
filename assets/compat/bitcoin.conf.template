@@ -110,14 +110,14 @@ txindex=1
 }}
 
 ## BIP37
-{{#IF advanced.filters.peerbloomfilters
+{{#IF advanced.bloomfilters.peerbloomfilters
 peerbloomfilters=1
 }}
 
 ## BIP157
-{{#IF advanced.filters.blockfilterindex
+{{#IF advanced.blockfilters.blockfilterindex
 blockfilterindex=basic
 }}
-{{#IF advanced.filters.peerblockfilters
+{{#IF advanced.blockfilters.peerblockfilters
 peerblockfilters=1
 }}
