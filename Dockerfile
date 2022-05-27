@@ -96,8 +96,6 @@ F9A8737BF4FF5C89C903DF31DD78544CF91B1514 \
   gpg --batch --keyserver keys.openpgp.org --recv-keys "$key" ; \
   done
 
-# RUN gpg --refresh-keys
-
 ARG BITCOIN_VERSION
 ARG N_PROC
 RUN test -n "$BITCOIN_VERSION"
