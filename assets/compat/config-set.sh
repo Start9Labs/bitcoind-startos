@@ -22,7 +22,8 @@ then
 fi
 
 # if the old prune config was disabled, no action required
-if [ "$OLD_PRUNING_TL" = "disabled" ]
+# also do nothing if there was no previous config. this allows bootstrapping a pruned node from a non-embassy-os source such as prunednode.today
+if [ "$OLD_PRUNING_TL" = "disabled" ] || [ -z "$OLD_PRUNING_TL" ]
 then
     >&2 echo No reindex required
 # if they are the same, and the new prune cache size is reduced, no action required
