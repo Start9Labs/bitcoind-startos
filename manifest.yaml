@@ -200,6 +200,16 @@ migrations:
       mounts:
         main: /root/.bitcoin
       inject: false
+    "=22.0.1":
+      type: docker
+      image: main
+      system: false
+      entrypoint: /usr/local/bin/migrations/eq_22_0_0.sh
+      args: ["from"]
+      io-format: json
+      mounts:
+        main: /root/.bitcoin
+      inject: false
   to:
     "<22.0.0":
       type: docker
@@ -212,6 +222,16 @@ migrations:
         main: /root/.bitcoin
       inject: false
     "=22.0.0":
+      type: docker
+      image: main
+      system: false
+      entrypoint: /usr/local/bin/migrations/eq_22_0_0.sh
+      args: ["to"]
+      io-format: json
+      mounts:
+        main: /root/.bitcoin
+      inject: false
+    "=22.0.1":
       type: docker
       image: main
       system: false

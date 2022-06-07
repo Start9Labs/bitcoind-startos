@@ -87,7 +87,7 @@ rpc:
           type: number
           nullable: false
           default: 4
-          range: "[1,4]"
+          range: "[1,64]"
           integral: true
           units: ~
         workqueue:
