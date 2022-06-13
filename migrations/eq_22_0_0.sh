@@ -17,11 +17,3 @@ else
     echo "FATAL: Invalid argument: {from, to}. Migration failed." >&2
     exit 1
 fi
-
-
-
-# if threads > 4
-#     set to 4
-
-# if workqueue > 32
-#     set to 32
