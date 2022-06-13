@@ -201,11 +201,11 @@ migrations:
       mounts:
         main: /root/.bitcoin
       inject: false
-    "<23.0.0":
+    ">22.0.0 <23.0.0":
       type: docker
       image: main
       system: false
-      entrypoint: /usr/local/bin/migrations/lt_23_0_0.sh
+      entrypoint: /usr/local/bin/migrations/gt_22_0_0_lt_23_0_0.sh
       args: ["from"]
       io-format: json
       mounts:
@@ -232,11 +232,11 @@ migrations:
       mounts:
         main: /root/.bitcoin
       inject: false
-    "<23.0.0":
+    ">22.0.0 <23.0.0":
       type: docker
       image: main
       system: false
-      entrypoint: /usr/local/bin/migrations/lt_23_0_0.sh
+      entrypoint: /usr/local/bin/migrations/gt_22_0_0_lt_23_0_0.sh
       args: ["to"]
       io-format: json
       mounts:
