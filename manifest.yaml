@@ -55,29 +55,9 @@ health-checks:
     inject: true
 config:
   get:
-    type: docker
-    image: compat
-    system: true
-    entrypoint: compat
-    args:
-      - config
-      - get
-      - /root/.bitcoin
-      - "/mnt/assets/config_spec.yaml"
-    mounts:
-      compat: /mnt/assets
-      main: /root/.bitcoin
-    io-format: yaml
+    type: script
   set:
-    type: docker
-    image: compat
-    system: true
-    entrypoint: /mnt/assets/config-set.sh
-    args: []
-    mounts:
-      compat: /mnt/assets
-      main: "/root/.bitcoin"
-    io-format: yaml
+    type: script
 properties:
   type: docker
   image: compat
