@@ -24,6 +24,7 @@ export const setConfig: ExpectedExports.setConfig = async (
       error: "Txindex not allowed on pruned nodes.",
     };
   }
+  // true, false only fail case
   if (
     !(!newConfig.advanced.blockfilters.peerblockfilters ||
       (newConfig.advanced.blockfilters.blockfilterindex))
