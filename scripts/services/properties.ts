@@ -7,12 +7,14 @@ const { shape, string, boolean, dictionary, any } = matches;
 const matchConfig = dictionary([string, any]);
 
 export const properties: ExpectedExports.properties = async (effects: Effects) => {
-  return YAML.parse(
-    await effects.readFile({
-      path: "start9/stats.yaml",
-      volumeId: "main",
-    })
-  ) as any
+  return {
+    result: YAML.parse(
+      await effects.readFile({
+        path: "start9/stats.yaml",
+        volumeId: "main",
+      })
+    ) as any
+  }
 
   const config = matchConfig.unsafeCast(
     YAML.parse(
