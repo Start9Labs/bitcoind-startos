@@ -1,4 +1,5 @@
-import { matches, YAML, ExpectedExports, ConfigRes } from "../deps.ts";
+import { matches, YAML, ExpectedExports, ConfigRes, ValueSpecAny } from "../deps.ts";
+import * as T from '../types.d.ts';
 
 const { any, string, dictionary } = matches;
 
@@ -37,7 +38,6 @@ export const getConfig: ExpectedExports.getConfig = async (effects) => {
     },
     "rpc": {
       "type": "object",
-      "nullable": false,
       "name": "RPC Settings",
       "description": "RPC configuration options.",
       "spec": {
@@ -73,7 +73,6 @@ export const getConfig: ExpectedExports.getConfig = async (effects) => {
         },
         "advanced": {
           "type": "object",
-          "nullable": false,
           "name": "Advanced",
           "description": "Advanced RPC Settings",
           "spec": {
@@ -88,7 +87,7 @@ export const getConfig: ExpectedExports.getConfig = async (effects) => {
                 "pattern-description": "Each item must be of the form \"<USERNAME>:<SALT>$<HASH>\"."
               },
               "range": "[0,*)"
-            },
+            } as any,
             "serialversion": {
               "name": "Serialization Version",
               "description": "Return raw transaction or block hex with Segwit or non-SegWit serialization.",
@@ -97,6 +96,7 @@ export const getConfig: ExpectedExports.getConfig = async (effects) => {
                 "non-segwit",
                 "segwit"
               ],
+              "value-names": {},
               "default": "segwit"
             },
             "servertimeout": {
@@ -176,7 +176,6 @@ export const getConfig: ExpectedExports.getConfig = async (effects) => {
     },
     "advanced": {
       "type": "object",
-      "nullable": false,
       "name": "Advanced",
       "description": "Advanced Settings",
       "spec": {
@@ -215,7 +214,6 @@ export const getConfig: ExpectedExports.getConfig = async (effects) => {
         },
         "peers": {
           "type": "object",
-          "nullable": false,
           "name": "Peers",
           "description": "Peer Connection Settings",
           "spec": {
@@ -268,7 +266,7 @@ export const getConfig: ExpectedExports.getConfig = async (effects) => {
                   }
                 }
               }
-            }
+            } as any
           }
         },
         "dbcache": {
@@ -361,7 +359,7 @@ export const getConfig: ExpectedExports.getConfig = async (effects) => {
         }
       }
     }
-  } as any
+  }
   return {
     result: {
       config,
@@ -369,5 +367,4 @@ export const getConfig: ExpectedExports.getConfig = async (effects) => {
     }
   }
 }
-
 

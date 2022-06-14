@@ -59,16 +59,7 @@ config:
   set:
     type: script
 properties:
-  type: docker
-  image: compat
-  system: true
-  entrypoint: compat
-  args:
-    - properties
-    - /root/.bitcoin
-  mounts:
-    main: /root/.bitcoin
-  io-format: yaml
+  type: script
 volumes:
   main:
     type: data
