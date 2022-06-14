@@ -26,4 +26,4 @@ manager/target/aarch64-unknown-linux-musl/release/bitcoind-manager: $(MANAGER_SR
 	docker run --rm -it -v ~/.cargo/registry:/root/.cargo/registry -v "$(shell pwd)"/manager:/home/rust/src start9/rust-musl-cross:aarch64-musl cargo build --release
 
 scripts/embassy.js: scripts/**/*.ts
-        deno bundle scripts/embassy.ts scripts/embassy.js
+	deno bundle scripts/embassy.ts scripts/embassy.js
