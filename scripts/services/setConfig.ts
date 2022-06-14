@@ -72,6 +72,14 @@ export const setConfig: ExpectedExports.setConfig = async (
         volumeId: "main",
       });
     }
+  } else {
+
+    effects.debug("Reindex required");
+    await effects.writeFile({
+      path: "start9/requires.reindex",
+      toWrite: "",
+      volumeId: "main",
+    });
   }
 
   await effects.createDir({
