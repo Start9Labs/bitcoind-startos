@@ -3,3 +3,4 @@ manager/target/
 bitcoind.s9pk
 image.tar
 .vscode/
+scripts/embassy.js
