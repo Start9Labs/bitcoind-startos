@@ -31,7 +31,7 @@ export const setConfig: ExpectedExports.setConfig = async (
   ) {
     return {
       error:
-        "'Compute Compact Block Filters' must be enabled if 'Serve Comopact Block Filters to Peers' is enabled.",
+        "'Compute Compact Block Filters' must be enabled if 'Serve Compact Block Filters to Peers' is enabled.",
     };
   }
 
