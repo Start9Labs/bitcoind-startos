@@ -12,9 +12,7 @@ elif [ $1 = "to" ]; then
     yq -i '.advanced.peers.addnode |= map_values(.hostname)' /root/.bitcoin/start9/config.yaml
     yq -i 'del(.advanced.blockfilters)' /root/.bitcoin/start9/config.yaml
     yq -i 'del(.advanced.bloomfilters)' /root/.bitcoin/start9/config.yaml
-    yq -i '.rpc.advanced.threads |= 4' /root/.bitcoin/start9/config.yaml
-    yq -i '.rpc.advanced.workqueue |= 32' /root/.bitcoin/start9/config.yaml
-    echo '{"configured": true }'
+    echo '{"configured": false }'
     exit 0
 else
     echo "FATAL: Invalid argument: {from, to}. Migration failed." >&2
