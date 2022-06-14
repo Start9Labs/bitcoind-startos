@@ -3576,7 +3576,7 @@ const DEPRECATED_BOOLEANS_SYNTAX = [
     "OFF", 
 ];
 function encodeHex(character) {
-    const string6 = character.toString(16).toUpperCase();
+    const string4 = character.toString(16).toUpperCase();
     let handle;
     let length;
     if (character <= 0xff) {
@@ -3591,18 +3591,18 @@ function encodeHex(character) {
     } else {
         throw new YAMLError("code point within a string may not be greater than 0xFFFFFFFF");
     }
-    return `\\${handle}${repeat("0", length - string6.length)}${string6}`;
+    return `\\${handle}${repeat("0", length - string4.length)}${string4}`;
 }
-function indentString(string7, spaces) {
-    const ind = repeat(" ", spaces), length = string7.length;
+function indentString(string5, spaces) {
+    const ind = repeat(" ", spaces), length = string5.length;
     let position = 0, next = -1, result = "", line;
     while(position < length){
-        next = string7.indexOf("\n", position);
+        next = string5.indexOf("\n", position);
         if (next === -1) {
-            line = string7.slice(position);
+            line = string5.slice(position);
             position = length;
         } else {
-            line = string7.slice(position, next + 1);
+            line = string5.slice(position, next + 1);
             position = next + 1;
         }
         if (line.length && line !== "\n") result += ind;
@@ -3635,30 +3635,30 @@ function isPlainSafe(c) {
 function isPlainSafeFirst(c) {
     return isPrintable(c) && c !== 0xfeff && !isWhitespace(c) && c !== 0x2d && c !== 0x3f && c !== 0x3a && c !== 0x2c && c !== 0x5b && c !== 0x5d && c !== 0x7b && c !== 0x7d && c !== 0x23 && c !== 0x26 && c !== 0x2a && c !== 0x21 && c !== 0x7c && c !== 0x3e && c !== 0x27 && c !== 0x22 && c !== 0x25 && c !== 0x40 && c !== 0x60;
 }
-function needIndentIndicator(string8) {
+function needIndentIndicator(string6) {
     const leadingSpaceRe = /^\n* /;
-    return leadingSpaceRe.test(string8);
+    return leadingSpaceRe.test(string6);
 }
 const STYLE_PLAIN = 1, STYLE_SINGLE = 2, STYLE_LITERAL = 3, STYLE_FOLDED = 4, STYLE_DOUBLE = 5;
-function chooseScalarStyle(string9, singleLineOnly, indentPerLevel, lineWidth, testAmbiguousType) {
+function chooseScalarStyle(string7, singleLineOnly, indentPerLevel, lineWidth, testAmbiguousType) {
     const shouldTrackWidth = lineWidth !== -1;
-    let hasLineBreak = false, hasFoldableLine = false, previousLineBreak = -1, plain = isPlainSafeFirst(string9.charCodeAt(0)) && !isWhitespace(string9.charCodeAt(string9.length - 1));
+    let hasLineBreak = false, hasFoldableLine = false, previousLineBreak = -1, plain = isPlainSafeFirst(string7.charCodeAt(0)) && !isWhitespace(string7.charCodeAt(string7.length - 1));
     let __char, i5;
     if (singleLineOnly) {
-        for(i5 = 0; i5 < string9.length; i5++){
-            __char = string9.charCodeAt(i5);
+        for(i5 = 0; i5 < string7.length; i5++){
+            __char = string7.charCodeAt(i5);
             if (!isPrintable(__char)) {
                 return 5;
             }
             plain = plain && isPlainSafe(__char);
         }
     } else {
-        for(i5 = 0; i5 < string9.length; i5++){
-            __char = string9.charCodeAt(i5);
+        for(i5 = 0; i5 < string7.length; i5++){
+            __char = string7.charCodeAt(i5);
             if (__char === 0x0a) {
                 hasLineBreak = true;
                 if (shouldTrackWidth) {
-                    hasFoldableLine = hasFoldableLine || i5 - previousLineBreak - 1 > lineWidth && string9[previousLineBreak + 1] !== " ";
+                    hasFoldableLine = hasFoldableLine || i5 - previousLineBreak - 1 > lineWidth && string7[previousLineBreak + 1] !== " ";
                     previousLineBreak = i5;
                 }
             } else if (!isPrintable(__char)) {
@@ -3666,12 +3666,12 @@ function chooseScalarStyle(string9, singleLineOnly, indentPerLevel, lineWidth, t
             }
             plain = plain && isPlainSafe(__char);
         }
-        hasFoldableLine = hasFoldableLine || shouldTrackWidth && i5 - previousLineBreak - 1 > lineWidth && string9[previousLineBreak + 1] !== " ";
+        hasFoldableLine = hasFoldableLine || shouldTrackWidth && i5 - previousLineBreak - 1 > lineWidth && string7[previousLineBreak + 1] !== " ";
     }
     if (!hasLineBreak && !hasFoldableLine) {
-        return plain && !testAmbiguousType(string9) ? 1 : 2;
+        return plain && !testAmbiguousType(string7) ? 1 : 2;
     }
-    if (indentPerLevel > 9 && needIndentIndicator(string9)) {
+    if (indentPerLevel > 9 && needIndentIndicator(string7)) {
         return 5;
     }
     return hasFoldableLine ? 4 : 3;
@@ -3699,21 +3699,21 @@ function foldLine(line, width) {
     }
     return result.slice(1);
 }
-function dropEndingNewline(string10) {
-    return string10[string10.length - 1] === "\n" ? string10.slice(0, -1) : string10;
+function dropEndingNewline(string8) {
+    return string8[string8.length - 1] === "\n" ? string8.slice(0, -1) : string8;
 }
-function foldString(string11, width) {
+function foldString(string9, width) {
     const lineRe = /(\n+)([^\n]*)/g;
     let result = (()=>{
-        let nextLF = string11.indexOf("\n");
-        nextLF = nextLF !== -1 ? nextLF : string11.length;
+        let nextLF = string9.indexOf("\n");
+        nextLF = nextLF !== -1 ? nextLF : string9.length;
         lineRe.lastIndex = nextLF;
-        return foldLine(string11.slice(0, nextLF), width);
+        return foldLine(string9.slice(0, nextLF), width);
     })();
-    let prevMoreIndented = string11[0] === "\n" || string11[0] === " ";
+    let prevMoreIndented = string9[0] === "\n" || string9[0] === " ";
     let moreIndented;
     let match;
-    while(match = lineRe.exec(string11)){
+    while(match = lineRe.exec(string9)){
         const prefix = match[1], line = match[2];
         moreIndented = line[0] === " ";
         result += prefix + (!prevMoreIndented && !moreIndented && line !== "" ? "\n" : "") + foldLine(line, width);
@@ -3721,14 +3721,14 @@ function foldString(string11, width) {
     }
     return result;
 }
-function escapeString(string12) {
+function escapeString(string10) {
     let result = "";
     let __char, nextChar;
     let escapeSeq;
-    for(let i6 = 0; i6 < string12.length; i6++){
-        __char = string12.charCodeAt(i6);
+    for(let i6 = 0; i6 < string10.length; i6++){
+        __char = string10.charCodeAt(i6);
         if (__char >= 0xd800 && __char <= 0xdbff) {
-            nextChar = string12.charCodeAt(i6 + 1);
+            nextChar = string10.charCodeAt(i6 + 1);
             if (nextChar >= 0xdc00 && nextChar <= 0xdfff) {
                 result += encodeHex((__char - 0xd800) * 0x400 + nextChar - 0xdc00 + 0x10000);
                 i6++;
@@ -3736,24 +3736,24 @@ function escapeString(string12) {
             }
         }
         escapeSeq = ESCAPE_SEQUENCES[__char];
-        result += !escapeSeq && isPrintable(__char) ? string12[i6] : escapeSeq || encodeHex(__char);
+        result += !escapeSeq && isPrintable(__char) ? string10[i6] : escapeSeq || encodeHex(__char);
     }
     return result;
 }
-function blockHeader(string13, indentPerLevel) {
-    const indentIndicator = needIndentIndicator(string13) ? String(indentPerLevel) : "";
-    const clip = string13[string13.length - 1] === "\n";
-    const keep = clip && (string13[string13.length - 2] === "\n" || string13 === "\n");
+function blockHeader(string11, indentPerLevel) {
+    const indentIndicator = needIndentIndicator(string11) ? String(indentPerLevel) : "";
+    const clip = string11[string11.length - 1] === "\n";
+    const keep = clip && (string11[string11.length - 2] === "\n" || string11 === "\n");
     const chomp = keep ? "+" : clip ? "" : "-";
     return `${indentIndicator}${chomp}\n`;
 }
-function writeScalar(state, string14, level, iskey) {
+function writeScalar(state, string12, level, iskey) {
     state.dump = (()=>{
-        if (string14.length === 0) {
+        if (string12.length === 0) {
             return "''";
         }
-        if (!state.noCompatMode && DEPRECATED_BOOLEANS_SYNTAX.indexOf(string14) !== -1) {
-            return `'${string14}'`;
+        if (!state.noCompatMode && DEPRECATED_BOOLEANS_SYNTAX.indexOf(string12) !== -1) {
+            return `'${string12}'`;
         }
         const indent = state.indent * Math.max(1, level);
         const lineWidth = state.lineWidth === -1 ? -1 : Math.max(Math.min(state.lineWidth, 40), state.lineWidth - indent);
@@ -3761,17 +3761,17 @@ function writeScalar(state, string14, level, iskey) {
         function testAmbiguity(str3) {
             return testImplicitResolving(state, str3);
         }
-        switch(chooseScalarStyle(string14, singleLineOnly, state.indent, lineWidth, testAmbiguity)){
+        switch(chooseScalarStyle(string12, singleLineOnly, state.indent, lineWidth, testAmbiguity)){
             case STYLE_PLAIN:
-                return string14;
+                return string12;
             case STYLE_SINGLE:
-                return `'${string14.replace(/'/g, "''")}'`;
+                return `'${string12.replace(/'/g, "''")}'`;
             case STYLE_LITERAL:
-                return `|${blockHeader(string14, state.indent)}${dropEndingNewline(indentString(string14, indent))}`;
+                return `|${blockHeader(string12, state.indent)}${dropEndingNewline(indentString(string12, indent))}`;
             case STYLE_FOLDED:
-                return `>${blockHeader(string14, state.indent)}${dropEndingNewline(indentString(foldString(string14, lineWidth), indent))}`;
+                return `>${blockHeader(string12, state.indent)}${dropEndingNewline(indentString(foldString(string12, lineWidth), indent))}`;
             case STYLE_DOUBLE:
-                return `"${escapeString(string14)}"`;
+                return `"${escapeString(string12)}"`;
             default:
                 throw new YAMLError("impossible error: invalid scalar style");
         }
@@ -4022,193 +4022,7 @@ const mod = {
     FAILSAFE_SCHEMA: failsafe,
     JSON_SCHEMA: json
 };
-const { literal: literal1 , shape: shape1 , number: number1 , string: string1 , some: some1 , boolean: __boolean1  } = matches;
-const setConfigMatcher = shape1({
-    "peer-tor-address": string1,
-    "rpc-tor-address": string1,
-    alias: string1.optional(),
-    color: string1,
-    bitcoind: some1(shape1({
-        type: literal1("internal"),
-        user: string1.optional(),
-        password: string1.optional()
-    }), shape1({
-        type: literal1("internal-proxy"),
-        user: string1.optional(),
-        password: string1.optional()
-    })),
-    rpc: shape1({
-        enabled: __boolean1,
-        user: string1,
-        password: string1
-    }),
-    advanced: shape1({
-        "tor-only": __boolean1,
-        "fee-base": number1,
-        "fee-rate": number1,
-        "min-capacity": number1,
-        "ignore-fee-limits": __boolean1,
-        "funding-confirms": number1,
-        "cltv-delta": number1,
-        "wumbo-channels": __boolean1,
-        experimental: shape1({
-            "dual-fund": __boolean1,
-            "onion-messages": __boolean1,
-            offers: __boolean1,
-            "shutdown-wrong-funding": __boolean1
-        }),
-        plugins: shape1({
-            http: __boolean1,
-            rebalance: __boolean1,
-            summary: __boolean1,
-            rest: __boolean1
-        })
-    })
-}, [
-    "alias"
-]);
-async function getAlias(effects, config) {
-    if (!!config.alias) {
-        return config.alias;
-    }
-    try {
-        return await effects.readFile({
-            volumeId: "main",
-            path: "default_alias.txt"
-        });
-    } catch (e) {
-        const alias = `start9-${(Math.random().toString(36) + "00000000000000011").slice(2, 9 + 2)}`;
-        await effects.writeFile({
-            volumeId: "main",
-            path: "default_alias.txt",
-            toWrite: alias
-        });
-        return alias;
-    }
-}
-const { string: string2 , boolean: __boolean2 , shape: shape2  } = matches;
-const matchConfig = shape2({
-    advanced: shape2({
-        experimental: shape2({
-            "onion-messages": __boolean2,
-            offers: __boolean2
-        })
-    })
-});
-const configRules = [
-    {
-        currentError (config) {
-            if (!matchConfig.test(config)) {
-                return "Config is not the correct shape";
-            }
-            const hasOffers = config.advanced.experimental.offers;
-            const hasOnionMessagesAndOffers = config.advanced.experimental["onion-messages"] && hasOffers;
-            const doesntHaveOffers = !hasOffers;
-            if (hasOnionMessagesAndOffers || doesntHaveOffers) return;
-            return `You must enable 'Onion Messages' if you wish to enable 'Offers'`;
-        }
-    }, 
-];
-function checkConfigRules(config) {
-    for (const checker of configRules){
-        const error = checker.currentError(config);
-        if (error) {
-            return {
-                error: error
-            };
-        }
-    }
-}
-async function createWaitForService(effects, config) {
-    const { bitcoin_rpc_host , bitcoin_rpc_pass , bitcoin_rpc_port , bitcoin_rpc_user  } = userInformation(config);
-    await effects.writeFile({
-        path: "start9/waitForStart.sh",
-        toWrite: `
-#!/bin/sh
-echo "Starting Wait for Bitcoin Start"
-while true; do
-  bitcoin-cli -rpcconnect=${bitcoin_rpc_host} -rpcport=${bitcoin_rpc_port} -rpcuser=${bitcoin_rpc_user} -rpcpassword=${bitcoin_rpc_pass} getblockchaininfo > /dev/null
-  if [ $? -eq 0 ] 
-  then 
-    break
-  else 
-    echo "Waiting for Bitcoin to start..."
-    sleep 1
-  fi
-done    
-    `,
-        volumeId: "main"
-    });
-}
-function userInformation(config) {
-    switch(config.bitcoind.type){
-        case "internal":
-            return {
-                bitcoin_rpc_user: config.bitcoind.user,
-                bitcoin_rpc_pass: config.bitcoind.password,
-                bitcoin_rpc_host: "bitcoind.embassy",
-                bitcoin_rpc_port: 8332
-            };
-        case "internal-proxy":
-            return {
-                bitcoin_rpc_user: config.bitcoind.user,
-                bitcoin_rpc_pass: config.bitcoind.password,
-                bitcoin_rpc_host: "btc-rpc-proxy.embassy",
-                bitcoin_rpc_port: 8332
-            };
-    }
-}
-function configMaker(alias, config) {
-    const { bitcoin_rpc_host , bitcoin_rpc_pass , bitcoin_rpc_port , bitcoin_rpc_user  } = userInformation(config);
-    const rpcBind = config.rpc.enabled ? "0.0.0.0:8080" : "127.0.0.1:8080";
-    const enableWumbo = config.advanced["wumbo-channels"] ? "large-channels" : "";
-    const enableExperimentalDualFund = config.advanced.experimental["dual-fund"] ? "experimental-dual-fund" : "";
-    const enableExperimentalOnionMessages = config.advanced.experimental["onion-messages"] ? "experimental-onion-messages" : "";
-    const enableExperimentalOffers = config.advanced.experimental.offers ? "experimental-offers" : "";
-    const enableExperimentalShutdownWrongFunding = config.advanced.experimental["shutdown-wrong-funding"] ? "experimental-shutdown-wrong-funding" : "";
-    const enableHttpPlugin = config.advanced.plugins.http ? "plugin=/usr/local/libexec/c-lightning/plugins/c-lightning-http-plugin" : "";
-    const enableRebalancePlugin = config.advanced.plugins.rebalance ? "plugin=/usr/local/libexec/c-lightning/plugins/rebalance/rebalance.py" : "";
-    const enableSummaryPlugin = config.advanced.plugins.summary ? "plugin=/usr/local/libexec/c-lightning/plugins/summary/summary.py" : "";
-    const enableRestPlugin = config.advanced.plugins.rest ? "plugin=/usr/local/libexec/c-lightning/plugins/c-lightning-REST/plugin.js\nrest-port=3001\nrest-protocol=https\n" : "";
-    return `
-network=bitcoin
-bitcoin-rpcuser=${bitcoin_rpc_user}
-bitcoin-rpcpassword=${bitcoin_rpc_pass}
-bitcoin-rpcconnect=${bitcoin_rpc_host}
-bitcoin-rpcport=${bitcoin_rpc_port}
-
-http-user=${config.rpc.user}
-http-pass=${config.rpc.password}
-http-bind=${rpcBind}
-bind-addr=0.0.0.0:9735
-announce-addr=${config["peer-tor-address"]}:9735
-proxy={proxy}
-always-use-proxy=${config.advanced["tor-only"]}
-
-alias=${alias}
-rgb=${config.color}
-
-fee-base=${config.advanced["fee-base"]}
-fee-per-satoshi=${config.advanced["fee-rate"]}
-min-capacity-sat=${config.advanced["min-capacity"]}
-ignore-fee-limits=${config.advanced["ignore-fee-limits"]}
-funding-confirms=${config.advanced["funding-confirms"]}
-cltv-delta=${config.advanced["cltv-delta"]}
-${enableWumbo}
-${enableExperimentalDualFund}
-${enableExperimentalOnionMessages}
-${enableExperimentalOffers}
-${enableExperimentalShutdownWrongFunding}
-
-${enableHttpPlugin}
-${enableRebalancePlugin}
-${enableSummaryPlugin}
-${enableRestPlugin}`;
-}
 const setConfig = async (effects, input)=>{
-    const config = setConfigMatcher.unsafeCast(input);
-    await checkConfigRules(config);
-    const alias = await getAlias(effects, config);
     await effects.createDir({
         path: "start9",
         volumeId: "main"
@@ -4218,12 +4032,6 @@ const setConfig = async (effects, input)=>{
         toWrite: mod.stringify(input),
         volumeId: "main"
     });
-    await effects.writeFile({
-        path: "config.main",
-        toWrite: configMaker(alias, config),
-        volumeId: "main"
-    });
-    await createWaitForService(effects, config);
     const result = {
         signal: "SIGTERM",
         "depends-on": {}
@@ -4232,13 +4040,13 @@ const setConfig = async (effects, input)=>{
         result
     };
 };
-const { shape: shape3 , arrayOf: arrayOf1 , string: string3 , boolean: __boolean3  } = matches;
-const matchProxyConfig = shape3({
-    users: arrayOf1(shape3({
-        name: string3,
-        "allowed-calls": arrayOf1(string3),
-        password: string3,
-        "fetch-blocks": __boolean3
+const { shape: shape1 , arrayOf: arrayOf1 , string: string1 , boolean: __boolean1  } = matches;
+const matchProxyConfig = shape1({
+    users: arrayOf1(shape1({
+        name: string1,
+        "allowed-calls": arrayOf1(string1),
+        password: string1,
+        "fetch-blocks": __boolean1
     }, [
         "fetch-blocks"
     ]))
@@ -4338,10 +4146,10 @@ const checks = [
         }
     }, 
 ];
-const matchBitcoindConfig = shape3({
-    advanced: shape3({
-        pruning: shape3({
-            mode: string3
+const matchBitcoindConfig = shape1({
+    advanced: shape1({
+        pruning: shape1({
+            mode: string1
         })
     })
 });
@@ -4398,162 +4206,46 @@ const dependencies = {
         }
     }
 };
-const NOT_COMPUTED = Symbol("not_computed");
-function once(val) {
-    let computed = NOT_COMPUTED;
-    return ()=>{
-        if (computed === NOT_COMPUTED) {
-            computed = val();
-        }
-        return computed;
-    };
-}
-function lazy_primative(val) {
-    return {
-        val,
-        map (next) {
-            return lazy(()=>next(val())
-            );
-        }
-    };
-}
-const lazy = (x)=>lazy_primative(once(x))
-;
-const { shape: shape4 , string: string4 , boolean: __boolean4  } = matches;
-const nodeInfoMatcher = shape4({
-    id: string4,
-    alias: string4
-}, [
-    'alias'
+const { shape: shape2 , string: string2 , boolean: __boolean2 , dictionary: dictionary1 , any: any1  } = matches;
+const matchConfig = dictionary1([
+    string2,
+    any1
 ]);
-shape4({
-    rpc: shape4({
-        enabled: __boolean4,
-        user: string4,
-        password: string4
-    }),
-    advanced: shape4({
-        plugins: shape4({
-            rest: __boolean4
-        })
-    })
-});
 const properties = async (effects)=>{
-    const nodeInfo = nodeInfoMatcher.unsafeCast(await effects.readJsonFile({
-        volumeId: "main",
-        path: "start9/lightningGetInfo"
-    }));
-    const peerTorAddress = await effects.readFile({
-        volumeId: "main",
-        path: "start9/peerTorAddress"
-    }).then((x)=>x.trim()
-    );
-    const config = setConfigMatcher.unsafeCast(mod.parse(await effects.readFile({
+    return {
+        result: mod.parse(await effects.readFile({
+            path: "start9/stats.yaml",
+            volumeId: "main"
+        }))
+    };
+    const config = matchConfig.unsafeCast(mod.parse(await effects.readFile({
         path: "start9/config.yaml",
         volumeId: "main"
     })));
-    const macaroonBase64 = lazy(()=>effects.readFile({
-            path: "start9/access.macaroon.base64",
-            volumeId: "main"
-        })
-    );
-    const hexMacaroon = lazy(()=>effects.readFile({
-            path: "start9/access.macaroon.hex",
-            volumeId: "main"
-        })
-    );
-    const rpcProperties = !config.rpc.enabled ? {} : {
-        "Quick Connect URL": {
-            type: "string",
-            value: `clightning-rpc://${config.rpc.user}:${config.rpc.password}@${peerTorAddress}:8080`,
-            description: "A convenient way to connect a wallet to a remote node",
-            copyable: true,
-            qr: true,
-            masked: true
-        },
-        "RPC Username": {
-            type: "string",
-            value: config.rpc.user,
-            description: "Username for RPC connections",
-            copyable: true,
-            qr: false,
-            masked: true
-        },
-        "RPC Password": {
-            type: "string",
-            value: config.rpc.password,
-            description: "Password for RPC connections",
-            copyable: true,
-            qr: false,
-            masked: true
-        }
-    };
-    const restProperties = !config.advanced.plugins.rest ? {} : {
-        "Rest API Port": {
-            type: "string",
-            value: "3001",
-            description: "The port your c-lightning-REST API is listening on",
-            copyable: true,
-            qr: false,
-            masked: false
-        },
-        "Rest API Macaroon": {
-            type: "string",
-            value: await macaroonBase64.val(),
-            description: "The macaroon that grants access to your node's REST API plugin",
-            copyable: true,
-            qr: false,
-            masked: true
-        },
-        "Rest API Macaroon (Hex)": {
-            type: "string",
-            value: await hexMacaroon.val(),
-            description: "The macaroon that grants access to your node's REST API plugin, in hexadecimal format",
-            copyable: true,
-            qr: false,
-            masked: true
-        }
-    };
-    const alias = await getAlias(effects, config);
+    const environmentVariables = matchConfig.unsafeCast(mod.parse(await effects.readFile({
+        path: "start9/environment.yaml",
+        volumeId: "main"
+    })));
+    const rpcAddress = environmentVariables['RPC_TOR_ADDRESS'];
+    const data = {};
+    if (string2.test(config?.rpc?.username) && string2.test(config?.rpc?.password)) {
+        data['Tor Quick Connect'] = {
+            "value_type": "string",
+            value: `btcstandup://${config.rpc.username}:${config.rpc.password}@${rpcAddress}:8332`
+        };
+    }
     const result = {
         version: 2,
-        data: {
-            "Node Id": {
-                type: "string",
-                value: nodeInfo.id,
-                description: "The node identifier that can be used for connecting to other nodes",
-                copyable: true,
-                qr: false,
-                masked: false
-            },
-            "Node Uri": {
-                type: "string",
-                value: `${nodeInfo.id}@${peerTorAddress}`,
-                description: "Enables connecting to another remote node",
-                copyable: true,
-                qr: true,
-                masked: true
-            },
-            "Node Alias": {
-                type: "string",
-                value: alias,
-                description: "The friendly identifier for your node",
-                copyable: true,
-                qr: false,
-                masked: false
-            },
-            ...rpcProperties,
-            ...restProperties
-        }
+        data
     };
     return {
         result
     };
 };
-const { any: any1 , string: string5 , dictionary: dictionary1  } = matches;
-const matchConfig1 = dictionary1([
-    string5,
-    any1
+const { any: any2 , string: string3 , dictionary: dictionary2  } = matches;
+const matchConfig1 = dictionary2([
+    string3,
+    any2
 ]);
 const getConfig = async (effects)=>{
     const config = await effects.readFile({
@@ -4565,281 +4257,353 @@ const getConfig = async (effects)=>{
         effects.warn(`Got error ${e} while trying to read the config`);
         return undefined;
     });
-    return {
-        result: {
-            config,
-            spec: {
-                "peer-tor-address": {
-                    "name": "Peer Tor Address",
-                    "description": "The Tor address of the peer interface",
-                    "type": "pointer",
-                    "subtype": "package",
-                    "package-id": "c-lightning",
-                    "target": "tor-address",
-                    "interface": "peer"
+    const spec = {
+        "peer-tor-address": {
+            "name": "Peer Tor Address",
+            "description": "The Tor address of the peer interface",
+            "type": "pointer",
+            "subtype": "package",
+            "package-id": "bitcoind",
+            "target": "tor-address",
+            "interface": "peer"
+        },
+        "rpc-tor-address": {
+            "name": "RPC Tor Address",
+            "description": "The Tor address of the RPC interface",
+            "type": "pointer",
+            "subtype": "package",
+            "package-id": "bitcoind",
+            "target": "tor-address",
+            "interface": "rpc"
+        },
+        "rpc": {
+            "type": "object",
+            "name": "RPC Settings",
+            "description": "RPC configuration options.",
+            "spec": {
+                "enable": {
+                    "type": "boolean",
+                    "name": "Enable",
+                    "description": "Allow remote RPC requests.",
+                    "default": true
                 },
-                "rpc-tor-address": {
-                    "name": "RPC Tor Address",
-                    "description": "The Tor address of the RPC interface",
-                    "type": "pointer",
-                    "subtype": "package",
-                    "package-id": "c-lightning",
-                    "target": "tor-address",
-                    "interface": "rpc"
-                },
-                "alias": {
+                "username": {
                     "type": "string",
-                    "name": "Alias",
-                    "description": "Recognizable name for the Lightning Network",
-                    "nullable": true,
-                    "pattern": ".{1,32}",
-                    "pattern-description": "Must be at least 1 character and no more than 32 characters"
-                },
-                "color": {
-                    "type": "string",
-                    "name": "Color",
-                    "description": "Color value for the Lightning Network",
                     "nullable": false,
-                    "pattern": "[0-9a-fA-F]{6}",
-                    "pattern-description": "Must be a valid 6 digit hexadecimal RGB value. The first two digits are red, middle two are green and final two are\nblue\n",
+                    "name": "Username",
+                    "description": "The username for connecting to Bitcoin over RPC.",
+                    "default": "bitcoin",
+                    "masked": true,
+                    "pattern": "^[a-zA-Z0-9_]+$",
+                    "pattern-description": "Must be alphanumeric (can contain underscore)."
+                },
+                "password": {
+                    "type": "string",
+                    "nullable": false,
+                    "name": "RPC Password",
+                    "description": "The password for connecting to Bitcoin over RPC.",
                     "default": {
-                        "charset": "a-f,0-9",
-                        "len": 6
-                    }
-                },
-                "bitcoind": {
-                    "type": "union",
-                    "name": "Bitcoin Core",
-                    "description": "The Bitcoin Core node to connect to:\n  - Internal (Bitcoin Core): The Bitcoin Core service installed to your Embassy\n  - Internal (Bitcoin Proxy): The Bitcoin RPC Proxy service installed to your Embassy\n",
-                    "tag": {
-                        "id": "type",
-                        "name": "Type",
-                        "variant-names": {
-                            "internal": "Internal (Bitcoin Core)",
-                            "internal-proxy": "Internal (Bitcoin Proxy)"
-                        },
-                        "description": "The Bitcoin Core node to connect to:\n  - Internal (Bitcoin Core): The Bitcoin Core service installed to your Embassy\n  - Internal (Bitcoin Proxy): The Bitcoin RPC Proxy service installed to your Embassy\n"
+                        "charset": "a-z,2-7",
+                        "len": 20
                     },
-                    "default": "internal-proxy",
-                    "variants": {
-                        "internal": {
-                            "user": {
-                                "type": "pointer",
-                                "name": "RPC Username",
-                                "description": "The username for Bitcoin Core's RPC interface",
-                                "subtype": "package",
-                                "package-id": "bitcoind",
-                                "target": "config",
-                                "multi": false,
-                                "selector": "$.rpc.username"
-                            },
-                            "password": {
-                                "type": "pointer",
-                                "name": "RPC Password",
-                                "description": "The password for Bitcoin Core's RPC interface",
-                                "subtype": "package",
-                                "package-id": "bitcoind",
-                                "target": "config",
-                                "multi": false,
-                                "selector": "$.rpc.password"
-                            }
-                        },
-                        "internal-proxy": {
-                            "user": {
-                                "type": "pointer",
-                                "name": "RPC Username",
-                                "description": "The username for the RPC user allocated to Core Lightning",
-                                "subtype": "package",
-                                "package-id": "btc-rpc-proxy",
-                                "target": "config",
-                                "selector": "$.users[?(@.name == \"c-lightning\")].name",
-                                "multi": false
-                            },
-                            "password": {
-                                "type": "pointer",
-                                "name": "RPC Password",
-                                "description": "The password for the RPC user allocated to Core Lightning",
-                                "subtype": "package",
-                                "package-id": "btc-rpc-proxy",
-                                "target": "config",
-                                "selector": "$.users[?(@.name == \"c-lightning\")].password",
-                                "multi": false
-                            }
-                        }
-                    }
-                },
-                "rpc": {
-                    "type": "object",
-                    "name": "RPC Options",
-                    "description": "Options for the HTTP RPC interface",
-                    "spec": {
-                        "enabled": {
-                            "type": "boolean",
-                            "name": "Enable",
-                            "description": "Whether to enable the RPC webserver",
-                            "default": true
-                        },
-                        "user": {
-                            "type": "string",
-                            "name": "RPC Username",
-                            "description": "The username for the RPC user on your Core Lightning node",
-                            "nullable": false,
-                            "default": "lightning",
-                            "copyable": true
-                        },
-                        "password": {
-                            "type": "string",
-                            "name": "RPC Password",
-                            "description": "The password for the RPC user on your Core Lightning node",
-                            "nullable": false,
-                            "default": {
-                                "charset": "a-z,A-Z,0-9",
-                                "len": 22
-                            },
-                            "copyable": true,
-                            "masked": true
-                        }
-                    }
+                    "pattern": "^[^\\n\"]*$",
+                    "pattern-description": "Must not contain newline or quote characters.",
+                    "copyable": true,
+                    "masked": true
                 },
                 "advanced": {
                     "type": "object",
                     "name": "Advanced",
-                    "description": "Advanced Options",
+                    "description": "Advanced RPC Settings",
                     "spec": {
-                        "tor-only": {
-                            "type": "boolean",
-                            "name": "Only Use Tor",
-                            "description": "Use Tor for outgoing connections",
-                            "default": false
-                        },
-                        "fee-base": {
-                            "type": "number",
-                            "name": "Routing Base Fee",
-                            "description": "The base fee in millisatoshis you will charge for forwarding payments on your channels.\n",
-                            "nullable": false,
-                            "range": "[0,*)",
-                            "integral": true,
-                            "default": 1000,
-                            "units": "millisatoshis"
-                        },
-                        "fee-rate": {
-                            "type": "number",
-                            "name": "Routing Fee Rate",
-                            "description": "The fee rate used when forwarding payments on your channels. The total fee charged is\nthe Base Fee + (amount * Fee Rate / 1,000,000), where the amount is the forwarded amount.\nMeasured in sats per million.\n",
-                            "nullable": false,
-                            "range": "[1,1000000)",
-                            "integral": true,
-                            "default": 1,
-                            "units": "sats per million"
-                        },
-                        "min-capacity": {
-                            "type": "number",
-                            "name": "Minimum Channel Capacity",
-                            "description": "This value defines the minimal effective channel capacity in satoshis to accept for channel opening requests.\nThis will reject any opening of a channel which can't pass an HTLC of at least this value. Usually this prevents\na peer opening a tiny channel, but it can also prevent a channel you open with a reasonable amount and the peer\nis requesting such a large reserve that the capacity of the channel falls below this.\n",
-                            "nullable": false,
-                            "range": "[1,16777215]",
-                            "integral": true,
-                            "default": 10000,
-                            "units": "satoshis"
-                        },
-                        "ignore-fee-limits": {
-                            "type": "boolean",
-                            "name": "Ignore Fee Limits",
-                            "description": "Allow nodes which establish channels to you to set any fee they want. This may result in a channel which cannot\nbe closed, should fees increase, but make channels far more reliable since Core Lightning will never close it due\nto unreasonable fees.\n",
-                            "default": false
-                        },
-                        "funding-confirms": {
-                            "type": "number",
-                            "name": "Required Funding Confirmations",
-                            "description": "Confirmations required for the funding transaction when the other side opens a channel before the channel is\nusable.\n",
-                            "nullable": false,
-                            "range": "[1,6]",
-                            "integral": true,
-                            "default": 3,
-                            "units": "blocks"
-                        },
-                        "cltv-delta": {
-                            "type": "number",
-                            "name": "Time Lock Delta",
-                            "description": "The number of blocks between the incoming payments and outgoing payments: this needs to be enough to make sure\nthat if it has to, Core Lightning can close the outgoing payment before the incoming, or redeem the incoming once\nthe outgoing is redeemed.\n",
-                            "nullable": false,
-                            "range": "[6,144]",
-                            "integral": true,
-                            "default": 40,
-                            "units": "blocks"
-                        },
-                        "wumbo-channels": {
-                            "type": "boolean",
-                            "name": "Enable Wumbo Channels",
-                            "description": "Removes capacity limits for channel creation. Version 1.0 of the specification limited channel sizes to 16777215\nsatoshis. With this option (which your node will advertise to peers), your node will accept larger incoming\nchannels and if the peer supports it, will open larger channels.\n\nWarning: This is #Reckless and you should not enable it unless you deeply understand the risks associated with\nthe Lightning Network.\n",
-                            "default": false
-                        },
-                        "experimental": {
-                            "type": "object",
-                            "name": "Experimental Features",
-                            "description": "Experimental features that have not been standardized across Lightning Network implementations",
-                            "change-warning": "These are experimental features. Enable them at your own risk. It is possible that software bugs can lead to\nunknown problems. We recommend not using them with large amounts of money. Unless you understand how these\nfeatures work, you should not enable them.\n",
+                        "auth": {
+                            "name": "Authorization",
+                            "description": "Username and hashed password for JSON-RPC connections. RPC clients connect using the usual http basic authentication.",
+                            "type": "list",
+                            "subtype": "string",
+                            "default": [],
                             "spec": {
-                                "dual-fund": {
-                                    "type": "boolean",
-                                    "name": "Dual Funding",
-                                    "description": "Enables the option to dual fund channels with other compatible lightning implementations using the v2\nchannel opening protocol\n",
-                                    "default": false
-                                },
-                                "onion-messages": {
-                                    "type": "boolean",
-                                    "name": "Onion Messages",
-                                    "description": "Enable the sending, receiving, and relay of onion messages\n",
-                                    "default": false
-                                },
-                                "offers": {
-                                    "type": "boolean",
-                                    "name": "Offers",
-                                    "description": "Enable the sending and receiving of offers (this requires Onion Messages to be enabled as well)\n",
-                                    "default": false
-                                },
-                                "shutdown-wrong-funding": {
-                                    "type": "boolean",
-                                    "name": "Shutdown Wrong Funding",
-                                    "description": "Allow channel shutdown with alternate txids\n",
-                                    "default": false
-                                }
-                            }
+                                "pattern": "^[a-zA-Z0-9_-]+:([0-9a-fA-F]{2})+\\$([0-9a-fA-F]{2})+$",
+                                "pattern-description": "Each item must be of the form \"<USERNAME>:<SALT>$<HASH>\"."
+                            },
+                            "range": "[0,*)"
                         },
-                        "plugins": {
-                            "type": "object",
-                            "name": "Plugins",
-                            "description": "Plugins are subprocesses that provide extra functionality and run alongside the lightningd process inside \nthe main Core Lightning container in order to communicate directly with it.\nTheir source is maintained separately from that of Core Lightning itself.\n",
-                            "spec": {
-                                "http": {
-                                    "type": "boolean",
-                                    "name": "Enable C-Lightning-HTTP-Plugin",
-                                    "description": "This plugin is a direct proxy for the unix domain socket from the HTTP interface. \nIt is required for Spark Wallet to connect to Core Lightning.\n\nSource: https://github.com/Start9Labs/c-lightning-http-plugin\n",
-                                    "default": true
-                                },
-                                "rebalance": {
-                                    "type": "boolean",
-                                    "name": "Enable Rebalance Plugin",
-                                    "description": "Enables the `rebalance` rpc command, which moves liquidity between your channels using circular payments.\nSee `help rebalance` on the CLI or in the Spark console for usage instructions.\n\nSource: https://github.com/lightningd/plugins/tree/master/rebalance\n",
-                                    "default": false
-                                },
-                                "summary": {
-                                    "type": "boolean",
-                                    "name": "Enable Summary Plugin",
-                                    "description": "Enables the `summary` rpc command, which outputs a text summary of your node, including fiat amounts.\nCan be called via command line or the Spark console.        \n\nSource: https://github.com/lightningd/plugins/tree/master/summary\n",
-                                    "default": false
-                                },
-                                "rest": {
-                                    "type": "boolean",
-                                    "name": "Enable C-Lightning-REST Plugin",
-                                    "description": "This plugin exposes an LND-like REST API. It is required for Ride The Lighting to connect to Core Lightning.\n\nSource: https://github.com/Ride-The-Lightning/c-lightning-REST\n",
-                                    "default": true
-                                }
-                            }
+                        "serialversion": {
+                            "name": "Serialization Version",
+                            "description": "Return raw transaction or block hex with Segwit or non-SegWit serialization.",
+                            "type": "enum",
+                            "values": [
+                                "non-segwit",
+                                "segwit"
+                            ],
+                            "value-names": {},
+                            "default": "segwit"
+                        },
+                        "servertimeout": {
+                            "name": "Rpc Server Timeout",
+                            "description": "Number of seconds after which an uncompleted RPC call will time out.",
+                            "type": "number",
+                            "nullable": false,
+                            "range": "[5,300]",
+                            "integral": true,
+                            "units": "seconds",
+                            "default": 30
+                        },
+                        "threads": {
+                            "name": "Threads",
+                            "description": "Set the number of threads for handling RPC calls. Only needed if you plan to abuse your node.",
+                            "type": "number",
+                            "nullable": false,
+                            "default": 4,
+                            "range": "[1,64]",
+                            "integral": true,
+                            "units": undefined
+                        },
+                        "workqueue": {
+                            "name": "Work Queue",
+                            "description": "Set the depth of the work queue to service RPC calls. Determines how long the backlog of RPC requests can get before it just rejects new ones.",
+                            "type": "number",
+                            "nullable": false,
+                            "default": 128,
+                            "range": "[8,256]",
+                            "integral": true,
+                            "units": "requests"
                         }
                     }
                 }
             }
+        },
+        "zmq-enabled": {
+            "type": "boolean",
+            "name": "ZeroMQ Enabled",
+            "description": "Enable the ZeroMQ interface",
+            "default": true
+        },
+        "txindex": {
+            "type": "boolean",
+            "name": "Transaction Index",
+            "description": "Enable the Transaction Index (txindex)",
+            "default": false
+        },
+        "wallet": {
+            "type": "object",
+            "name": "Wallet",
+            "description": "Wallet Settings",
+            "spec": {
+                "enable": {
+                    "name": "Enable Wallet",
+                    "description": "Load the wallet and enable wallet RPC calls.",
+                    "type": "boolean",
+                    "default": true
+                },
+                "avoidpartialspends": {
+                    "name": "Avoid Partial Spends",
+                    "description": "Group outputs by address, selecting all or none, instead of selecting on a per-output basis. This improves privacy at the expense of higher transaction fees.",
+                    "type": "boolean",
+                    "default": true
+                },
+                "discardfee": {
+                    "name": "Discard Change Tolerance",
+                    "description": "The fee rate (in BTC/kB) that indicates your tolerance for discarding change by adding it to the fee.",
+                    "type": "number",
+                    "nullable": false,
+                    "default": 0.0001,
+                    "range": "[0,.01]",
+                    "integral": false,
+                    "units": "BTC/kB"
+                }
+            }
+        },
+        "advanced": {
+            "type": "object",
+            "name": "Advanced",
+            "description": "Advanced Settings",
+            "spec": {
+                "mempool": {
+                    "type": "object",
+                    "name": "Mempool",
+                    "description": "Mempool Settings",
+                    "spec": {
+                        "persistmempool": {
+                            "type": "boolean",
+                            "name": "Persist Mempool",
+                            "description": "Save the mempool on shutdown and load on restart.",
+                            "default": true
+                        },
+                        "maxmempool": {
+                            "type": "number",
+                            "nullable": false,
+                            "name": "Max Mempool Size",
+                            "description": "Keep the transaction memory pool below <n> megabytes.",
+                            "range": "[1,*)",
+                            "integral": true,
+                            "units": "MiB",
+                            "default": 300
+                        },
+                        "mempoolexpiry": {
+                            "type": "number",
+                            "nullable": false,
+                            "name": "Mempool Expiration",
+                            "description": "Do not keep transactions in the mempool longer than <n> hours.",
+                            "range": "[1,*)",
+                            "integral": true,
+                            "units": "Hr",
+                            "default": 336
+                        }
+                    }
+                },
+                "peers": {
+                    "type": "object",
+                    "name": "Peers",
+                    "description": "Peer Connection Settings",
+                    "spec": {
+                        "listen": {
+                            "type": "boolean",
+                            "name": "Make Public",
+                            "description": "Allow other nodes to find your server on the network.",
+                            "default": true
+                        },
+                        "onlyconnect": {
+                            "type": "boolean",
+                            "name": "Disable Peer Discovery",
+                            "description": "Only connect to specified peers.",
+                            "default": false
+                        },
+                        "onlyonion": {
+                            "type": "boolean",
+                            "name": "Disable Clearnet",
+                            "description": "Only connect to peers over Tor.",
+                            "default": false
+                        },
+                        "addnode": {
+                            "name": "Add Nodes",
+                            "description": "Add addresses of nodes to connect to.",
+                            "type": "list",
+                            "subtype": "object",
+                            "range": "[0,*)",
+                            "default": [],
+                            "spec": {
+                                "type": "object",
+                                "nullable": false,
+                                "name": "Peer",
+                                "description": "Peer to connect to",
+                                "spec": {
+                                    "hostname": {
+                                        "type": "string",
+                                        "nullable": false,
+                                        "name": "Hostname",
+                                        "description": "Domain or IP address of bitcoin peer",
+                                        "pattern": "(^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$)|((^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$)|(^[a-z2-7]{16}\\.onion$)|(^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$))",
+                                        "pattern-description": "Must be either a domain name, or an IPv4 or IPv6 address. Do not include protocol scheme (eg 'http://') or port."
+                                    },
+                                    "port": {
+                                        "type": "number",
+                                        "nullable": true,
+                                        "name": "Port",
+                                        "description": "Port that peer is listening on for inbound p2p connections",
+                                        "range": "[0,65535]",
+                                        "integral": true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "dbcache": {
+                    "type": "number",
+                    "nullable": true,
+                    "name": "Database Cache",
+                    "description": "How much RAM to allocate for caching the TXO set. Higher values improve syncing performance, but increase your chance of using up all your system's memory or corrupting your database in the event of an ungraceful shutdown. Set this high but comfortably below your system's total RAM during IBD, then turn down to 450 (or leave blank) once the sync completes.",
+                    "warning": "WARNING: Increasing this value results in a higher chance of ungraceful shutdowns, which can leave your node unusable if it happens during the initial block download. Use this setting with caution. Be sure to set this back to the default (450 or leave blank) once your node is synced.",
+                    "range": "(0,1024]",
+                    "integral": true,
+                    "units": "MiB"
+                },
+                "pruning": {
+                    "type": "union",
+                    "name": "Pruning Settings",
+                    "description": "Blockchain Pruning Options\nReduce the blockchain size on disk\n",
+                    "warning": "If you set pruning to Manual and your disk is smaller than the total size of the blockchain, you MUST have something running that prunes these blocks or you may overfill your disk!\nDisabling pruning will convert your node into a full archival node. This requires a resync of the entire blockchain, a process that may take several days. Make sure you have enough free disk space or you may fill up your disk.\n",
+                    "tag": {
+                        "id": "mode",
+                        "name": "Pruning Mode",
+                        "description": "- Disabled: Disable pruning\n- Automatic: Limit blockchain size on disk to a certain number of megabytes\n- Manual: Prune blockchain with the \"pruneblockchain\" RPC\n",
+                        "variant-names": {
+                            "disabled": "Disabled",
+                            "automatic": "Automatic",
+                            "manual": "Manual"
+                        }
+                    },
+                    "variants": {
+                        "disabled": {},
+                        "automatic": {
+                            "size": {
+                                "type": "number",
+                                "nullable": false,
+                                "name": "Max Chain Size",
+                                "description": "Limit of blockchain size on disk.",
+                                "warning": "Increasing this value will require re-syncing your node.",
+                                "default": 550,
+                                "range": "[550,1000000)",
+                                "integral": true,
+                                "units": "MiB"
+                            }
+                        },
+                        "manual": {
+                            "size": {
+                                "type": "number",
+                                "nullable": false,
+                                "name": "Failsafe Chain Size",
+                                "description": "Prune blockchain if size expands beyond this.",
+                                "default": 65536,
+                                "range": "[550,1000000)",
+                                "integral": true,
+                                "units": "MiB"
+                            }
+                        }
+                    },
+                    "default": "disabled"
+                },
+                "blockfilters": {
+                    "type": "object",
+                    "name": "Block Filters",
+                    "description": "Settings for storing and serving compact block filters",
+                    "spec": {
+                        "blockfilterindex": {
+                            "type": "boolean",
+                            "name": "Compute Compact Block Filters (BIP158)",
+                            "description": "Generate Compact Block Filters during initial sync (IBD) to enable 'getblockfilter' RPC. This is useful if dependent services need block filters to efficiently scan for addresses/transactions etc.",
+                            "default": false
+                        },
+                        "peerblockfilters": {
+                            "type": "boolean",
+                            "name": "Serve Compact Block Filters to Peers (BIP157)",
+                            "description": "Serve Compact Block Filters as a peer service to other nodes on the network. This is useful if you wish to connect an SPV client to your node to make it efficient to scan transactions without having to download all block data.",
+                            "default": false
+                        }
+                    }
+                },
+                "bloomfilters": {
+                    "type": "object",
+                    "name": "Bloom Filters (BIP37)",
+                    "description": "Setting for serving Bloom Filters",
+                    "spec": {
+                        "peerbloomfilters": {
+                            "type": "boolean",
+                            "name": "Serve Bloom Filters to Peers",
+                            "description": "Peers have the option of setting filters on each connection they make after the version handshake has completed. Bloom filters are for clients implementing SPV (Simplified Pament Verification) that want to check that block headers  connect together correctly, without needing to verify the full blockchain.  The client must trust that the transactions in the chain are in fact valid.  It is highly recommended AGAINST using for anything except Bisq integration.",
+                            "warning": "This is ONLY for use with Bisq integration, please use Block Filters for all other applications.",
+                            "default": false
+                        }
+                    }
+                }
+            }
+        }
+    };
+    return {
+        result: {
+            config,
+            spec
         }
     };
 };

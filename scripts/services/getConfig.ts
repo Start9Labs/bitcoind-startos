@@ -1,5 +1,4 @@
-import { matches, YAML, ExpectedExports, ConfigRes, ValueSpecAny } from "../deps.ts";
-import * as T from '../types.d.ts';
+import { matches, YAML, ExpectedExports, ConfigRes } from "../deps.ts";
 
 const { any, string, dictionary } = matches;
 
@@ -87,7 +86,7 @@ export const getConfig: ExpectedExports.getConfig = async (effects) => {
                 "pattern-description": "Each item must be of the form \"<USERNAME>:<SALT>$<HASH>\"."
               },
               "range": "[0,*)"
-            } as any,
+            },
             "serialversion": {
               "name": "Serialization Version",
               "description": "Return raw transaction or block hex with Segwit or non-SegWit serialization.",
@@ -244,7 +243,6 @@ export const getConfig: ExpectedExports.getConfig = async (effects) => {
               "default": [],
               "spec": {
                 "type": "object",
-                "nullable": false,
                 "name": "Peer",
                 "description": "Peer to connect to",
                 "spec": {
@@ -266,7 +264,7 @@ export const getConfig: ExpectedExports.getConfig = async (effects) => {
                   }
                 }
               }
-            } as any
+            },
           }
         },
         "dbcache": {
