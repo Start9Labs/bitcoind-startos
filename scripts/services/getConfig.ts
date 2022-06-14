@@ -363,7 +363,7 @@ export const getConfig: ExpectedExports.getConfig = async (effects) => {
               "type": "boolean",
               "name": "Serve Compact Block Filters to Peers (BIP157)",
               "description":
-                "Serve Compact Block Filters as a peer service to other nodes on the network. This is useful if you wish to connect an SPV client to your node to make it efficient to scan transactions without having to download all block data.",
+                "Serve Compact Block Filters as a peer service to other nodes on the network. This is useful if you wish to connect an SPV client to your node to make it efficient to scan transactions without having to download all block data.  'Compute Compact Block Filters (BIP158)' is required.",
               "default": false,
             },
           },
