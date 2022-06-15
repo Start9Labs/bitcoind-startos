@@ -257,9 +257,6 @@ export const getConfig: ExpectedExports.getConfig = async (effects) => {
               "range": "[0,*)",
               "default": [],
               "spec": {
-                "type": "object",
-                "name": "Peer",
-                "description": "Peer to connect to",
                 "spec": {
                   "hostname": {
                     "type": "string",
