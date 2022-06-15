@@ -377,7 +377,7 @@ export const getConfig: ExpectedExports.getConfig = async (effects) => {
               "type": "boolean",
               "name": "Serve Bloom Filters to Peers",
               "description":
-                "Peers have the option of setting filters on each connection they make after the version handshake has completed. Bloom filters are for clients implementing SPV (Simplified Pament Verification) that want to check that block headers  connect together correctly, without needing to verify the full blockchain.  The client must trust that the transactions in the chain are in fact valid.  It is highly recommended AGAINST using for anything except Bisq integration.",
+                "Peers have the option of setting filters on each connection they make after the version handshake has completed. Bloom filters are for clients implementing SPV (Simplified Payment Verification) that want to check that block headers  connect together correctly, without needing to verify the full blockchain.  The client must trust that the transactions in the chain are in fact valid.  It is highly recommended AGAINST using for anything except Bisq integration.",
               "warning":
                 "This is ONLY for use with Bisq integration, please use Block Filters for all other applications.",
               "default": false,
