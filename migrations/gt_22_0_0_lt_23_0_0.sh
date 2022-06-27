@@ -10,10 +10,6 @@ if [ $1 = "from" ]; then
     exit 0
 elif [ $1 = "to" ]; then
     yq -i '.advanced.peers.addnode |= map_values(.hostname)' /root/.bitcoin/start9/config.yaml
-<<<<<<<< HEAD:migrations/gt_22_0_0_lt_23_0_0.sh
-========
-    yq -i 'del(.advanced.blockfilters)' /root/.bitcoin/start9/config.yaml
->>>>>>>> origin/master:migrations/lt_22_0_0.sh
     yq -i 'del(.advanced.bloomfilters)' /root/.bitcoin/start9/config.yaml
     echo '{"configured": false }'
     exit 0
