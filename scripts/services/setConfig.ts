@@ -60,8 +60,9 @@ export const setConfig: ExpectedExports.setConfig = async (
     if (newPruningTl !== "disabled") {
       newPruningSize = number.unsafeCast(newConfig?.advanced?.pruning?.size);
     }
-    if (oldPruningTl == "disabled") effects.debug("No reindex required");
-    else if (
+    if (oldPruningTl == "disabled" || !oldPruningTl) {
+      effects.debug("No reindex required");
+    } else if (
       oldPruningTl === newPruningTl && oldPruningSize >= newPruningSize
     ) {
       effects.debug("No reindex required");
@@ -74,7 +75,6 @@ export const setConfig: ExpectedExports.setConfig = async (
       });
     }
   } else {
-
     effects.debug("Reindex required");
     await effects.writeFile({
       path: "start9/requires.reindex",
