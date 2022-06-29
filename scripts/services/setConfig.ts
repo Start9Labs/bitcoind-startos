@@ -35,12 +35,17 @@ export const setConfig: ExpectedExports.setConfig = async (
     };
   }
 
+  await effects.createDir({
+    path: "start9",
+    volumeId: "main",
+  });
+
   // config-set.sh
 
   const oldConfig = await effects.readFile({
     path: "start9/config.yaml",
     volumeId: "main",
-  }).catch(() => "");
+  }).catch(() => null);
   if (oldConfig) {
     await effects.writeFile({
       path: "start9/config-old.yaml",
@@ -75,18 +80,9 @@ export const setConfig: ExpectedExports.setConfig = async (
       });
     }
   } else {
-    effects.debug("Reindex required");
-    await effects.writeFile({
-      path: "start9/requires.reindex",
-      toWrite: "",
-      volumeId: "main",
-    });
+    effects.debug("No reindex required");
   }
-
-  await effects.createDir({
-    path: "start9",
-    volumeId: "main",
-  });
+  
   await effects.writeFile({
     path: "start9/config.yaml",
     toWrite: YAML.stringify(newConfig),
