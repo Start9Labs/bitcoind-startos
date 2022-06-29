@@ -11,7 +11,7 @@ export const setConfig: types.ExpectedExports.setConfig = async (
   // deno-lint-ignore no-explicit-any
   newConfig: any,
 ) => {
-  if (!(newConfig?.rpc?.enable || !(newConfig.advanced?.mode === "manual"))) {
+  if (!(newConfig?.rpc?.enable || !(newConfig.advanced?.pruning?.mode === "manual"))) {
     return {
       error: "RPC must be enabled for manual.",
     };
