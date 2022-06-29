@@ -10,7 +10,7 @@ clean:
 	rm bitcoind.s9pk
 	rm image.tar
 
-bitcoind.s9pk: manifest.yaml assets/compat/* image.tar instructions.md
+bitcoind.s9pk: manifest.yaml assets/compat/* image.tar instructions.md  $(ASSET_PATHS)
 	embassy-sdk pack
 
 verify: bitcoind.s9pk
@@ -24,3 +24,6 @@ image.tar: Dockerfile docker_entrypoint.sh manager/target/aarch64-unknown-linux-
 
 manager/target/aarch64-unknown-linux-musl/release/bitcoind-manager: $(MANAGER_SRC)
 	docker run --rm -it -v ~/.cargo/registry:/root/.cargo/registry -v "$(shell pwd)"/manager:/home/rust/src start9/rust-musl-cross:aarch64-musl cargo build --release
+
+scripts/embassy.js: scripts/**/*.ts
+	deno bundle scripts/embassy.ts scripts/embassy.js
