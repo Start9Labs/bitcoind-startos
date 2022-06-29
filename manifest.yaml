@@ -1,11 +1,16 @@
 id: bitcoind
 title: "Bitcoin Core"
 version: 23.0.0
+eos-version: 0.3.1
 release-notes: |
   * Latest release from Core - see full release notes at https://github.com/bitcoin/bitcoin/blob/master/doc/release-notes/release-notes-23.0.md
   * Embassy changes
     * Add support for Bloom Filters (BIP37), as required for Bisq integration
-      * It is highly recommended AGAINST using Bloom Filters for anything except Bisq integration.
+    * Increased options for RPC resources (Config -> RPC Settings -> Advanced)
+    * Implement additional ZMQ interfaces, for use with future Layer 2 integrations
+      * `zmqpubhashblock`
+      * `zmqpubhashtx`
+      * `zmqpubsequence`
 license: mit
 wrapper-repo: https://github.com/Start9Labs/bitcoind-wrapper
 upstream-repo: https://github.com/bitcoin/bitcoin
@@ -55,40 +60,11 @@ health-checks:
     inject: true
 config:
   get:
-    type: docker
-    image: compat
-    system: true
-    entrypoint: compat
-    args:
-      - config
-      - get
-      - /root/.bitcoin
-      - "/mnt/assets/config_spec.yaml"
-    mounts:
-      compat: /mnt/assets
-      main: /root/.bitcoin
-    io-format: yaml
+    type: script
   set:
-    type: docker
-    image: compat
-    system: true
-    entrypoint: /mnt/assets/config-set.sh
-    args: []
-    mounts:
-      compat: /mnt/assets
-      main: "/root/.bitcoin"
-    io-format: yaml
+    type: script
 properties:
-  type: docker
-  image: compat
-  system: true
-  entrypoint: compat
-  args:
-    - properties
-    - /root/.bitcoin
-  mounts:
-    main: /root/.bitcoin
-  io-format: yaml
+  type: script
 volumes:
   main:
     type: data
@@ -191,11 +167,11 @@ migrations:
       mounts:
         main: /root/.bitcoin
       inject: false
-    "=22.0.0":
+    ">22.0.0 <23.0.0":
       type: docker
       image: main
       system: false
-      entrypoint: /usr/local/bin/migrations/eq_22_0_0.sh
+      entrypoint: /usr/local/bin/migrations/gt_22_0_0_lt_23_0_0.sh
       args: ["from"]
       io-format: json
       mounts:
@@ -222,11 +198,11 @@ migrations:
       mounts:
         main: /root/.bitcoin
       inject: false
-    "=22.0.0":
+    ">22.0.0 <23.0.0":
       type: docker
       image: main
       system: false
-      entrypoint: /usr/local/bin/migrations/eq_22_0_0.sh
+      entrypoint: /usr/local/bin/migrations/gt_22_0_0_lt_23_0_0.sh
       args: ["to"]
       io-format: json
       mounts:

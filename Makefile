@@ -10,7 +10,7 @@ clean:
 	rm bitcoind.s9pk
 	rm image.tar
 
-bitcoind.s9pk: manifest.yaml assets/compat/* image.tar instructions.md  $(ASSET_PATHS)
+bitcoind.s9pk: manifest.yaml assets/compat/* image.tar instructions.md scripts/embassy.js
 	embassy-sdk pack
 
 verify: bitcoind.s9pk
