@@ -1,16 +1,15 @@
 import {
-  Config,
-  Effects,
-  ExpectedExports,
   matches,
-  SetResult,
-  YAML,
-} from "../deps.ts";
-const { number } = matches;
+  compat,
+  types,
+  YAML
+} from "../dependencies.ts";
+const { number, shape, boolean } = matches;
 
-export const setConfig: ExpectedExports.setConfig = async (
-  effects: Effects,
-  newConfig: Config,
+export const setConfig: types.ExpectedExports.setConfig = async (
+  effects: types.Effects,
+  // deno-lint-ignore no-explicit-any
+  newConfig: any,
 ) => {
   if (!(newConfig?.rpc?.enable || !(newConfig.advanced?.mode === "manual"))) {
     return {
@@ -93,7 +92,7 @@ export const setConfig: ExpectedExports.setConfig = async (
     volumeId: "main",
   });
 
-  const result: SetResult = {
+  const result: types.SetResult = {
     signal: "SIGTERM",
     "depends-on": {},
   };
