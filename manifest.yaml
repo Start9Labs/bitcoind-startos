@@ -11,6 +11,7 @@ release-notes: |
       * `zmqpubhashblock`
       * `zmqpubhashtx`
       * `zmqpubsequence`
+  * Switch to using new EOS APIs for faster configuration and properties
 license: mit
 wrapper-repo: https://github.com/Start9Labs/bitcoind-wrapper
 upstream-repo: https://github.com/bitcoin/bitcoin
