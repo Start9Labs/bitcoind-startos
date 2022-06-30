@@ -11,7 +11,7 @@ release-notes: |
       * `zmqpubhashblock`
       * `zmqpubhashtx`
       * `zmqpubsequence`
-    * Switch to using new EOS apis for faster configuration and properties
+    * Switch to using new EOS APIs for faster configuration and properties
 license: mit
 wrapper-repo: https://github.com/Start9Labs/bitcoind-wrapper
 upstream-repo: https://github.com/bitcoin/bitcoin
@@ -178,15 +178,13 @@ migrations:
       mounts:
         main: /root/.bitcoin
       inject: false
-    ">22.0.0 <23.0.0":
+    "=23.0.0":
       type: docker
       image: main
       system: false
-      entrypoint: /usr/local/bin/migrations/gt_22_0_0_lt_23_0_0.sh
-      args: ["from"]
+      entrypoint: "/bin/echo"
+      args: ['{"configured": true}']
       io-format: json
-      mounts:
-        main: /root/.bitcoin
       inject: false
   to:
     "<22.0.0":
@@ -209,13 +207,11 @@ migrations:
       mounts:
         main: /root/.bitcoin
       inject: false
-    ">22.0.0 <23.0.0":
+    "=23.0.0":
       type: docker
       image: main
       system: false
-      entrypoint: /usr/local/bin/migrations/gt_22_0_0_lt_23_0_0.sh
-      args: ["to"]
+      entrypoint: "/bin/echo"
+      args: ['{"configured": true}']
       io-format: json
-      mounts:
-        main: /root/.bitcoin
       inject: false
