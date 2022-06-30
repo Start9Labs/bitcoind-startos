@@ -34,7 +34,6 @@ main:
   mounts:
     main: /root/.bitcoin
     compat: /mnt/assets
-  io-format: yaml
   sigterm-timeout: 5m
 health-checks:
   rpc:
