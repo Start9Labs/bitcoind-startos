@@ -4565,6 +4565,23 @@ const getConfig1 = mod2.getConfig({
         }
     }
 });
+const action = {
+    async "delete-tx-index" (effect, _input) {
+        await effect.removeDir({
+            path: "indexes/txindex",
+            volumeId: "main"
+        });
+        return {
+            result: {
+                copyable: false,
+                message: "Deleted txindex",
+                version: "0",
+                qr: false
+            }
+        };
+    }
+};
 export { setConfig1 as setConfig };
 export { properties1 as properties };
 export { getConfig1 as getConfig };
+export { action as action };

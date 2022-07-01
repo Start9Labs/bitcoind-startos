@@ -3,7 +3,7 @@ import { types as T } from '../dependencies.ts'
 export const action = {
 
     async "delete-tx-index"(effect: T.Effects, _input?: T.Config): Promise<T.ResultType<T.ActionResult>> {
-        await effect.removeFile({
+        await effect.removeDir({
             path: "indexes/txindex",
             volumeId: "main",
         });
