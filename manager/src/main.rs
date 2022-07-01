@@ -481,9 +481,6 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
     } else {
         1
     };
-    if child_res.core_dumped() {
-        eprintln!("CORE DUMPED");
-    }
 
     std::process::exit(code)
 }
