@@ -1,15 +1,13 @@
-use std::sync::Arc;
+use std::convert::TryFrom;
+use std::env::var;
+use std::error::Error;
+use std::os::unix::prelude::ExitStatusExt;
 use std::{borrow::Cow, sync::Mutex};
-use std::{env::var, sync::atomic::AtomicBool};
-use std::{error::Error, sync::atomic::Ordering};
-use std::{
-    fs,
-    io::{Read, Write},
-    path::Path,
-};
+use std::{fs, io::Write, path::Path};
 
 use heck::TitleCase;
 use linear_map::LinearMap;
+use nix::sys::signal::Signal;
 use serde_yaml::{Mapping, Value};
 use tmpl::TemplatingReader;
 
@@ -469,7 +467,23 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
             .map(|e| eprintln!("ERROR IN SIDECAR: {}", e));
         std::thread::sleep(sidecar_poll_interval);
     });
-    let code = child.wait()?.code().unwrap_or(0);
+    let child_res = child.wait()?;
+    let code = if let Some(code) = child_res.code() {
+        code
+    } else if let Some(signal) = child_res.signal() {
+        eprintln!(
+            "PROCESS TERMINATED BY {}",
+            Signal::try_from(signal)
+                .map(|s| s.to_string())
+                .unwrap_or_else(|_| "UNKNOWN SIGNAL".to_owned())
+        );
+        128 + signal
+    } else {
+        1
+    };
+    if child_res.core_dumped() {
+        eprintln!("CORE DUMPED");
+    }
 
     std::process::exit(code)
 }
