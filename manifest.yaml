@@ -157,7 +157,7 @@ actions:
       io-format: json
   delete-txindex:
     name: "Delete Transaction Index"
-    description: "Deletes the Transaction Index (txindex) in case it gets corrupted. Can only be executed once Bitcoin Core is stopped."
+    description: "Deletes the Transaction Index (txindex) in case it gets corrupted."
     warning: The Transaction Index will be rebuilt once Bitcoin Core is started again, unless you deactivate it in the config settings. Please don't do this unless instructed to by Start9 support staff.
     allowed-statuses:
       - stopped
