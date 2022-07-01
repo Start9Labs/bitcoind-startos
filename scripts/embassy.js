@@ -4156,7 +4156,7 @@ const mod2 = {
 };
 const { number: number1 , shape: shape1 , boolean: __boolean1  } = mod;
 const setConfig1 = async (effects, newConfig)=>{
-    if (!(newConfig?.rpc?.enable || !(newConfig.advanced?.mode === "manual"))) {
+    if (!(newConfig?.rpc?.enable || !(newConfig.advanced?.pruning?.mode === "manual"))) {
         return {
             error: "RPC must be enabled for manual."
         };
@@ -4171,10 +4171,14 @@ const setConfig1 = async (effects, newConfig)=>{
             error: "'Compute Compact Block Filters' must be enabled if 'Serve Compact Block Filters to Peers' is enabled."
         };
     }
+    await effects.createDir({
+        path: "start9",
+        volumeId: "main"
+    });
     const oldConfig = await effects.readFile({
         path: "start9/config.yaml",
         volumeId: "main"
-    }).catch(()=>""
+    }).catch(()=>null
     );
     if (oldConfig) {
         await effects.writeFile({
@@ -4206,17 +4210,8 @@ const setConfig1 = async (effects, newConfig)=>{
             });
         }
     } else {
-        effects.debug("Reindex required");
-        await effects.writeFile({
-            path: "start9/requires.reindex",
-            toWrite: "",
-            volumeId: "main"
-        });
+        effects.debug("No reindex required");
     }
-    await effects.createDir({
-        path: "start9",
-        volumeId: "main"
-    });
     await effects.writeFile({
         path: "start9/config.yaml",
         toWrite: mod1.stringify(newConfig),

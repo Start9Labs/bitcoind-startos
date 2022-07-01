@@ -155,6 +155,15 @@ actions:
       mounts:
         main: /root/.bitcoin
       io-format: json
+  
+  delete-tx-index:
+    name: "Delete Transaction Index"
+    description: "Don't do this unless instructed to by support"
+    warning: This is dangerous
+    allowed-statuses:
+      - stopped
+    implementation:
+      type: script
 migrations:
   from:
     "<22.0.0":
