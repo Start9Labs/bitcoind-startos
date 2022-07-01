@@ -155,11 +155,10 @@ actions:
       mounts:
         main: /root/.bitcoin
       io-format: json
-  
-  delete-tx-index:
+  delete-txindex:
     name: "Delete Transaction Index"
-    description: "Don't do this unless instructed to by support"
-    warning: This is dangerous
+    description: "Deletes the Transaction Index (txindex) in case it gets corrupted. Can only be executed once Bitcoin Core is stopped."
+    warning: The Transaction Index will be rebuilt once Bitcoin Core is started again, unless you deactivate it in the config settings. Please don't do this unless instructed to by Start9 support staff.
     allowed-statuses:
       - stopped
     implementation:
