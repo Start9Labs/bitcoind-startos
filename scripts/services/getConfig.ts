@@ -102,7 +102,7 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
           "threads": {
             "name": "Threads",
             "description":
-              "Set the number of threads for handling RPC calls. Only needed if you plan to abuse your node.",
+              "Set the number of threads for handling RPC calls.",
             "type": "number",
             "nullable": false,
             "default": 16,
