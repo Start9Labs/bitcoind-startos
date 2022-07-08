@@ -185,6 +185,14 @@ migrations:
       mounts:
         main: /root/.bitcoin
       inject: false
+    "=23.0.0":
+      type: docker
+      image: main
+      system: false
+      entrypoint: "/bin/echo"
+      args: ['{"configured": true}']
+      io-format: json
+      inject: false
   to:
     "<22.0.0":
       type: docker
@@ -205,4 +213,12 @@ migrations:
       io-format: json
       mounts:
         main: /root/.bitcoin
+      inject: false
+    "=23.0.0":
+      type: docker
+      image: main
+      system: false
+      entrypoint: "/bin/echo"
+      args: ['{"configured": true}']
+      io-format: json
       inject: false
