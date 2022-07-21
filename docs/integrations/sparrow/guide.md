@@ -26,9 +26,11 @@ You will need to have Tor running natively on your device in order to use Sparro
 
     ![Sparrow Server Setup](./assets/sparrow-server-setup4.png "Add RPC User & Password")
 
-7. Select "Use Proxy," and enter the default values of `127.0.0.1` and `9050` for the URL and Port, respectively.
+Note: At least on Linux and MacOS, you will need to NOT be running a native Tor on your device for Sparrow to connect to a .onion address.  Sparrow has its own built-in Tor which will conflict with a system Tor.  Please temporarily shut down Tor if it is running:
 
-    ![Sparrow Server Setup](./assets/sparrow-server-setup5.png "Use Tor Proxy")
+    Linux: sudo systemctl stop tor
+
+    MacOS: sudo brew services stop tor
 
 8. Finally, click "Test Connection" to verify that you are able to reach your Bitcoin node.  If your node is not yet synced, Sparrow will let you know, as shown in our example
 
