@@ -1,5 +1,7 @@
 # Bisq Setup Guide
 
+Note:  You must have "Bloom Filters" set to "Enabled" in your Bitcoin Core service on Embassy.
+
 1. Open Bisq and select "Settings" from the menu at the top
 
     ![Bisq Settings](./assets/bisq0.png "Click Settings from top menu")
