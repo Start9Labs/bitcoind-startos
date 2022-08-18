@@ -141,7 +141,7 @@ backup:
 actions:
   reindex:
     name: "Reindex Blockchain"
-    description: "Rebuilds the block and chainstate databases starting from genesis. If blocks already exist on disk, these are used rather than being redownloaded. This usually means downloading the entire blockchain over again, so please be prepared for this inconvenience."
+    description: "Rebuilds the block and chainstate databases starting from genesis. If blocks already exist on disk, these are used rather than being redownloaded. For pruned nodes, this means downloading the entire blockchain over again."
     warning: Blocks not stored on disk will be redownloaded in order to rebuild the database. If your node is pruned (embasssy nodes are pruned by default), this action is equivalent to syncing the node from scratch, so this process could take a couple of weeks.
     allowed-statuses:
       - running
