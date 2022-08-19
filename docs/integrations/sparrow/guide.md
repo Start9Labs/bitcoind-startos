@@ -48,7 +48,9 @@ The steps are the same as above, with 2 changes:
 
 ## Using an Electrum Server
 
-Coming soon.
+Electrs on Embassy:
+
+https://github.com/Start9Labs/electrs-wrapper/blob/master/docs/integrations/sparrow/guide.md
 
 ## Resources
 
