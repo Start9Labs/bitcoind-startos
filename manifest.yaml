@@ -163,6 +163,13 @@ actions:
       - stopped
     implementation:
       type: script
+  delete-peers:
+    name: "Delete Peer List"
+    description: "Deletes the Peer List (peers.dat) in case it gets corrupted."
+    allowed-statuses:
+      - stopped
+    implementation:
+      type: script
 migrations:
   from:
     "<22.0.0":
