@@ -97,9 +97,7 @@ F9A8737BF4FF5C89C903DF31DD78544CF91B1514 \
   done
 
 ARG BITCOIN_VERSION
-ARG N_PROC
 RUN test -n "$BITCOIN_VERSION"
-RUN test -n "$N_PROC"
 ENV BITCOIN_PREFIX=/opt/bitcoin-${BITCOIN_VERSION}
 
 RUN wget https://bitcoincore.org/bin/bitcoin-core-${BITCOIN_VERSION}/SHA256SUMS
@@ -128,7 +126,7 @@ RUN ./configure LDFLAGS=-L`ls -d /opt/db*`/lib/ CPPFLAGS=-I`ls -d /opt/db*`/incl
   --with-utils \
   --with-libs \
   --with-daemon
-RUN make -j${N_PROC}
+RUN make -j
 RUN make install
 RUN strip ${BITCOIN_PREFIX}/bin/bitcoin-cli
 RUN strip ${BITCOIN_PREFIX}/bin/bitcoin-tx
