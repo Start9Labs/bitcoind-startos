@@ -3,6 +3,7 @@ title: "Bitcoin Core"
 version: 23.0.1
 release-notes: |
     * Add build for x86
+    * Use new eOS 0.3.3 APIs
 license: mit
 wrapper-repo: https://github.com/Start9Labs/bitcoind-wrapper
 upstream-repo: https://github.com/bitcoin/bitcoin
@@ -16,38 +17,24 @@ assets:
   license: LICENSE
   icon: icon.png
   instructions: instructions.md
+containers:
+  main:
+    image: main
+    mounts:
+      main: /root/.bitcoin
+      compat: /mnt/assets
+    sigterm-timeout: 5m
 main:
-  type: docker
-  image: main
-  entrypoint: "docker_entrypoint.sh"
-  args: []
-  mounts:
-    main: /root/.bitcoin
-    compat: /mnt/assets
-  sigterm-timeout: 5m
+  type: script
 health-checks:
   rpc:
     name: RPC
     success-message: The RPC server is ready for connections
-    type: docker
-    image: main
-    system: false
-    entrypoint: check-rpc.sh
-    args: []
-    mounts: {}
-    io-format: yaml
-    inject: true
+    type: script
   synced:
     name: Synced
     success-message: Bitcoin Core is synced with the network
-    type: docker
-    image: main
-    system: false
-    entrypoint: check-synced.sh
-    args: []
-    mounts: {}
-    io-format: yaml
-    inject: true
+    type: script
 config:
   get:
     type: script
