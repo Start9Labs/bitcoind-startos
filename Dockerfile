@@ -4,7 +4,7 @@
 FROM lncm/berkeleydb as berkeleydb
 
 # Build stage for Bitcoin Core
-FROM arm64v8/alpine:3.12 as bitcoin-core
+FROM alpine:3.12 as bitcoin-core
 
 COPY --from=berkeleydb /opt /opt
 
@@ -126,7 +126,7 @@ RUN ./configure LDFLAGS=-L`ls -d /opt/db*`/lib/ CPPFLAGS=-I`ls -d /opt/db*`/incl
   --with-utils \
   --with-libs \
   --with-daemon
-RUN make -j
+RUN make -j$(($(nproc) - 1))
 RUN make install
 RUN strip ${BITCOIN_PREFIX}/bin/bitcoin-cli
 RUN strip ${BITCOIN_PREFIX}/bin/bitcoin-tx
@@ -135,7 +135,7 @@ RUN strip ${BITCOIN_PREFIX}/lib/libbitcoinconsensus.a
 RUN strip ${BITCOIN_PREFIX}/lib/libbitcoinconsensus.so.0.0.0
 
 # Build stage for compiled artifacts
-FROM arm64v8/alpine:3.13
+FROM alpine:3.13
 
 LABEL maintainer.0="João Fonseca (@joaopaulofonseca)" \
   maintainer.1="Pedro Branco (@pedrobranco)" \
@@ -154,8 +154,10 @@ RUN apk --no-cache add \
   sqlite-libs \
   su-exec \
   tini
-RUN wget https://github.com/mikefarah/yq/releases/download/v4.23.1/yq_linux_arm.tar.gz -O - |\
-    tar xz && mv yq_linux_arm /usr/bin/yq
+
+ARG PLATFORM
+ARG ARCH
+RUN wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_${PLATFORM} && chmod +x /usr/local/bin/yq
 
 ENV BITCOIN_DATA=/root/.bitcoin
 ARG BITCOIN_VERSION
@@ -164,7 +166,7 @@ ENV BITCOIN_PREFIX=/opt/bitcoin-${BITCOIN_VERSION}
 ENV PATH=${BITCOIN_PREFIX}/bin:$PATH
 
 COPY --from=bitcoin-core /opt /opt
-ADD ./manager/target/aarch64-unknown-linux-musl/release/bitcoind-manager /usr/local/bin/bitcoind-manager
+ADD ./manager/target/${ARCH}-unknown-linux-musl/release/bitcoind-manager /usr/local/bin/bitcoind-manager
 RUN chmod a+x /usr/local/bin/bitcoind-manager
 ADD ./docker_entrypoint.sh /usr/local/bin/docker_entrypoint.sh
 RUN chmod a+x /usr/local/bin/docker_entrypoint.sh
