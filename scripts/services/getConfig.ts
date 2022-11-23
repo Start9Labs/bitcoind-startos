@@ -135,7 +135,7 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
     "type": "boolean",
     "name": "Transaction Index",
     "description": "Enable the Transaction Index (txindex)",
-    "default": false,
+    "default": true,
   },
   "wallet": {
     "type": "object",
@@ -338,7 +338,7 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
             "name": "Compute Compact Block Filters (BIP158)",
             "description":
               "Generate Compact Block Filters during initial sync (IBD) to enable 'getblockfilter' RPC. This is useful if dependent services need block filters to efficiently scan for addresses/transactions etc.",
-            "default": false,
+            "default": true,
           },
           "peerblockfilters": {
             "type": "boolean",
