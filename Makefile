@@ -15,6 +15,14 @@ clean:
 verify: $(PKG_ID).s9pk
 	embassy-sdk verify s9pk $(PKG_ID).s9pk
 
+# for rebuilding just the arm image. will include docker-images/x86_64.tar into the s9pk if it exists
+arm: docker-images/aarch64.tar scripts/embassy.js
+	embassy-sdk pack
+
+# for rebuilding just the x86 image. will include docker-images/aarch64.tar into the s9pk if it exists
+x86: docker-images/x86_64.tar scripts/embassy.js
+	embassy-sdk pack
+
 $(PKG_ID).s9pk: manifest.yaml assets/compat/* docker-images/aarch64.tar docker-images/x86_64.tar instructions.md scripts/embassy.js
 	embassy-sdk pack
 
