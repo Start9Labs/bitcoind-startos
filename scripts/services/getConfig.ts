@@ -116,7 +116,7 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
               "Set the depth of the work queue to service RPC calls. Determines how long the backlog of RPC requests can get before it just rejects new ones.",
             "type": "number",
             "nullable": false,
-            "default": 64,
+            "default": 128,
             "range": "[8,256]",
             "integral": true,
             "units": "requests",
@@ -178,6 +178,13 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
         "name": "Mempool",
         "description": "Mempool Settings",
         "spec": {
+          "mempoolfullrbf": {
+            "name": "Enable Full RBF",
+            "description":
+              "Policy for your node to use for relaying and mining unconfirmed transactions.  For details, see https://github.com/bitcoin/bitcoin/blob/master/doc/release-notes/release-notes-24.0.md",
+            "type": "boolean",
+            "default": false,
+          },
           "persistmempool": {
             "type": "boolean",
             "name": "Persist Mempool",

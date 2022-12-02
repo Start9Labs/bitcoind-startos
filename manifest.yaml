@@ -1,8 +1,11 @@
 id: bitcoind
 title: "Bitcoin Core"
-version: 23.0.1
+version: 24.0.0
 release-notes: |
     * Add build for x86
+    * Use new eOS 0.3.3 APIs
+    * Update to latest upstream
+    * Add Full RBF Config option
 license: mit
 wrapper-repo: https://github.com/Start9Labs/bitcoind-wrapper
 upstream-repo: https://github.com/bitcoin/bitcoin
@@ -182,7 +185,17 @@ migrations:
       mounts:
         main: /root/.bitcoin
       inject: false
-    "=23.0.0":
+    "=23.0.0 <24.0.0":
+      type: docker
+      image: main
+      system: false
+      entrypoint: /usr/local/bin/migrations/eq_23_0_0_lt_24_0_0.sh
+      args: ["from"]
+      io-format: json
+      mounts:
+        main: /root/.bitcoin
+      inject: false
+    "=24.0.0":
       type: docker
       image: main
       system: false
@@ -211,7 +224,17 @@ migrations:
       mounts:
         main: /root/.bitcoin
       inject: false
-    "=23.0.0":
+    "=23.0.0 <24.0.0":
+      type: docker
+      image: main
+      system: false
+      entrypoint: /usr/local/bin/migrations/eq_23_0_0_lt_24_0_0.sh
+      args: ["to"]
+      io-format: json
+      mounts:
+        main: /root/.bitcoin
+      inject: false
+    "=24.0.0":
       type: docker
       image: main
       system: false

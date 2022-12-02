@@ -87,6 +87,7 @@ F9A8737BF4FF5C89C903DF31DD78544CF91B1514 \
 # C388F6961FB972A95678E327F62711DBDCA8AE56 \
 4DAF18FE948E7A965B30F9457E296D555E7F63A7 \
 28E72909F1717FE9607754F8A7BEB2621678D37D \
+F19F5FF2B0589EC341220045BA03F4DBE0C63FB4 \
   ; do \
   gpg --batch --keyserver hkps://keyserver.ubuntu.com --recv-keys "$key" || \
   gpg --batch --keyserver hkps://pgp.mit.edu --recv-keys "$key" || \
@@ -103,16 +104,16 @@ ENV BITCOIN_PREFIX=/opt/bitcoin-${BITCOIN_VERSION}
 RUN wget https://bitcoincore.org/bin/bitcoin-core-${BITCOIN_VERSION}/SHA256SUMS
 RUN wget https://bitcoincore.org/bin/bitcoin-core-${BITCOIN_VERSION}/SHA256SUMS.asc
 RUN wget https://bitcoincore.org/bin/bitcoin-core-${BITCOIN_VERSION}/bitcoin-${BITCOIN_VERSION}.tar.gz
-RUN patch -u SHA256SUMS.asc -i SHA256SUMS.asc.patch
+# RUN patch -u SHA256SUMS.asc -i SHA256SUMS.asc.patch
 RUN gpg --verify SHA256SUMS.asc
 RUN grep " bitcoin-${BITCOIN_VERSION}.tar.gz\$" SHA256SUMS | sha256sum -c -
 RUN tar -xzf *.tar.gz
 
 WORKDIR /bitcoin-${BITCOIN_VERSION}
 
-RUN sed -i '/AC_PREREQ/a\AR_FLAGS=cr' src/univalue/configure.ac
+# RUN sed -i '/AC_PREREQ/a\AR_FLAGS=cr' src/univalue/configure.ac
 RUN sed -i '/AX_PROG_CC_FOR_BUILD/a\AR_FLAGS=cr' src/secp256k1/configure.ac
-RUN sed -i s:sys/fcntl.h:fcntl.h: src/compat.h
+# RUN sed -i s:sys/fcntl.h:fcntl.h: src/compat.h
 RUN ./autogen.sh
 RUN ./configure LDFLAGS=-L`ls -d /opt/db*`/lib/ CPPFLAGS=-I`ls -d /opt/db*`/include/ \
   # If building on Mac make sure to increase Docker VM memory, or uncomment this line. See https://github.com/bitcoin/bitcoin/issues/6658 for more info.
