@@ -181,7 +181,7 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
           "mempoolfullrbf": {
             "name": "Enable Full RBF",
             "description":
-              "Policy for your node to use for relaying and mining unconfirmed transactions.  For details, see https://github.com/bitcoin/bitcoin/blob/master/doc/release-notes/release-notes-24.0.md",
+              "Policy for your node to use for relaying and mining unconfirmed transactions.  For details, see https://github.com/bitcoin/bitcoin/blob/master/doc/release-notes/release-notes-24.0.md#notice-of-new-option-for-transaction-replacement-policies",
             "type": "boolean",
             "default": false,
           },
