@@ -3,7 +3,6 @@ title: "Bitcoin Core"
 version: 24.0.0
 release-notes: |
     * Add build for x86
-    * Use new eOS 0.3.3 APIs
     * Update to latest upstream
     * Add Full RBF Config option
 license: mit
