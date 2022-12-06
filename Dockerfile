@@ -8,8 +8,6 @@ FROM alpine:3.12 as bitcoin-core
 
 COPY --from=berkeleydb /opt /opt
 
-COPY ./SHA256SUMS.asc.patch SHA256SUMS.asc.patch
-
 RUN sed -i 's/http\:\/\/dl-cdn.alpinelinux.org/https\:\/\/alpine.global.ssl.fastly.net/g' /etc/apk/repositories
 RUN apk --no-cache add autoconf
 RUN apk --no-cache add automake
@@ -22,7 +20,6 @@ RUN apk --no-cache add libevent-dev
 RUN apk --no-cache add libressl
 RUN apk --no-cache add libtool
 RUN apk --no-cache add linux-headers
-# RUN apk --no-cache add sqlite-libs
 RUN apk --no-cache add sqlite-dev
 RUN apk --no-cache add zeromq-dev
 RUN set -ex \
@@ -84,7 +81,6 @@ AEC1884398647C47413C1C3FB1179EB7347DC10D \
 71A3B16735405025D447E8F274810B012346C9A6 \
 287AE4CA1187C68C08B49CB2D11BD4F33F1DB499 \
 F9A8737BF4FF5C89C903DF31DD78544CF91B1514 \
-# C388F6961FB972A95678E327F62711DBDCA8AE56 \
 4DAF18FE948E7A965B30F9457E296D555E7F63A7 \
 28E72909F1717FE9607754F8A7BEB2621678D37D \
 F19F5FF2B0589EC341220045BA03F4DBE0C63FB4 \
