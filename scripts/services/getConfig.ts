@@ -274,7 +274,7 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
           "How much RAM to allocate for caching the TXO set. Higher values improve syncing performance, but increase your chance of using up all your system's memory or corrupting your database in the event of an ungraceful shutdown. Set this high but comfortably below your system's total RAM during IBD, then turn down to 450 (or leave blank) once the sync completes.",
         "warning":
           "WARNING: Increasing this value results in a higher chance of ungraceful shutdowns, which can leave your node unusable if it happens during the initial block download. Use this setting with caution. Be sure to set this back to the default (450 or leave blank) once your node is synced.",
-        "range": "(0,1024]",
+        "range": "(0,*)",
         "integral": true,
         "units": "MiB",
       },
