@@ -8,8 +8,6 @@ FROM alpine:3.12 as bitcoin-core
 
 COPY --from=berkeleydb /opt /opt
 
-COPY ./SHA256SUMS.asc.patch SHA256SUMS.asc.patch
-
 RUN sed -i 's/http\:\/\/dl-cdn.alpinelinux.org/https\:\/\/alpine.global.ssl.fastly.net/g' /etc/apk/repositories
 RUN apk --no-cache add autoconf
 RUN apk --no-cache add automake
@@ -22,7 +20,6 @@ RUN apk --no-cache add libevent-dev
 RUN apk --no-cache add libressl
 RUN apk --no-cache add libtool
 RUN apk --no-cache add linux-headers
-# RUN apk --no-cache add sqlite-libs
 RUN apk --no-cache add sqlite-dev
 RUN apk --no-cache add zeromq-dev
 RUN set -ex \
@@ -84,9 +81,9 @@ AEC1884398647C47413C1C3FB1179EB7347DC10D \
 71A3B16735405025D447E8F274810B012346C9A6 \
 287AE4CA1187C68C08B49CB2D11BD4F33F1DB499 \
 F9A8737BF4FF5C89C903DF31DD78544CF91B1514 \
-# C388F6961FB972A95678E327F62711DBDCA8AE56 \
 4DAF18FE948E7A965B30F9457E296D555E7F63A7 \
 28E72909F1717FE9607754F8A7BEB2621678D37D \
+F19F5FF2B0589EC341220045BA03F4DBE0C63FB4 \
   ; do \
   gpg --batch --keyserver hkps://keyserver.ubuntu.com --recv-keys "$key" || \
   gpg --batch --keyserver hkps://pgp.mit.edu --recv-keys "$key" || \
@@ -103,16 +100,13 @@ ENV BITCOIN_PREFIX=/opt/bitcoin-${BITCOIN_VERSION}
 RUN wget https://bitcoincore.org/bin/bitcoin-core-${BITCOIN_VERSION}/SHA256SUMS
 RUN wget https://bitcoincore.org/bin/bitcoin-core-${BITCOIN_VERSION}/SHA256SUMS.asc
 RUN wget https://bitcoincore.org/bin/bitcoin-core-${BITCOIN_VERSION}/bitcoin-${BITCOIN_VERSION}.tar.gz
-RUN patch -u SHA256SUMS.asc -i SHA256SUMS.asc.patch
 RUN gpg --verify SHA256SUMS.asc
 RUN grep " bitcoin-${BITCOIN_VERSION}.tar.gz\$" SHA256SUMS | sha256sum -c -
 RUN tar -xzf *.tar.gz
 
 WORKDIR /bitcoin-${BITCOIN_VERSION}
 
-RUN sed -i '/AC_PREREQ/a\AR_FLAGS=cr' src/univalue/configure.ac
 RUN sed -i '/AX_PROG_CC_FOR_BUILD/a\AR_FLAGS=cr' src/secp256k1/configure.ac
-RUN sed -i s:sys/fcntl.h:fcntl.h: src/compat.h
 RUN ./autogen.sh
 RUN ./configure LDFLAGS=-L`ls -d /opt/db*`/lib/ CPPFLAGS=-I`ls -d /opt/db*`/include/ \
   # If building on Mac make sure to increase Docker VM memory, or uncomment this line. See https://github.com/bitcoin/bitcoin/issues/6658 for more info.
@@ -128,9 +122,7 @@ RUN ./configure LDFLAGS=-L`ls -d /opt/db*`/lib/ CPPFLAGS=-I`ls -d /opt/db*`/incl
   --with-daemon
 RUN make -j$(($(nproc) - 1))
 RUN make install
-RUN strip ${BITCOIN_PREFIX}/bin/bitcoin-cli
-RUN strip ${BITCOIN_PREFIX}/bin/bitcoin-tx
-RUN strip ${BITCOIN_PREFIX}/bin/bitcoind
+RUN strip ${BITCOIN_PREFIX}/bin/*
 RUN strip ${BITCOIN_PREFIX}/lib/libbitcoinconsensus.a
 RUN strip ${BITCOIN_PREFIX}/lib/libbitcoinconsensus.so.0.0.0
 

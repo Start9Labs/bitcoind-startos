@@ -18,4 +18,3 @@ else
     echo "FATAL: Invalid argument: {from, to}. Migration failed." >&2
     exit 1
 fi
-
