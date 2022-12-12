@@ -1,9 +1,9 @@
 id: bitcoind
 title: "Bitcoin Core"
-version: 24.0.0
+version: 24.0.1
 release-notes: |
     * Add build for x86
-    * Update to latest upstream
+    * Update to latest upstream (v24.0.1)
     * Add Full RBF Config option
     * Add action to delete peers.dat in case of corruption
     * Remove dbcache limit (Please use large dbcache values with caution! We recommend not touching this setting unless you know what you're doing.)
