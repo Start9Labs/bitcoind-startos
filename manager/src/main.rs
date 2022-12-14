@@ -28,6 +28,13 @@ pub struct ChainInfo {
 }
 
 #[derive(Clone, Debug, serde::Deserialize)]
+pub struct NetworkInfo {
+    connections: usize,
+    connections_in: usize,
+    connections_out: usize,
+}
+
+#[derive(Clone, Debug, serde::Deserialize)]
 #[serde(tag = "type")]
 pub enum SoftFork {
     #[serde(rename = "buried")]
@@ -384,6 +391,31 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
     } else {
         eprintln!(
             "Error updating blockchain info: {}",
+            std::str::from_utf8(&info_res.stderr).unwrap_or("UNKNOWN ERROR")
+        );
+    }
+    let info_res = std::process::Command::new("bitcoin-cli")
+        .arg("-conf=/root/.bitcoin/bitcoin.conf")
+        .arg("getnetworkinfo")
+        .output()?;
+    if info_res.status.success() {
+        let info: NetworkInfo = serde_json::from_slice(&info_res.stdout)?;
+        stats.insert(
+            Cow::from("Connections"),
+            Stat {
+                value_type: "string",
+                value: format!("{} ({} in / {} out)", info.connections, info.connections_in, info.connections_out),
+                description: Some(Cow::from("The number of peers connected (inbound and outbound)")),
+                copyable: false,
+                qr: false,
+                masked: false,
+            },
+        );
+    } else if info_res.status.code() == Some(28) {
+        return Ok(());
+    } else {
+        eprintln!(
+            "Error updating network info: {}",
             std::str::from_utf8(&info_res.stderr).unwrap_or("UNKNOWN ERROR")
         );
     }
