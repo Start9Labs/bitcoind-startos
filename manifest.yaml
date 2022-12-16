@@ -186,7 +186,7 @@ migrations:
       mounts:
         main: /root/.bitcoin
       inject: false
-    "=23.0.0 <24.0.0":
+    ">=23.0.0 <24.0.0":
       type: docker
       image: main
       system: false
@@ -225,7 +225,7 @@ migrations:
       mounts:
         main: /root/.bitcoin
       inject: false
-    "=23.0.0 <24.0.0":
+    ">=23.0.0 <24.0.0":
       type: docker
       image: main
       system: false
@@ -235,7 +235,7 @@ migrations:
       mounts:
         main: /root/.bitcoin
       inject: false
-    "=24.0.0 <25.0.0":
+    ">=24.0.0 <25.0.0":
       type: docker
       image: main
       system: false
