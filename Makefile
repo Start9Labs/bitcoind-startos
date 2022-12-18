@@ -1,7 +1,7 @@
 PKG_VERSION := $(shell yq e ".version" manifest.yaml)
 PKG_ID := $(shell yq e ".id" manifest.yaml)
 MANAGER_SRC := $(shell find ./manager -name '*.rs') manager/Cargo.toml manager/Cargo.lock
-VERSION_CORE := "24.0"
+VERSION_CORE := "24.0.1"
 
 .DELETE_ON_ERROR:
 
