@@ -14,24 +14,27 @@ If you use tor, you will need to have Tor running natively on your device in ord
 
     ![Sparrow Server Setup](./assets/sparrow-server-setup2.png "Setup Your Bitcoin Server")
 
-5. From your Embassy's Bitcoin Core service page, click "Interfaces," and copy the `Tor Address` under **RPC Interface**.  Paste this into Sparrow's "URL" field, removing the `http://` prefix, as Sparrow will not accept it.  In the "Port" field, type `443`:
+4. From your Embassy's Bitcoin Core service page, click "Interfaces," and copy the `Tor Address` under **RPC Interface**.  Paste this into Sparrow's "URL" field, removing the `http://` prefix, as Sparrow will not accept it.  In the "Port" field, type `443`:
 
     ![Sparrow Server Setup](./assets/sparrow-server-setup3.png "Enter URL & Port")
 
     **Note**: Use port `8332` if you are using your Tor Address.
 
-6. Select "User/Pass" as the Authentication method.  Return to the Bitcoin Core service page again, and click "Properties" -> "RPC Username".  Copy the username and insert it into the **User** field in Sparrow.  Do the same for the "RPC Password":
+5. Return to your Embassy's Bitcoin Core service page again, and click "Properties" -> "RPC Username".  Copy the Username using the button to the right:
 
     ![Bitcoin RPC Credentials](./assets/sparrow-server-setup4-rpc-user-pass.png "Copy Bitcoin RPC Username and Password")
+
+    In Sparrow, select "User/Pass" as the Authentication method and paste in the previously copied Username into the **User** field in Sparrow.  Do the same for the "RPC Password":
+
     ![Sparrow Server Setup](./assets/sparrow-server-setup4.png "Add RPC User & Password to Sparrow")
 
-7. OPTIONAL - Only applies if you are using the .onion: Select "Use Proxy," and enter the default values of `localhost` and `9050` for the URL and Port, respectively:
+6. OPTIONAL - Only applies if you are using the .onion: Select "Use Proxy," and enter the default values of `localhost` and `9050` for the URL and Port, respectively:
 
     ![Sparrow Server Setup](./assets/sparrow-server-setup5.png "Use Tor Proxy")
 
     **Note**: If you are using the .local, leave "Use Proxy" **disabled**.
 
-8. Finally, click "Test Connection" to verify that you are able to reach your Bitcoin node.  If your node is not yet synced, Sparrow will let you know it's not fully ready to be connected to.  Otherwise, you should just see a Satoshi message:
+7. Finally, click "Test Connection" to verify that you are able to reach your Bitcoin node.  If your node is not yet synced, Sparrow will let you know it's not fully ready to be connected to.  Otherwise, you should just see a Satoshi message:
 
     ![Sparrow Server Setup](./assets/sparrow-server-setup6.png "Test Connection")
 
