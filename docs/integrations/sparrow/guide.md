@@ -4,7 +4,7 @@ You have two options for connecting Sparrow directly to Bitcoin's RPC: LAN (.loc
 
 If you use tor, you will need to have Tor running natively on your device in order to use Sparrow remotely.  You can find the relevant setup documentation in the Resources section at the bottom of this page.
 
-# Configuring Sparrow to use the Bitcoin Core RPC
+## Configuring Sparrow to use the Bitcoin Core RPC
 
 1. First, install the Bitcoin Core service to your Embassy from the Start9 Marketplace.
 
@@ -39,7 +39,6 @@ If you use tor, you will need to have Tor running natively on your device in ord
     ![Sparrow Server Setup](./assets/sparrow-server-setup6.png "Test Connection")
 
 From here you can click **[Close]** complete your wallet setup and begin using Sparrow Wallet!
-
 
 ## Using an Electrum Server
 
