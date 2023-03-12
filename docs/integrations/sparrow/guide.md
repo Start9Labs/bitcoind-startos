@@ -14,11 +14,11 @@ If you use tor, you will need to have Tor running natively on your device in ord
 
     ![Sparrow Server Setup](./assets/sparrow-server-setup2.png "Setup Your Bitcoin Server")
 
-4. From your Embassy's Bitcoin Core service page, click "Interfaces," and copy the `Tor Address` under **RPC Interface**.  Paste this into Sparrow's "URL" field, removing the `http://` prefix, as Sparrow will not accept it.  In the "Port" field, type `443`:
+4. From your Embassy's Bitcoin Core service page, click "Interfaces," and copy the `LAN Address` under **RPC Interface**.  Paste this into Sparrow's "URL" field, removing the `http://` prefix, as Sparrow will not accept it.  In the "Port" field, type `443`:
 
     ![Sparrow Server Setup](./assets/sparrow-server-setup3.png "Enter URL & Port")
 
-    **Note**: Use port `8332` if you are using your Tor Address.
+    **Note**: Use port `8332` if you are using your `Tor Address`.
 
 5. Return to your Embassy's Bitcoin Core service page again, and click "Properties" -> "RPC Username".  Copy the Username using the button to the right:
 
