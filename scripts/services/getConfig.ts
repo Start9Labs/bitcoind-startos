@@ -372,6 +372,12 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
           },
         },
       },
+      "ordifilter": {
+        "type": "boolean",
+        "name": "Ordinals Spam Filter (Experimental)",
+        "description": "This is an experimental feature that uses a patched version of bitcoind made by Luke Dashjr, a Bitcoin Core developer. The Ordinals spam filter works by detecting the pattern of Ordinals transactions that are entering the mempool of the node and rejecting them.",
+        "default": false,
+      },  
     },
   },
 })
