@@ -5,7 +5,7 @@ VERSION_CORE := "24.0.1"
 
 .DELETE_ON_ERROR:
 
-all: verify
+all: submodule-update verify
 
 clean:
 	rm -f $(PKG_ID).s9pk
@@ -45,3 +45,11 @@ manager/target/x86_64-unknown-linux-musl/release/bitcoind-manager: $(MANAGER_SRC
 
 scripts/embassy.js: scripts/**/*.ts
 	deno bundle scripts/embassy.ts scripts/embassy.js
+
+submodule-update:
+	@if [ -z "$(shell git submodule status | egrep -v '^ '|awk '{print $$2}')" ]; then \
+		echo "Submodules are up to date."; \
+	else \
+		echo "\nUpdating submodules...\n"; \
+		git submodule update --init --progress; \
+	fi
