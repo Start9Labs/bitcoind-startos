@@ -1,9 +1,11 @@
 id: bitcoind
 title: "Bitcoin Core"
-version: 24.0.1.1
+version: 24.0.1
 release-notes: |
-    * Add option for Ordinals Spam Filter by Luke-Jr
-license: mit
+    * Update services base image to alpine 3.16
+    * Use ssl for base image packages download
+    * Optimized higher resolution Bitcoin icon
+license: MIT
 wrapper-repo: https://github.com/Start9Labs/bitcoind-wrapper
 upstream-repo: https://github.com/bitcoin/bitcoin
 support-site: https://github.com/bitcoin/bitcoin/issues

@@ -76,30 +76,6 @@ RUN make install
 RUN strip ${BITCOIN_PREFIX}/bin/*
 RUN strip ${BITCOIN_PREFIX}/lib/libbitcoinconsensus.a
 RUN strip ${BITCOIN_PREFIX}/lib/libbitcoinconsensus.so.0.0.0
-RUN mv ${BITCOIN_PREFIX} ${BITCOIN_PREFIX}-vanilla
-
-ENV BITCOIN_PREFIX=/opt/bitcoin-${BITCOIN_VERSION}-ordifilter
-
-WORKDIR /bitcoin-${BITCOIN_VERSION}/src/script
-RUN wget https://gist.githubusercontent.com/luke-jr/4c022839584020444915c84bdd825831/raw/555c8a1e1e0143571ad4ff394221573ee37d9a56/filter-ordinals.patch
-RUN patch interpreter.cpp < filter-ordinals.patch
-WORKDIR /bitcoin-${BITCOIN_VERSION}
-RUN ./configure LDFLAGS=-L`ls -d /opt/db*`/lib/ CPPFLAGS=-I`ls -d /opt/db*`/include/ \
-  # CXXFLAGS="--param ggc-min-expand=1 --param ggc-min-heapsize=32768" \
-  --prefix=${BITCOIN_PREFIX} \
-  --mandir=/usr/share/man \
-  --disable-tests \
-  --disable-bench \
-  --disable-ccache \
-  --with-gui=no \
-  --with-utils \
-  --with-libs \
-  --with-daemon
-RUN make -j$(($(nproc) - 1))
-RUN make install
-RUN strip ${BITCOIN_PREFIX}/bin/*
-RUN strip ${BITCOIN_PREFIX}/lib/libbitcoinconsensus.a
-RUN strip ${BITCOIN_PREFIX}/lib/libbitcoinconsensus.so.0.0.0
 
 # Build stage for compiled artifacts
 FROM alpine:3.16
