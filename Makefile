@@ -19,10 +19,12 @@ verify: $(PKG_ID).s9pk
 
 # for rebuilding just the arm image.
 arm:
+	@rm -f docker-images/x86_64.tar
 	ARCH=aarch64 $(MAKE)
 
 # for rebuilding just the x86 image.
 x86:
+	@rm -f docker-images/aarch64.tar
 	ARCH=x86_64 $(MAKE)
 
 $(PKG_ID).s9pk: manifest.yaml assets/compat/* docker-images/aarch64.tar docker-images/x86_64.tar instructions.md scripts/embassy.js
