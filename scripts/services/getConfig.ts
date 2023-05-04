@@ -137,6 +137,12 @@ export const getConfig: T.ExpectedExports.getConfig = compat.getConfig({
     "description": "Enable the Transaction Index (txindex)",
     "default": true,
   },
+  "coinstatsindex": {
+    "type": "boolean",
+    "name": "Coinstats Index",
+    "description": "Enable the Coinstats Index (coinstatsindex)",
+    "default": false,
+  },
   "wallet": {
     "type": "object",
     "name": "Wallet",

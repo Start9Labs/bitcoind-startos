@@ -16,7 +16,7 @@ Enter your QuickConnect QR code **OR** your raw RPC credentials (both located in
 
 ## Pruning
 
-Beginning in EOS v0.3.0, Bitcoin is now set to be an "archival" node by default.  This means that it will download and verify the entire blockchain, and will not "prune."  Be aware that this takes approximately 400GB as of early 2022.  If you enable the `txindex,` this will require an additional ~40GB.
+Beginning in EOS v0.3.0, Bitcoin is now set to be an "archival" node by default.  This means that it will download and verify the entire blockchain, and will not "prune."  Be aware that this takes approximately 400GB as of early 2022.  If you enable the `txindex,` this will require an additional ~40GB. Also, if you enable `coinstatsindex,` this will require an additional ~150MB.
 
 Pruning is a process by which your node discards old blocks and transactions after it verifies them. Pruned nodes and archival nodes are both "full nodes" in that they are fully validating - they validate every block and transaction. Archival nodes store the entire blockchain and are useful to people interested in doing general or historical analysis, or being a provider of blockchain data to others (eg. a blockexplorer). They are also required for the best experience with many popular wallets and other Bitcoin tools.
 
