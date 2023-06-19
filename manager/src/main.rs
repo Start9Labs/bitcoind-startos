@@ -2,9 +2,13 @@ use std::convert::TryFrom;
 use std::env::var;
 use std::error::Error;
 use std::os::unix::prelude::ExitStatusExt;
+use std::sync::Arc;
+use std::time::Duration;
 use std::{borrow::Cow, sync::Mutex};
 use std::{fs, io::Write, path::Path};
 
+use btc_rpc_proxy::{Peers, RpcClient, TorState};
+use env_logger::Env;
 use heck::TitleCase;
 use linear_map::LinearMap;
 use nix::sys::signal::Signal;
@@ -99,7 +103,14 @@ pub struct Stat {
     masked: bool,
 }
 
-fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
+#[derive(Clone, Copy)]
+enum Pruning {
+    Disabled,
+    Automatic,
+    Manual { size: f64 },
+}
+
+fn sidecar(config: &Mapping, addr: &str, pruning: Pruning) -> Result<(), Box<dyn Error>> {
     let mut stats = LinearMap::new();
     if let (Some(user), Some(pass)) = (
         config
@@ -346,17 +357,10 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
             },
         );
         if info.size_on_disk as f64
-            > (|| -> Option<f64> {
-                let advanced = config.get(&Value::String("advanced".to_owned()))?;
-                let pruning = advanced.get(&Value::String("pruning".to_owned()))?;
-                if pruning.get(&Value::String("mode".to_owned()))? == "manual" {
-                    let size = pruning.get(&Value::String("size".to_owned()))?;
-                    Some(size.as_f64()? * 1024_f64.powf(2_f64))
-                } else {
-                    None
-                }
-            })()
-            .unwrap_or(std::f64::INFINITY)
+            > match pruning {
+                Pruning::Manual { size } => size,
+                _ => std::f64::INFINITY,
+            }
         {
             std::process::Command::new("bitcoin-cli")
                 .arg("-conf=/root/.bitcoin/bitcoin.conf")
@@ -461,8 +465,45 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
     }
     let raw_child = child.id();
     *CHILD_PID.lock().unwrap() = Some(raw_child);
+    let pruning = {
+        let pruning = &config[&Value::from("advanced")][&Value::from("pruning")];
+        let mode = &pruning[&Value::from("mode")];
+        if mode == "manual" {
+            let size = pruning.get(&Value::String("size".to_owned())).unwrap();
+            let size = size.as_f64().unwrap() * 1024_f64.powf(2_f64);
+            Pruning::Manual { size }
+        } else if mode == "automatic" {
+            Pruning::Automatic
+        } else {
+            Pruning::Disabled
+        }
+    };
+    let _proxy = if matches!(pruning, Pruning::Automatic) {
+        let state = Arc::new(btc_rpc_proxy::State {
+            rpc_client: RpcClient::new("http://127.0.0.1:18332/".parse().unwrap()),
+            tor: Some(TorState {
+                proxy: format!("{}:9050", var("EMBASSY_IP")?).parse()?,
+                only: config[&Value::from("advanced")][&Value::from("peers")]
+                    [&Value::from("onlyonion")]
+                    .as_bool()
+                    .unwrap(),
+            }),
+            peer_timeout: Duration::from_secs(30),
+            peers: tokio::sync::RwLock::new(Arc::new(Peers::new())),
+            max_peer_age: Duration::from_secs(300),
+            max_peer_concurrency: Some(1),
+        });
+        Some(std::thread::spawn(move || {
+            tokio::runtime::Runtime::new()
+                .unwrap()
+                .block_on(btc_rpc_proxy::main(state, ([0, 0, 0, 0], 8332).into()))
+                .unwrap();
+        }))
+    } else {
+        None
+    };
     let _sidecar_handle = std::thread::spawn(move || loop {
-        sidecar(&config, &rpc_addr)
+        sidecar(&config, &rpc_addr, pruning)
             .err()
             .map(|e| eprintln!("ERROR IN SIDECAR: {}", e));
         std::thread::sleep(sidecar_poll_interval);
@@ -486,6 +527,7 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
+    env_logger::Builder::from_env(Env::default().default_filter_or("warn")).init();
     let reindex = Path::new("/root/.bitcoin/requires.reindex").exists();
     ctrlc::set_handler(move || {
         if let Some(raw_child) = *CHILD_PID.lock().unwrap() {

@@ -1,10 +1,10 @@
 id: bitcoind
 title: "Bitcoin Core"
-version: 24.0.1
+version: 25.0.0
 release-notes: |
-    * Update services base image to alpine 3.16
-    * Use ssl for base image packages download
-    * Optimized higher resolution Bitcoin icon
+  * Update services base image to alpine 3.16
+  * Use ssl for base image packages download
+  * Optimized higher resolution Bitcoin icon
 license: MIT
 wrapper-repo: https://github.com/Start9Labs/bitcoind-wrapper
 upstream-repo: https://github.com/bitcoin/bitcoin
@@ -194,7 +194,7 @@ migrations:
       mounts:
         main: /root/.bitcoin
       inject: false
-    "=24.0.0":
+    ">=24.0.0 <=25.0.0":
       type: docker
       image: main
       system: false
@@ -233,7 +233,7 @@ migrations:
       mounts:
         main: /root/.bitcoin
       inject: false
-    ">=24.0.0 <25.0.0":
+    ">=24.0.0 <26.0.0":
       type: docker
       image: main
       system: false

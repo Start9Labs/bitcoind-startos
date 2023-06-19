@@ -4,8 +4,14 @@
 
 ## RPC
 {{#IF rpc.enable
+{{#IF advanced.pruning.mode = "automatic"
+rpcbind=127.0.0.1:18332
+rpcallowip=127.0.0.1/32
+}}
+{{#IF advanced.pruning.mode != "automatic"
 rpcbind=0.0.0.0:8332
 rpcallowip=0.0.0.0/0
+}}
 }}
 rpcuser={{rpc.username}}
 rpcpassword={{rpc.password}}
