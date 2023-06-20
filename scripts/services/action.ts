@@ -29,32 +29,4 @@ export const action = {
       },
     };
   },
-  async "delete-peers"(
-    effect: T.Effects,
-    _input?: T.Config
-  ): Promise<T.ResultType<T.ActionResult>> {
-    const peersLocation = {
-      path: "peers.dat",
-      volumeId: "main",
-    };
-    if ((await util.exists(effect, peersLocation)) === false) {
-      return {
-        result: {
-          copyable: false,
-          message: "peers.dat doesn't exist",
-          version: "0",
-          qr: false,
-        },
-      };
-    }
-    await effect.removeFile(peersLocation);
-    return {
-      result: {
-        copyable: false,
-        message: "Deleted peers.dat",
-        version: "0",
-        qr: false,
-      },
-    };
-  },
 };

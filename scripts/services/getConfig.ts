@@ -59,83 +59,54 @@ export const getConfig: T.ExpectedExports.getConfig = async (effects) => {
           copyable: true,
           masked: true,
         },
-        advanced: {
-          type: "object",
-          name: "Advanced",
-          description: "Advanced RPC Settings",
+        auth: {
+          name: "Authorization",
+          description:
+            "Username and hashed password for JSON-RPC connections. RPC clients connect using the usual http basic authentication.",
+          type: "list",
+          subtype: "string",
+          default: [],
           spec: {
-            auth: {
-              name: "Authorization",
-              description:
-                "Username and hashed password for JSON-RPC connections. RPC clients connect using the usual http basic authentication.",
-              type: "list",
-              subtype: "string",
-              default: [],
-              spec: {
-                pattern:
-                  "^[a-zA-Z0-9_-]+:([0-9a-fA-F]{2})+\\$([0-9a-fA-F]{2})+$",
-                "pattern-description":
-                  'Each item must be of the form "<USERNAME>:<SALT>$<HASH>".',
-              },
-              range: "[0,*)",
-            },
-            serialversion: {
-              name: "Serialization Version",
-              description:
-                "Return raw transaction or block hex with Segwit or non-SegWit serialization.",
-              type: "enum",
-              values: ["non-segwit", "segwit"],
-              "value-names": {},
-              default: "segwit",
-            },
-            servertimeout: {
-              name: "Rpc Server Timeout",
-              description:
-                "Number of seconds after which an uncompleted RPC call will time out.",
-              type: "number",
-              nullable: false,
-              range: "[5,300]",
-              integral: true,
-              units: "seconds",
-              default: 30,
-            },
-            threads: {
-              name: "Threads",
-              description:
-                "Set the number of threads for handling RPC calls. You may wish to increase this if you are making lots of calls via an integration.",
-              type: "number",
-              nullable: false,
-              default: 16,
-              range: "[1,64]",
-              integral: true,
-              units: undefined,
-            },
-            workqueue: {
-              name: "Work Queue",
-              description:
-                "Set the depth of the work queue to service RPC calls. Determines how long the backlog of RPC requests can get before it just rejects new ones.",
-              type: "number",
-              nullable: false,
-              default: 128,
-              range: "[8,256]",
-              integral: true,
-              units: "requests",
-            },
+            pattern: "^[a-zA-Z0-9_-]+:([0-9a-fA-F]{2})+\\$([0-9a-fA-F]{2})+$",
+            "pattern-description":
+              'Each item must be of the form "<USERNAME>:<SALT>$<HASH>".',
           },
+          range: "[0,*)",
+        },
+        servertimeout: {
+          name: "Rpc Server Timeout",
+          description:
+            "Number of seconds after which an uncompleted RPC call will time out.",
+          type: "number",
+          nullable: false,
+          range: "[5,300]",
+          integral: true,
+          units: "seconds",
+          default: 30,
+        },
+        threads: {
+          name: "Threads",
+          description:
+            "Set the number of threads for handling RPC calls. You may wish to increase this if you are making lots of calls via an integration.",
+          type: "number",
+          nullable: false,
+          default: 16,
+          range: "[1,64]",
+          integral: true,
+          units: undefined,
+        },
+        workqueue: {
+          name: "Work Queue",
+          description:
+            "Set the depth of the work queue to service RPC calls. Determines how long the backlog of RPC requests can get before it just rejects new ones.",
+          type: "number",
+          nullable: false,
+          default: 128,
+          range: "[8,256]",
+          integral: true,
+          units: "requests",
         },
       },
-    },
-    "zmq-enabled": {
-      type: "boolean",
-      name: "ZeroMQ Enabled",
-      description: "Enable the ZeroMQ interface",
-      default: true,
-    },
-    txindex: {
-      type: "boolean",
-      name: "Transaction Index",
-      description: "Enable the Transaction Index (txindex)",
-      default: allowUnpruned,
     },
     wallet: {
       type: "object",
@@ -168,122 +139,114 @@ export const getConfig: T.ExpectedExports.getConfig = async (effects) => {
         },
       },
     },
+    mempool: {
+      type: "object",
+      name: "Mempool",
+      description: "Mempool Settings",
+      spec: {
+        persistmempool: {
+          type: "boolean",
+          name: "Persist Mempool",
+          description: "Save the mempool on shutdown and load on restart.",
+          default: true,
+        },
+        maxmempool: {
+          type: "number",
+          nullable: false,
+          name: "Max Mempool Size",
+          description: "Keep the transaction memory pool below <n> megabytes.",
+          range: "[1,*)",
+          integral: true,
+          units: "MiB",
+          default: 300,
+        },
+        mempoolexpiry: {
+          type: "number",
+          nullable: false,
+          name: "Mempool Expiration",
+          description:
+            "Do not keep transactions in the mempool longer than <n> hours.",
+          range: "[1,*)",
+          integral: true,
+          units: "Hr",
+          default: 336,
+        },
+        mempoolfullrbf: {
+          name: "Enable Full RBF",
+          description:
+            "Policy for your node to use for relaying and mining unconfirmed transactions.  For details, see https://github.com/bitcoin/bitcoin/blob/master/doc/release-notes/release-notes-24.0.md#notice-of-new-option-for-transaction-replacement-policies",
+          type: "boolean",
+          default: false,
+        },
+      },
+    },
+    peers: {
+      type: "object",
+      name: "Peers",
+      description: "Peer Connection Settings",
+      spec: {
+        listen: {
+          type: "boolean",
+          name: "Make Public",
+          description: "Allow other nodes to find your server on the network.",
+          default: true,
+        },
+        onlyconnect: {
+          type: "boolean",
+          name: "Disable Peer Discovery",
+          description: "Only connect to specified peers.",
+          default: false,
+        },
+        onlyonion: {
+          type: "boolean",
+          name: "Disable Clearnet",
+          description: "Only connect to peers over Tor.",
+          default: false,
+        },
+        addnode: {
+          name: "Add Nodes",
+          description: "Add addresses of nodes to connect to.",
+          type: "list",
+          subtype: "object",
+          range: "[0,*)",
+          default: [],
+          spec: {
+            spec: {
+              hostname: {
+                type: "string",
+                nullable: false,
+                name: "Hostname",
+                description: "Domain or IP address of bitcoin peer",
+                pattern:
+                  "(^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$)|((^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$)|(^[a-z2-7]{16}\\.onion$)|(^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$))",
+                "pattern-description":
+                  "Must be either a domain name, or an IPv4 or IPv6 address. Do not include protocol scheme (eg 'http://') or port.",
+              },
+              port: {
+                type: "number",
+                nullable: true,
+                name: "Port",
+                description:
+                  "Port that peer is listening on for inbound p2p connections",
+                range: "[0,65535]",
+                integral: true,
+              },
+            },
+          },
+        },
+      },
+    },
+    txindex: {
+      type: "boolean",
+      name: "Transaction Index",
+      description: "Enable the Transaction Index (txindex)",
+      default: allowUnpruned,
+    },
     advanced: {
       type: "object",
       name: "Advanced",
       description: "Advanced Settings",
       spec: {
-        mempool: {
-          type: "object",
-          name: "Mempool",
-          description: "Mempool Settings",
-          spec: {
-            mempoolfullrbf: {
-              name: "Enable Full RBF",
-              description:
-                "Policy for your node to use for relaying and mining unconfirmed transactions.  For details, see https://github.com/bitcoin/bitcoin/blob/master/doc/release-notes/release-notes-24.0.md#notice-of-new-option-for-transaction-replacement-policies",
-              type: "boolean",
-              default: false,
-            },
-            persistmempool: {
-              type: "boolean",
-              name: "Persist Mempool",
-              description: "Save the mempool on shutdown and load on restart.",
-              default: true,
-            },
-            maxmempool: {
-              type: "number",
-              nullable: false,
-              name: "Max Mempool Size",
-              description:
-                "Keep the transaction memory pool below <n> megabytes.",
-              range: "[1,*)",
-              integral: true,
-              units: "MiB",
-              default: 300,
-            },
-            mempoolexpiry: {
-              type: "number",
-              nullable: false,
-              name: "Mempool Expiration",
-              description:
-                "Do not keep transactions in the mempool longer than <n> hours.",
-              range: "[1,*)",
-              integral: true,
-              units: "Hr",
-              default: 336,
-            },
-          },
-        },
-        peers: {
-          type: "object",
-          name: "Peers",
-          description: "Peer Connection Settings",
-          spec: {
-            listen: {
-              type: "boolean",
-              name: "Make Public",
-              description:
-                "Allow other nodes to find your server on the network.",
-              default: true,
-            },
-            onlyconnect: {
-              type: "boolean",
-              name: "Disable Peer Discovery",
-              description: "Only connect to specified peers.",
-              default: false,
-            },
-            onlyonion: {
-              type: "boolean",
-              name: "Disable Clearnet",
-              description: "Only connect to peers over Tor.",
-              default: false,
-            },
-            addnode: {
-              name: "Add Nodes",
-              description: "Add addresses of nodes to connect to.",
-              type: "list",
-              subtype: "object",
-              range: "[0,*)",
-              default: [],
-              spec: {
-                spec: {
-                  hostname: {
-                    type: "string",
-                    nullable: false,
-                    name: "Hostname",
-                    description: "Domain or IP address of bitcoin peer",
-                    pattern:
-                      "(^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$)|((^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$)|(^[a-z2-7]{16}\\.onion$)|(^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$))",
-                    "pattern-description":
-                      "Must be either a domain name, or an IPv4 or IPv6 address. Do not include protocol scheme (eg 'http://') or port.",
-                  },
-                  port: {
-                    type: "number",
-                    nullable: true,
-                    name: "Port",
-                    description:
-                      "Port that peer is listening on for inbound p2p connections",
-                    range: "[0,65535]",
-                    integral: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-        dbcache: {
-          type: "number",
-          nullable: true,
-          name: "Database Cache",
-          description:
-            "How much RAM to allocate for caching the TXO set. Higher values improve syncing performance, but increase your chance of using up all your system's memory or corrupting your database in the event of an ungraceful shutdown. Set this high but comfortably below your system's total RAM during IBD, then turn down to 450 (or leave blank) once the sync completes.",
-          warning:
-            "WARNING: Increasing this value results in a higher chance of ungraceful shutdowns, which can leave your node unusable if it happens during the initial block download. Use this setting with caution. Be sure to set this back to the default (450 or leave blank) once your node is synced. DO NOT press the STOP button if your dbcache is large. Instead, set this number back to the default, hit save, and wait for bitcoind to restart on its own.",
-          range: "(0,*)",
-          integral: true,
-          units: "MiB",
-        },
         pruning: {
           type: "union",
           name: "Pruning Settings",
@@ -295,11 +258,10 @@ export const getConfig: T.ExpectedExports.getConfig = async (effects) => {
             id: "mode",
             name: "Pruning Mode",
             description:
-              '- Disabled: Disable pruning\n- Automatic: Limit blockchain size on disk to a certain number of megabytes\n- Manual: Prune blockchain with the "pruneblockchain" RPC\n',
+              "- Disabled: Disable pruning\n- Automatic: Limit blockchain size on disk to a certain number of megabytes\n",
             "variant-names": {
               disabled: "Disabled",
               automatic: "Automatic",
-              manual: "Manual",
             },
           },
           variants: {
@@ -318,20 +280,20 @@ export const getConfig: T.ExpectedExports.getConfig = async (effects) => {
                 units: "MiB",
               },
             },
-            manual: {
-              size: {
-                type: "number",
-                nullable: false,
-                name: "Failsafe Chain Size",
-                description: "Prune blockchain if size expands beyond this.",
-                default: 65536,
-                range: "[550,1000000)",
-                integral: true,
-                units: "MiB",
-              },
-            },
           },
           default: allowUnpruned ? "disabled" : "automatic",
+        },
+        dbcache: {
+          type: "number",
+          nullable: true,
+          name: "Database Cache",
+          description:
+            "How much RAM to allocate for caching the TXO set. Higher values improve syncing performance, but increase your chance of using up all your system's memory or corrupting your database in the event of an ungraceful shutdown. Set this high but comfortably below your system's total RAM during IBD, then turn down to 450 (or leave blank) once the sync completes.",
+          warning:
+            "WARNING: Increasing this value results in a higher chance of ungraceful shutdowns, which can leave your node unusable if it happens during the initial block download. Use this setting with caution. Be sure to set this back to the default (450 or leave blank) once your node is synced. DO NOT press the STOP button if your dbcache is large. Instead, set this number back to the default, hit save, and wait for bitcoind to restart on its own.",
+          range: "(0,*)",
+          integral: true,
+          units: "MiB",
         },
         blockfilters: {
           type: "object",
