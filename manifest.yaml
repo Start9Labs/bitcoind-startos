@@ -2,6 +2,9 @@ id: bitcoind
 title: "Bitcoin Core"
 version: 25.0.0
 release-notes: |
+  * Update to latest upstream (v25.0)
+  * Reorganize config
+  * Force pruning for servers with not enough disk space
   * Update services base image to alpine 3.16
   * Use ssl for base image packages download
   * Optimized higher resolution Bitcoin icon
