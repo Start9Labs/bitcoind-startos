@@ -26,6 +26,12 @@ rpcworkqueue={{rpc.workqueue}}
 {{#IF mempool.mempoolfullrbf
 mempoolfullrbf=1
 }}
+{{#IF !mempool.mempoolfullrbf
+mempoolfullrbf=0
+}}
+{{#IF mempool.persistmempool
+persistmempool=1
+}}
 {{#IF !mempool.persistmempool
 persistmempool=0
 }}
@@ -34,6 +40,7 @@ mempoolexpiry={{mempool.mempoolexpiry}}
 
 ## PEERS
 {{#IF peers.listen
+listen=1
 bind=0.0.0.0:8333
 }}
 {{#IF !peers.listen
@@ -83,8 +90,14 @@ dbcache={{advanced.dbcache}}
 {{#IF !wallet.enable
 disablewallet=1
 }}
+{{#IF wallet.enable
+disablewallet=0
+}}
 {{#IF wallet.avoidpartialspends
 avoidpartialspends=1
+}}
+{{#IF !wallet.avoidpartialspends
+avoidpartialspends=0
 }}
 discardfee={{wallet.discardfee}}
 

@@ -89,8 +89,6 @@ ADD ./check-rpc.sh /usr/local/bin/check-rpc.sh
 RUN chmod a+x /usr/local/bin/check-rpc.sh
 ADD ./check-synced.sh /usr/local/bin/check-synced.sh
 RUN chmod a+x /usr/local/bin/check-synced.sh
-ADD ./migrations /usr/local/bin/migrations
-RUN chmod a+x /usr/local/bin/migrations/*
 
 EXPOSE 8332 8333
 
