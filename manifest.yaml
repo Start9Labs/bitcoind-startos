@@ -155,89 +155,12 @@ actions:
       - stopped
     implementation:
       type: script
-  delete-peers:
-    name: "Delete Peer List"
-    description: "Deletes the Peer List (peers.dat) in case it gets corrupted."
-    allowed-statuses:
-      - stopped
-    implementation:
-      type: script
 migrations:
   from:
-    "<22.0.0":
-      type: docker
-      image: main
-      system: false
-      entrypoint: /usr/local/bin/migrations/lt_22_0_0.sh
+    "*":
+      type: script
       args: ["from"]
-      io-format: json
-      mounts:
-        main: /root/.bitcoin
-      inject: false
-    ">22.0.0 <23.0.0":
-      type: docker
-      image: main
-      system: false
-      entrypoint: /usr/local/bin/migrations/gt_22_0_0_lt_23_0_0.sh
-      args: ["from"]
-      io-format: json
-      mounts:
-        main: /root/.bitcoin
-      inject: false
-    ">=23.0.0 <24.0.0":
-      type: docker
-      image: main
-      system: false
-      entrypoint: /usr/local/bin/migrations/eq_23_0_0_lt_24_0_0.sh
-      args: ["from"]
-      io-format: json
-      mounts:
-        main: /root/.bitcoin
-      inject: false
-    ">=24.0.0 <=25.0.0":
-      type: docker
-      image: main
-      system: false
-      entrypoint: "/bin/echo"
-      args: ['{"configured": true}']
-      io-format: json
-      inject: false
   to:
-    "<22.0.0":
-      type: docker
-      image: main
-      system: false
-      entrypoint: /usr/local/bin/migrations/lt_22_0_0.sh
+    "*":
+      type: script
       args: ["to"]
-      io-format: json
-      mounts:
-        main: /root/.bitcoin
-      inject: false
-    ">22.0.0 <23.0.0":
-      type: docker
-      image: main
-      system: false
-      entrypoint: /usr/local/bin/migrations/gt_22_0_0_lt_23_0_0.sh
-      args: ["to"]
-      io-format: json
-      mounts:
-        main: /root/.bitcoin
-      inject: false
-    ">=23.0.0 <24.0.0":
-      type: docker
-      image: main
-      system: false
-      entrypoint: /usr/local/bin/migrations/eq_23_0_0_lt_24_0_0.sh
-      args: ["to"]
-      io-format: json
-      mounts:
-        main: /root/.bitcoin
-      inject: false
-    ">=24.0.0 <26.0.0":
-      type: docker
-      image: main
-      system: false
-      entrypoint: "/bin/echo"
-      args: ['{"configured": true}']
-      io-format: json
-      inject: false
