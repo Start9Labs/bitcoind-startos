@@ -1,85 +1,26 @@
 import { compat, types as T } from "../dependencies.ts";
 
-function asArray(input: unknown): unknown[] {
-  if (Array.isArray(input)) {
-    return input;
-  } else {
-    return [];
-  }
-}
-
-function asObject(input: unknown): T.Config {
-  if (typeof input === "object" && input) {
-    return input as T.Config;
-  } else {
-    return {};
-  }
-}
-
-function safeDeref(config: unknown, path: string[]): unknown {
-  let cur = config;
-  for (const seg of path) {
-    cur = asObject(config)[seg];
-  }
-  return cur;
-}
-
-function safeAssign(
-  config: unknown,
-  path: [string, ...string[]],
-  value: unknown
-) {
-  let cur = config;
-
-  const last = path.pop()!;
-
-  for (const seg of path) {
-    cur = asObject(config)[seg];
-  }
-
-  asObject(cur)[last] = value;
-}
-
-function safeDelete(config: unknown, path: [string, ...string[]]) {
-  let cur = config;
-
-  const last = path.pop()!;
-
-  for (const seg of path) {
-    cur = asObject(config)[seg];
-  }
-
-  delete asObject(cur)[last];
-}
-
 export const migration: T.ExpectedExports.migration =
   compat.migrations.fromMapping(
     {
       "22.0.0": {
         up: compat.migrations.updateConfig(
-          (config) => {
-            safeAssign(
-              config,
-              ["advanced", "peers", "addnode"],
-              asArray(safeDeref(config, ["advanced", "peers", "addnode"]))
-                .map((node) => {
-                  if (typeof node === "string") {
-                    return { hostname: node, port: null };
-                  }
-                })
-                .filter((a) => !!a)
-            );
+          (config: any) => {
+            config.advanced.peers.addnode = (
+              config.advanced.peers.addnode as string[]
+            )
+              .map((node) => {
+                if (typeof node === "string") {
+                  const [hostname, port] = node.split(":");
+                  return { hostname, port: port || null };
+                }
+              })
+              .filter((a) => !!a);
 
-            safeAssign(
-              config,
-              ["advanced", "blockfilters", "blockfilterindex"],
-              false
-            );
-            safeAssign(
-              config,
-              ["advanced", "blockfilters", "peerblockfilters"],
-              false
-            );
+            config.advanced.blockfilters = {
+              blockfilterindex: false,
+              peerblockfilters: false,
+            };
 
             return config;
           },
@@ -87,19 +28,21 @@ export const migration: T.ExpectedExports.migration =
           { version: "22.0.0", type: "up" }
         ),
         down: compat.migrations.updateConfig(
-          (config) => {
-            safeAssign(
-              config,
-              ["advanced", "peers", "addnode"],
-              asArray(safeDeref(config, ["advanced", "peers", "addnode"]))
-                .map((node) => {
-                  if (typeof node === "string") {
-                    return { hostname: node, port: null };
-                  }
-                })
-                .filter((a) => !!a)
-            );
-            safeDelete(config, ["advanced", "blockfilters"]);
+          (config: any) => {
+            config.advanced.peers.addnode = (
+              config.advanced.peers.addnode as {
+                hostname: string;
+                port: number;
+              }[]
+            )
+              .map((node) => {
+                if (typeof node === "object" && node && "hostname" in node) {
+                  return node.hostname;
+                }
+              })
+              .filter((a) => !!a);
+
+            delete config.advanced.blockfilters;
 
             return config;
           },
@@ -112,24 +55,25 @@ export const migration: T.ExpectedExports.migration =
       },
       "22.0.1": {
         up: compat.migrations.updateConfig(
-          (config) => {
-            safeAssign(
-              config,
-              ["advanced", "peers", "addnode"],
-              asArray(safeDeref(config, ["advanced", "peers", "addnode"]))
-                .map((node) => {
-                  if (typeof node === "string") {
-                    return { hostname: node, port: null };
-                  } else if (
-                    typeof node === "object" &&
-                    node &&
-                    "hostname" in node
-                  ) {
-                    return { hostname: node.hostname, port: null };
-                  }
-                })
-                .filter((a) => !!a)
-            );
+          (config: any) => {
+            config.advanced.peers.addnode = (
+              config.advanced.peers.addnode as unknown[]
+            )
+              .map((node) => {
+                if (typeof node === "string") {
+                  return { hostname: node, port: null };
+                } else if (
+                  typeof node === "object" &&
+                  node &&
+                  "hostname" in node
+                ) {
+                  return {
+                    hostname: node.hostname,
+                    port: "port" in node ? node.port : null,
+                  };
+                }
+              })
+              .filter((a) => !!a);
 
             return config;
           },
@@ -143,12 +87,8 @@ export const migration: T.ExpectedExports.migration =
       },
       "23.0.0": {
         up: compat.migrations.updateConfig(
-          (config) => {
-            safeAssign(
-              config,
-              ["advanced", "bloomfilters", "peerbloomfilters"],
-              false
-            );
+          (config: any) => {
+            config.advanced.bloomfilters = { peerbloomfilters: false };
 
             return config;
           },
@@ -156,12 +96,8 @@ export const migration: T.ExpectedExports.migration =
           { version: "23.0.0", type: "up" }
         ),
         down: compat.migrations.updateConfig(
-          (config) => {
-            safeDelete(config, [
-              "advanced",
-              "bloomfilters",
-              "peerbloomfilters",
-            ]);
+          (config: any) => {
+            delete config.advanced.bloomfilters;
 
             return config;
           },
@@ -171,8 +107,8 @@ export const migration: T.ExpectedExports.migration =
       },
       "24.0.0": {
         up: compat.migrations.updateConfig(
-          (config) => {
-            safeAssign(config, ["advanced", "mempoolfullrbf"], false);
+          (config: any) => {
+            config.advanced.mempool.mempoolfullrbf = false;
 
             return config;
           },
@@ -180,8 +116,8 @@ export const migration: T.ExpectedExports.migration =
           { version: "24.0.0", type: "up" }
         ),
         down: compat.migrations.updateConfig(
-          (config) => {
-            safeDelete(config, ["advanced", "mempoolfullrbf"]);
+          (config: any) => {
+            delete config.advanced.mempool.mempoolfullrbf;
 
             return config;
           },
