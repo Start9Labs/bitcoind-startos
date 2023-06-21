@@ -245,5 +245,5 @@ export const migration: T.ExpectedExports.migration =
         ),
       },
     },
-    "25.0.0"
+    "25.0.0.1"
   );
