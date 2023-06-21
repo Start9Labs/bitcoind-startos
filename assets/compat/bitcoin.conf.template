@@ -4,71 +4,71 @@
 
 ## RPC
 {{#IF rpc.enable
+{{#IF advanced.pruning.mode = "automatic"
+rpcbind=127.0.0.1:18332
+rpcallowip=127.0.0.1/32
+}}
+{{#IF advanced.pruning.mode != "automatic"
 rpcbind=0.0.0.0:8332
 rpcallowip=0.0.0.0/0
 }}
+}}
 rpcuser={{rpc.username}}
 rpcpassword={{rpc.password}}
-{{#FOREACH rpc.advanced.auth
-rpcauth={{rpc.advanced.auth}}
+{{#FOREACH rpc.auth
+rpcauth={{rpc.auth}}
 }}
-{{#IF rpc.advanced.serialversion = "segwit"
-rpcserialversion=1
-}}
-{{#IF rpc.advanced.serialversion = "non-segwit"
-rpcserialversion=0
-}}
-rpcservertimeout={{rpc.advanced.servertimeout}}
-rpcthreads={{rpc.advanced.threads}}
-rpcworkqueue={{rpc.advanced.workqueue}}
+rpcservertimeout={{rpc.servertimeout}}
+rpcthreads={{rpc.threads}}
+rpcworkqueue={{rpc.workqueue}}
 
 ## MEMPOOL
-{{#IF advanced.mempool.mempoolfullrbf
+{{#IF mempool.mempoolfullrbf
 mempoolfullrbf=1
 }}
-{{#IF !advanced.mempool.mempoolfullrbf
+{{#IF !mempool.mempoolfullrbf
 mempoolfullrbf=0
 }}
-{{#IF advanced.mempool.persistmempool
+{{#IF mempool.persistmempool
 persistmempool=1
 }}
-{{#IF !advanced.mempool.persistmempool
+{{#IF !mempool.persistmempool
 persistmempool=0
 }}
-maxmempool={{advanced.mempool.maxmempool}}
-mempoolexpiry={{advanced.mempool.mempoolexpiry}}
+maxmempool={{mempool.maxmempool}}
+mempoolexpiry={{mempool.mempoolexpiry}}
 
 ## PEERS
-{{#IF advanced.peers.listen
+{{#IF peers.listen
 listen=1
 bind=0.0.0.0:8333
 }}
-{{#IF !advanced.peers.listen
+{{#IF !peers.listen
 listen=0
 }}
 
-{{#IF advanced.peers.onlyconnect
-{{#FOREACH advanced.peers.addnode
-{{#IF advanced.peers.addnode.port
-connect={{advanced.peers.addnode.hostname}}:{{advanced.peers.addnode.port}}
+{{#IF peers.onlyconnect
+{{#FOREACH peers.addnode
+{{#IF peers.addnode.port
+connect={{peers.addnode.hostname}}:{{peers.addnode.port}}
 }}
-{{#IF !advanced.peers.addnode.port
-connect={{advanced.peers.addnode.hostname}}
+{{#IF !peers.addnode.port
+connect={{peers.addnode.hostname}}
 }}
 }}
 }}
 
-{{#IF !advanced.peers.onlyconnect
-{{#FOREACH advanced.peers.addnode
-{{#IF advanced.peers.addnode.port
-addnode={{advanced.peers.addnode.hostname}}:{{advanced.peers.addnode.port}}
+{{#IF !peers.onlyconnect
+{{#FOREACH peers.addnode
+{{#IF peers.addnode.port
+addnode={{peers.addnode.hostname}}:{{peers.addnode.port}}
 }}
-{{#IF !advanced.peers.addnode.port
-addnode={{advanced.peers.addnode.hostname}}
+{{#IF !peers.addnode.port
+addnode={{peers.addnode.hostname}}
 }}
 }}
 }}
-{{#IF advanced.peers.onlyonion
+{{#IF peers.onlyonion
 onlynet=onion
 }}
 
@@ -77,9 +77,6 @@ onlynet=onion
 whitelist=172.18.0.0/16
 
 ## PRUNING
-{{#IF advanced.pruning.mode = "manual"
-prune=1
-}}
 {{#IF advanced.pruning.mode = "automatic"
 prune={{advanced.pruning.size}}
 }}
@@ -105,13 +102,11 @@ avoidpartialspends=0
 discardfee={{wallet.discardfee}}
 
 ## ZERO MQ
-{{#IF zmq-enabled
 zmqpubrawblock=tcp://0.0.0.0:28332
 zmqpubhashblock=tcp://0.0.0.0:28332
 zmqpubrawtx=tcp://0.0.0.0:28333
 zmqpubhashtx=tcp://0.0.0.0:28333
 zmqpubsequence=tcp://0.0.0.0:28333
-}}
 
 ## TXINDEX
 {{#IF txindex
