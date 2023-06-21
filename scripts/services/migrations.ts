@@ -194,20 +194,20 @@ export const migration: T.ExpectedExports.migration =
           (config: any) => {
             delete config["zmq-enabled"];
 
-            delete config.rpc.advanced?.serialversion;
+            delete config.rpc.advanced.serialversion;
             config.rpc = {
               ...config.rpc,
-              ...config.rpc?.advanced,
+              ...config.rpc.advanced,
             };
-            delete config.rpc?.advanced;
+            delete config.rpc.advanced;
 
-            config.mempool = config.advanced?.mempool;
-            delete config.advanced?.mempool;
+            config.mempool = config.advanced.mempool;
+            delete config.advanced.mempool;
 
-            config.peers = config.advanced?.peers;
-            delete config.advanced?.peers;
+            config.peers = config.advanced.peers;
+            delete config.advanced.peers;
 
-            if (config.advanced?.pruning?.mode === "manual") {
+            if (config.advanced.pruning.mode === "manual") {
               config.advanced.pruning = { mode: "automatic", size: 550 };
             }
 

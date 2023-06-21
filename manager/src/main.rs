@@ -103,14 +103,7 @@ pub struct Stat {
     masked: bool,
 }
 
-#[derive(Clone, Copy)]
-enum Pruning {
-    Disabled,
-    Automatic,
-    Manual { size: f64 },
-}
-
-fn sidecar(config: &Mapping, addr: &str, pruning: Pruning) -> Result<(), Box<dyn Error>> {
+fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
     let mut stats = LinearMap::new();
     if let (Some(user), Some(pass)) = (
         config
@@ -356,18 +349,6 @@ fn sidecar(config: &Mapping, addr: &str, pruning: Pruning) -> Result<(), Box<dyn
                 masked: false,
             },
         );
-        if info.size_on_disk as f64
-            > match pruning {
-                Pruning::Manual { size } => size,
-                _ => std::f64::INFINITY,
-            }
-        {
-            std::process::Command::new("bitcoin-cli")
-                .arg("-conf=/root/.bitcoin/bitcoin.conf")
-                .arg("pruneblockchain")
-                .arg(format!("{}", info.pruneheight + 10))
-                .status()?;
-        }
         if info.pruneheight > 0 {
             stats.insert(
                 Cow::from("Prune Height"),
@@ -465,20 +446,11 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
     }
     let raw_child = child.id();
     *CHILD_PID.lock().unwrap() = Some(raw_child);
-    let pruning = {
-        let pruning = &config[&Value::from("advanced")][&Value::from("pruning")];
-        let mode = &pruning[&Value::from("mode")];
-        if mode == "manual" {
-            let size = pruning.get(&Value::String("size".to_owned())).unwrap();
-            let size = size.as_f64().unwrap() * 1024_f64.powf(2_f64);
-            Pruning::Manual { size }
-        } else if mode == "automatic" {
-            Pruning::Automatic
-        } else {
-            Pruning::Disabled
-        }
+    let pruned = {
+        config[&Value::from("advanced")][&Value::from("pruning")][&Value::from("mode")]
+            == "automatic"
     };
-    let _proxy = if matches!(pruning, Pruning::Automatic) {
+    let _proxy = if pruned {
         let state = Arc::new(btc_rpc_proxy::State {
             rpc_client: RpcClient::new("http://127.0.0.1:18332/".parse().unwrap()),
             tor: Some(TorState {
@@ -503,7 +475,7 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
         None
     };
     let _sidecar_handle = std::thread::spawn(move || loop {
-        sidecar(&config, &rpc_addr, pruning)
+        sidecar(&config, &rpc_addr)
             .err()
             .map(|e| eprintln!("ERROR IN SIDECAR: {}", e));
         std::thread::sleep(sidecar_poll_interval);
