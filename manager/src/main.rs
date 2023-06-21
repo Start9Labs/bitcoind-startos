@@ -402,9 +402,7 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
         "-conf=/root/.bitcoin/bitcoin.conf".to_owned(),
     ];
     if config
-        .get(&Value::String("advanced".to_owned()))
-        .and_then(|v| v.as_mapping())
-        .and_then(|v| v.get(&Value::String("peers".to_owned())))
+        .get(&Value::String("peers".to_owned()))
         .and_then(|v| v.as_mapping())
         .and_then(|v| v.get(&Value::String("onlyonion".to_owned())))
         .and_then(|v| v.as_bool())
@@ -455,8 +453,7 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
             rpc_client: RpcClient::new("http://127.0.0.1:18332/".parse().unwrap()),
             tor: Some(TorState {
                 proxy: format!("{}:9050", var("EMBASSY_IP")?).parse()?,
-                only: config[&Value::from("advanced")][&Value::from("peers")]
-                    [&Value::from("onlyonion")]
+                only: config[&Value::from("peers")][&Value::from("onlyonion")]
                     .as_bool()
                     .unwrap(),
             }),
