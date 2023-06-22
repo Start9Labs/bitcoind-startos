@@ -180,6 +180,55 @@ export const migration: T.ExpectedExports.migration =
           { version: "25.0.0", type: "down" }
         ),
       },
+      "25.0.0.2": {
+        up: compat.migrations.updateConfig(
+          (config: any) => {
+            config["zmq-enabled"] = true;
+
+            config.rpc.advanced = {
+              auth: config.rpc.auth,
+              servertimeout: config.rpc.servertimeout,
+              threads: config.rpc.threads,
+              workqueue: config.rpc.workqueue,
+            };
+            delete config.rpc.auth;
+            delete config.rpc.servertimeout;
+            delete config.rpc.threads;
+            delete config.rpc.workqueue;
+
+            config.advanced.mempool = config.mempool;
+            delete config.mempool;
+
+            config.advanced.peers = config.peers;
+            delete config.peers;
+
+            return config;
+          },
+          true,
+          { version: "25.0.0.2", type: "up" }
+        ),
+        down: compat.migrations.updateConfig(
+          (config: any) => {
+            delete config["zmq-enabled"];
+
+            config.rpc = {
+              ...config.rpc,
+              ...config.rpc.advanced,
+            };
+            delete config.rpc.advanced;
+
+            config.mempool = config.advanced.mempool;
+            delete config.advanced.mempool;
+
+            config.peers = config.advanced.peers;
+            delete config.advanced.peers;
+
+            return config;
+          },
+          true,
+          { version: "25.0.0.2", type: "down" }
+        ),
+      },
     },
     "25.0.0.1"
   );

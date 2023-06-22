@@ -15,60 +15,60 @@ rpcallowip=0.0.0.0/0
 }}
 rpcuser={{rpc.username}}
 rpcpassword={{rpc.password}}
-{{#FOREACH rpc.auth
-rpcauth={{rpc.auth}}
+{{#FOREACH rpc.advanced.auth
+rpcauth={{rpc.advanced.auth}}
 }}
-rpcservertimeout={{rpc.servertimeout}}
-rpcthreads={{rpc.threads}}
-rpcworkqueue={{rpc.workqueue}}
+rpcservertimeout={{rpc.advanced.servertimeout}}
+rpcthreads={{rpc.advanced.threads}}
+rpcworkqueue={{rpc.advanced.workqueue}}
 
 ## MEMPOOL
-{{#IF mempool.mempoolfullrbf
+{{#IF advanced.mempool.mempoolfullrbf
 mempoolfullrbf=1
 }}
-{{#IF !mempool.mempoolfullrbf
+{{#IF !advanced.mempool.mempoolfullrbf
 mempoolfullrbf=0
 }}
-{{#IF mempool.persistmempool
+{{#IF advanced.mempool.persistmempool
 persistmempool=1
 }}
-{{#IF !mempool.persistmempool
+{{#IF !advanced.mempool.persistmempool
 persistmempool=0
 }}
-maxmempool={{mempool.maxmempool}}
-mempoolexpiry={{mempool.mempoolexpiry}}
+maxmempool={{advanced.mempool.maxmempool}}
+mempoolexpiry={{advanced.mempool.mempoolexpiry}}
 
 ## PEERS
-{{#IF peers.listen
+{{#IF advanced.peers.listen
 listen=1
 bind=0.0.0.0:8333
 }}
-{{#IF !peers.listen
+{{#IF !advanced.peers.listen
 listen=0
 }}
 
-{{#IF peers.onlyconnect
-{{#FOREACH peers.addnode
-{{#IF peers.addnode.port
-connect={{peers.addnode.hostname}}:{{peers.addnode.port}}
+{{#IF advanced.peers.onlyconnect
+{{#FOREACH advanced.peers.addnode
+{{#IF advanced.peers.addnode.port
+connect={{advanced.peers.addnode.hostname}}:{{advanced.peers.addnode.port}}
 }}
-{{#IF !peers.addnode.port
-connect={{peers.addnode.hostname}}
+{{#IF !advanced.peers.addnode.port
+connect={{advanced.peers.addnode.hostname}}
 }}
 }}
 }}
 
-{{#IF !peers.onlyconnect
-{{#FOREACH peers.addnode
-{{#IF peers.addnode.port
-addnode={{peers.addnode.hostname}}:{{peers.addnode.port}}
+{{#IF !advanced.peers.onlyconnect
+{{#FOREACH advanced.peers.addnode
+{{#IF advanced.peers.addnode.port
+addnode={{advanced.peers.addnode.hostname}}:{{advanced.peers.addnode.port}}
 }}
-{{#IF !peers.addnode.port
-addnode={{peers.addnode.hostname}}
+{{#IF !advanced.peers.addnode.port
+addnode={{advanced.peers.addnode.hostname}}
 }}
 }}
 }}
-{{#IF peers.onlyonion
+{{#IF advanced.peers.onlyonion
 onlynet=onion
 }}
 
@@ -102,11 +102,13 @@ avoidpartialspends=0
 discardfee={{wallet.discardfee}}
 
 ## ZERO MQ
+{{#IF zmq-enabled
 zmqpubrawblock=tcp://0.0.0.0:28332
 zmqpubhashblock=tcp://0.0.0.0:28332
 zmqpubrawtx=tcp://0.0.0.0:28333
 zmqpubhashtx=tcp://0.0.0.0:28333
 zmqpubsequence=tcp://0.0.0.0:28333
+}}
 
 ## TXINDEX
 {{#IF txindex
