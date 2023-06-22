@@ -1,6 +1,6 @@
 id: bitcoind
 title: "Bitcoin Core"
-version: 25.0.0.1
+version: 25.0.0.2
 eos-version: 0.3.4.3
 release-notes: |
   * Update to latest upstream (v25.0)
