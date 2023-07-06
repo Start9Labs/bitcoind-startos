@@ -1,4 +1,4 @@
-import { util, types as T } from "../dependencies.ts";
+import { util, exists, types as T } from "../dependencies.ts";
 
 export const action = {
   async "delete-txindex"(
@@ -24,6 +24,34 @@ export const action = {
       result: {
         copyable: false,
         message: "Deleted txindex",
+        version: "0",
+        qr: false,
+      },
+    };
+  },
+  async "delete-peers"(
+    effect: T.Effects,
+    _input?: T.Config,
+  ): Promise<T.ResultType<T.ActionResult>> {
+    const peersLocation = {
+      path: "peers.dat",
+      volumeId: "main",
+    };
+    if (await exists(effect, peersLocation) === false) {
+      return {
+        result: {
+          copyable: false,
+          message: "peers.dat doesn't exist",
+          version: "0",
+          qr: false,
+        },
+      };
+    }
+    await effect.removeFile(peersLocation);
+    return {
+      result: {
+        copyable: false,
+        message: "Deleted peers.dat",
         version: "0",
         qr: false,
       },
