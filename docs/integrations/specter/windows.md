@@ -6,7 +6,7 @@ Original Author: Community Member @julian
 
 ## Step 1 - Install Tor on Windows
 
-:warning: **DO NOT PROCEED** before [installing Tor](https://docs.start9labs.com/misc-guides/tor-os/index.html) on your machine!
+:warning: **DO NOT PROCEED** before [installing Tor](https://docs.start9.com/latest/user-manual/connecting/connecting-tor/tor-os/index) on your machine!
 
 ## Step 2 - Configure Specter RPC user in Bitcoin Proxy
 
