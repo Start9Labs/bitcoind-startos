@@ -62,9 +62,6 @@ RUN sed -i 's/http\:\/\/dl-cdn.alpinelinux.org/https\:\/\/alpine.global.ssl.fast
 RUN apk --no-cache add \
   bash \
   curl \
-  boost-filesystem \
-  boost-system \
-  boost-thread \
   libevent \
   libzmq \
   sqlite-dev \
