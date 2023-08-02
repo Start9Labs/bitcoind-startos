@@ -1,3 +1,6 @@
 [submodule "bitcoin"]
 	path = bitcoin
 	url = https://github.com/bitcoin/bitcoin
+[submodule "bitcoin-node-manager"]
+	path = bitcoin-node-manager
+	url = https://github.com/Mirobit/bitcoin-node-manager/

@@ -68,8 +68,10 @@ RUN apk --no-cache add \
   libevent \
   libzmq \
   sqlite-dev \
-  tini\
-  yq
+  tini \
+  yq \
+  nginx \
+  php8 php8-fpm php8-curl php8-session
 RUN rm -rf /var/cache/apk/*
 
 ARG ARCH
@@ -77,6 +79,12 @@ ARG ARCH
 ENV BITCOIN_DATA=/root/.bitcoin
 ENV BITCOIN_PREFIX=/opt/bitcoin
 ENV PATH=${BITCOIN_PREFIX}/bin:$PATH
+
+# Add the Bitcoin Node Manager web UI submodule
+ADD ./bitcoin-node-manager /var/www/bitcoin-node-manager
+RUN sed -i 's/^user = nobody$/user = nginx/' /etc/php8/php-fpm.d/www.conf && \
+    sed -i 's/^group = nobody$/group = nginx/' /etc/php8/php-fpm.d/www.conf
+RUN chown -R nginx:nginx /var/www/bitcoin-node-manager
 
 COPY --from=bitcoin-core /opt /opt
 ADD ./manager/target/${ARCH}-unknown-linux-musl/release/bitcoind-manager /usr/local/bin/bitcoind-manager

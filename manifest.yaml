@@ -1,8 +1,8 @@
 id: bitcoind
 title: "Bitcoin Core"
-version: 25.0.0.3
+version: 25.0.0.4
 eos-version: 0.3.4.3
-release-notes: Add back delete-peers action
+release-notes: Add Bitcoin Node Manager as UI
 license: MIT
 wrapper-repo: https://github.com/Start9Labs/bitcoind-wrapper
 upstream-repo: https://github.com/bitcoin/bitcoin
@@ -24,6 +24,7 @@ main:
   mounts:
     main: /root/.bitcoin
     compat: /mnt/assets
+    web-ui: /var/www/bitcoin-node-manager/data
   sigterm-timeout: 5m
 health-checks:
   rpc:
@@ -60,6 +61,8 @@ volumes:
     type: data
   compat:
     type: assets
+  web-ui:
+    type: data
 alerts:
   uninstall: Uninstalling Bitcoin Core will result in permanent loss of data. Without a backup, any funds stored on your node's default hot wallet will be lost forever. If you are unsure, we recommend making a backup, just to be safe.
   restore: Restoring Bitcoin Core will overwrite its current data. You will lose any transactions recorded in watch-only wallets, and any funds you have received to the hot wallet, since the last backup.
@@ -100,6 +103,20 @@ interfaces:
     protocols:
       - tcp
       - zmq
+  web-ui:
+    name: Bitcoin Node Manager
+    description: Lightweight dashboard and control system for your Bitcoin node
+    tor-config:
+      port-mapping:
+        80: "8080"
+    lan-config:
+      443:
+        ssl: true
+        internal: 8080
+    ui: true
+    protocols:
+      - tcp
+      - http
 dependencies: {}
 backup:
   create:

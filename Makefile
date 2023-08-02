@@ -20,12 +20,12 @@ verify: $(PKG_ID).s9pk
 # for rebuilding just the arm image.
 arm:
 	@rm -f docker-images/x86_64.tar
-	ARCH=aarch64 $(MAKE)
+	@ARCH=aarch64 $(MAKE) -s
 
 # for rebuilding just the x86 image.
 x86:
 	@rm -f docker-images/aarch64.tar
-	ARCH=x86_64 $(MAKE)
+	@ARCH=x86_64 $(MAKE) -s
 
 $(PKG_ID).s9pk: manifest.yaml assets/compat/* docker-images/aarch64.tar docker-images/x86_64.tar instructions.md scripts/embassy.js
 ifeq ($(ARCH),aarch64)
@@ -37,9 +37,9 @@ else
 endif
 	@embassy-sdk pack
 
-install: $(PKG_ID).s9pk
+install:
 ifeq (,$(wildcard ~/.embassy/config.yaml))
-	@echo; echo "You must define \"host: http://embassy-server-name.local\" in ~/.embassy/config.yaml config file first"; echo
+	@echo; echo "You must define \"host: http://server-name.local\" in ~/.embassy/config.yaml config file first"; echo
 else
 	embassy-cli package install $(PKG_ID).s9pk
 endif
