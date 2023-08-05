@@ -9,22 +9,22 @@ FROM alpine:3.18 as bitcoin-core
 COPY --from=berkeleydb /opt /opt
 
 RUN sed -i 's/http\:\/\/dl-cdn.alpinelinux.org/https\:\/\/alpine.global.ssl.fastly.net/g' /etc/apk/repositories
-RUN apk --no-cache add autoconf
-RUN apk --no-cache add automake
-RUN apk --no-cache add boost-dev
-RUN apk --no-cache add build-base
-RUN apk --no-cache add chrpath
-RUN apk --no-cache add file
-RUN apk --no-cache add gnupg
-RUN apk --no-cache add libevent-dev
-RUN apk --no-cache add libressl
-RUN apk --no-cache add libtool
-RUN apk --no-cache add linux-headers
-RUN apk --no-cache add sqlite-dev
-RUN apk --no-cache add zeromq-dev
+RUN apk --no-cache add \
+        autoconf \
+        automake \
+        boost-dev \
+        build-base \
+        chrpath \
+        file \
+        gnupg \
+        libevent-dev \
+        libressl \
+        libtool \
+        linux-headers \
+        sqlite-dev \
+        zeromq-dev
 
 ADD ./bitcoin /bitcoin
-
 
 ENV BITCOIN_PREFIX=/opt/bitcoin
 
@@ -81,22 +81,24 @@ ENV BITCOIN_PREFIX=/opt/bitcoin
 ENV PATH=${BITCOIN_PREFIX}/bin:$PATH
 
 # Add the Bitcoin Node Manager web UI submodule
-ADD ./bitcoin-node-manager /var/www/bitcoin-node-manager
-RUN sed -i 's/^user = nobody$/user = nginx/' /etc/php82/php-fpm.d/www.conf && \
-    sed -i 's/^group = nobody$/group = nginx/' /etc/php82/php-fpm.d/www.conf
-RUN chown -R nginx:nginx /var/www/bitcoin-node-manager
+ENV FPM_CONF=/etc/php82/php-fpm.d/www.conf
+ENV BNM_PATH=/var/www/bitcoin-node-manager
+ADD ./bitcoin-node-manager ${BNM_PATH}
+RUN sed -i 's/^user = nobody$/user = nginx/; s/^group = nobody$/group = nginx/' ${FPM_CONF} && \
+    sed -i 's|^listen = .*$|listen = /run/nginx/php-fpm.sock|' ${FPM_CONF} && \
+    sed -i 's|^;listen.owner = .*|listen.owner = nginx|; s|^;listen.group = .*|listen.group = nginx|; s|^;listen.mode = .*|listen.mode = 0660|' ${FPM_CONF}
+RUN chown -R nginx:nginx /var/www/bitcoin-node-manager /run/nginx
 
 COPY --from=bitcoin-core /opt /opt
-ADD ./manager/target/${ARCH}-unknown-linux-musl/release/bitcoind-manager /usr/local/bin/bitcoind-manager
-RUN chmod a+x /usr/local/bin/bitcoind-manager
-ADD ./docker_entrypoint.sh /usr/local/bin/docker_entrypoint.sh
-RUN chmod a+x /usr/local/bin/docker_entrypoint.sh
-ADD ./actions/reindex.sh /usr/local/bin/reindex.sh
-RUN chmod a+x /usr/local/bin/reindex.sh
-ADD ./check-rpc.sh /usr/local/bin/check-rpc.sh
-RUN chmod a+x /usr/local/bin/check-rpc.sh
-ADD ./check-synced.sh /usr/local/bin/check-synced.sh
-RUN chmod a+x /usr/local/bin/check-synced.sh
+COPY ./manager/target/${ARCH}-unknown-linux-musl/release/bitcoind-manager \
+     ./docker_entrypoint.sh \
+     ./actions/reindex.sh \
+     ./check-rpc.sh \
+     ./check-synced.sh \
+     /usr/local/bin/
+
+RUN chmod a+x /usr/local/bin/bitcoind-manager \
+    /usr/local/bin/*.sh
 
 EXPOSE 8332 8333
 

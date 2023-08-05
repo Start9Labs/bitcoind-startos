@@ -19,7 +19,7 @@ NGINX_CFG='server {
     }
 
     location ~ \.php$ {
-        fastcgi_pass 127.0.0.1:9000;
+        fastcgi_pass unix:/run/nginx/php-fpm.sock;
         fastcgi_index index.php;
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         include fastcgi_params;
@@ -44,7 +44,7 @@ class Config {
     const RPC_PASSWORD = "'$RPC_PASSWORD'";
 
     const PEERS_GEO = true;
-    const PEERS_GEO_TIMEOUT = 2;
+    const PEERS_GEO_TIMEOUT = 3;
 
     const DISPLAY_BLOCKS = 25;
     const DISPLAY_FORKS = 25;
