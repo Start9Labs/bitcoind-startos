@@ -4,7 +4,7 @@
 FROM lncm/berkeleydb as berkeleydb
 
 # Build stage for Bitcoin Core
-FROM alpine:3.16 as bitcoin-core
+FROM alpine:3.18 as bitcoin-core
 
 COPY --from=berkeleydb /opt /opt
 
@@ -51,7 +51,7 @@ RUN strip ${BITCOIN_PREFIX}/lib/libbitcoinconsensus.a
 RUN strip ${BITCOIN_PREFIX}/lib/libbitcoinconsensus.so.0.0.0
 
 # Build stage for compiled artifacts
-FROM alpine:3.16
+FROM alpine:3.18
 
 LABEL maintainer.0="João Fonseca (@joaopaulofonseca)" \
   maintainer.1="Pedro Branco (@pedrobranco)" \
@@ -71,7 +71,7 @@ RUN apk --no-cache add \
   tini \
   yq \
   nginx \
-  php8 php8-fpm php8-curl php8-session
+  php82 php82-fpm php82-curl php82-session
 RUN rm -rf /var/cache/apk/*
 
 ARG ARCH
@@ -82,8 +82,8 @@ ENV PATH=${BITCOIN_PREFIX}/bin:$PATH
 
 # Add the Bitcoin Node Manager web UI submodule
 ADD ./bitcoin-node-manager /var/www/bitcoin-node-manager
-RUN sed -i 's/^user = nobody$/user = nginx/' /etc/php8/php-fpm.d/www.conf && \
-    sed -i 's/^group = nobody$/group = nginx/' /etc/php8/php-fpm.d/www.conf
+RUN sed -i 's/^user = nobody$/user = nginx/' /etc/php82/php-fpm.d/www.conf && \
+    sed -i 's/^group = nobody$/group = nginx/' /etc/php82/php-fpm.d/www.conf
 RUN chown -R nginx:nginx /var/www/bitcoin-node-manager
 
 COPY --from=bitcoin-core /opt /opt

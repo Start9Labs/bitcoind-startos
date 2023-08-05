@@ -59,7 +59,7 @@ echo "$BNM_CFG" > $BNM_CFG_FILE
 cp /mnt/assets/hoster.json /var/www/bitcoin-node-manager/data
 chown -R nginx:nginx /var/www/bitcoin-node-manager/data
  
-php-fpm8
+php-fpm82
 nginx
 
 exec tini -p SIGTERM -- bitcoind-manager
