@@ -105,7 +105,10 @@ pub struct Stat {
 
 fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
     let mut stats = LinearMap::new();
-    if let (Some(user), Some(pass)) = (
+    if let (Some(uipass), Some(user), Some(pass)) = (
+        config
+            .get(&Value::String("ui-password".to_owned()))
+            .and_then(|v| v.as_str()),
         config
             .get(&Value::String("rpc".to_owned()))
             .and_then(|v| v.get(&Value::String("username".to_owned())))
@@ -115,6 +118,17 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
             .and_then(|v| v.get(&Value::String("password".to_owned())))
             .and_then(|v| v.as_str()),
     ) {
+        stats.insert(
+            Cow::from("UI Password"),
+            Stat {
+                value_type: "string",
+                value: format!("{}", uipass),
+                description: Some(Cow::from("Bitcoin UI Password")),
+                copyable: true,
+                masked: true,
+                qr: false,
+            },
+        );
         stats.insert(
             Cow::from("Tor Quick Connect"),
             Stat {

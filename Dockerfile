@@ -87,7 +87,7 @@ ADD ./bitcoin-node-manager ${BNM_PATH}
 RUN sed -i 's/^user = nobody$/user = nginx/; s/^group = nobody$/group = nginx/' ${FPM_CONF} && \
     sed -i 's|^listen = .*$|listen = /run/nginx/php-fpm.sock|' ${FPM_CONF} && \
     sed -i 's|^;listen.owner = .*|listen.owner = nginx|; s|^;listen.group = .*|listen.group = nginx|; s|^;listen.mode = .*|listen.mode = 0660|' ${FPM_CONF}
-RUN chown -R nginx:nginx /var/www/bitcoin-node-manager /run/nginx
+RUN chown -R nginx:nginx ${BNM_PATH} /run/nginx
 
 COPY --from=bitcoin-core /opt /opt
 COPY ./manager/target/${ARCH}-unknown-linux-musl/release/bitcoind-manager \

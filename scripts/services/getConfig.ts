@@ -22,6 +22,21 @@ export const getConfig: T.ExpectedExports.getConfig = async (effects) => {
       target: "tor-address",
       interface: "rpc",
     },
+    password: {
+      type: "string",
+      nullable: false,
+      name: "UI Password",
+      description: "The password for logging into Bitcoin Node Manager.",
+      default: {
+        charset: "a-z,1-9",
+        len: 20,
+      },
+      pattern: '^[^\\n"]*$',
+      "pattern-description":
+        "Must not contain newline or quote characters.",
+      copyable: true,
+      masked: true,
+    },
     rpc: {
       type: "object",
       name: "RPC Settings",
