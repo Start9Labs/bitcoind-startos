@@ -30,12 +30,13 @@ echo "$NGINX_CFG" > $NGINX_CFG_FILE
 
 RPC_USER=$(yq e '.rpc.username' "$CONFIG_FILE")
 RPC_PASSWORD=$(yq e '.rpc.password' "$CONFIG_FILE")
+UI_PASSWORD=$(yq e '.ui-password' "$CONFIG_FILE")
 BNM_CFG_FILE="/var/www/bitcoin-node-manager/src/Config.php"
 BNM_CFG='<?php
 namespace App;
 
 class Config {
-    const PASSWORD = "'$RPC_PASSWORD'";
+    const PASSWORD = "'$UI_PASSWORD'";
     const ACCESS_IP = "";
 
     const RPC_IP = "127.0.0.1";

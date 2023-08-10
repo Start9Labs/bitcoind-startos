@@ -22,7 +22,7 @@ export const getConfig: T.ExpectedExports.getConfig = async (effects) => {
       target: "tor-address",
       interface: "rpc",
     },
-    password: {
+    "ui-password": {
       type: "string",
       nullable: false,
       name: "UI Password",

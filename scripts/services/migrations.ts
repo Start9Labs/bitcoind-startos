@@ -229,6 +229,26 @@ export const migration: T.ExpectedExports.migration =
           { version: "25.0.0.2", type: "down" }
         ),
       },
+      "25.0.0.4": {
+        up: compat.migrations.updateConfig(
+          (config: any) => {
+            config["ui-password"] = Math.random().toString(36).slice(-20);
+
+            return config;
+          },
+          true,
+          { version: "25.0.0.4", type: "up" }
+        ),
+        down: compat.migrations.updateConfig(
+          (config: any) => {
+            delete config["ui-password"];
+
+            return config;
+          },
+          true,
+          { version: "25.0.0.4", type: "down" }
+        ),
+      },
     },
     "25.0.0.4"
   );
