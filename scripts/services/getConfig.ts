@@ -68,9 +68,9 @@ export const getConfig: T.ExpectedExports.getConfig = async (effects) => {
             charset: "a-z,2-7",
             len: 20,
           },
-          pattern: '^[^\\n"]*$',
+          pattern: "^[a-zA-Z0-9_]+$",
           "pattern-description":
-            "Must not contain newline or quote characters.",
+            "Must be alphanumeric (can contain underscore).",
           copyable: true,
           masked: true,
         },
