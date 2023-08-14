@@ -59,7 +59,7 @@ export const migration: T.ExpectedExports.migration =
             config.advanced.peers.addnode = (
               config.advanced.peers.addnode as unknown[]
             )
-              .map((node) => {
+              .map((node: any) => {
                 if (typeof node === "string") {
                   return { hostname: node, port: null };
                 } else if (
