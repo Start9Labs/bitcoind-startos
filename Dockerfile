@@ -35,14 +35,16 @@ RUN ./autogen.sh
 RUN ./configure LDFLAGS=-L`ls -d /opt/db*`/lib/ CPPFLAGS=-I`ls -d /opt/db*`/include/ \
   # If building on Mac make sure to increase Docker VM memory, or uncomment this line. See https://github.com/bitcoin/bitcoin/issues/6658 for more info.
   # CXXFLAGS="--param ggc-min-expand=1 --param ggc-min-heapsize=32768" \
+  CXXFLAGS="-O2" \
   --prefix=${BITCOIN_PREFIX} \
-  --mandir=/usr/share/man \
+  --disable-man \
   --disable-tests \
   --disable-bench \
   --disable-ccache \
   --with-gui=no \
   --with-utils \
   --with-libs \
+  --with-sqlite=yes \
   --with-daemon
 RUN make -j$(($(nproc) - 1))
 RUN make install
