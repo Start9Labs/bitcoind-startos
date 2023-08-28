@@ -20,7 +20,7 @@ If you use tor, you will need to have Tor running natively on your device in ord
 
     **Note**: Use port `8332` if you are using your `Tor Address`.
 
-5. Return to your StartOS's Bitcoin Core service page again, and click "Properties" -> "RPC Username".  Copy the Username using the button to the right:
+5. Return to your server's Bitcoin Core service page again, and click "Properties" -> "RPC Username".  Copy the Username using the button to the right:
 
     ![Bitcoin RPC Credentials](./assets/sparrow-server-setup4-rpc-user-pass.png "Copy Bitcoin RPC Username and Password")
 
