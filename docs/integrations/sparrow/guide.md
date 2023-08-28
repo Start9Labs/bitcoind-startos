@@ -14,7 +14,7 @@ If you use tor, you will need to have Tor running natively on your device in ord
 
     ![Sparrow Server Setup](./assets/sparrow-server-setup2.png "Setup Your Bitcoin Server")
 
-4. From your StartOS's Bitcoin Core service page, click "Interfaces," and copy the `LAN Address` under **RPC Interface**.  Paste this into Sparrow's "URL" field, removing the `http://` prefix, as Sparrow will not accept it.  In the "Port" field, type `443`:
+4. From the Bitcoin Core service page in StartOS, click "Interfaces," and copy the `LAN Address` under **RPC Interface**.  Paste this into Sparrow's "URL" field, removing the `http://` prefix, as Sparrow will not accept it.  In the "Port" field, type `443`:
 
     ![Sparrow Server Setup](./assets/sparrow-server-setup3.png "Enter URL & Port")
 
