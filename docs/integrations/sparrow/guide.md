@@ -6,7 +6,7 @@ If you use tor, you will need to have Tor running natively on your device in ord
 
 ## Configuring Sparrow to use the Bitcoin Core RPC
 
-1. First, install the Bitcoin Core service to your StartOS from the Start9 Marketplace.
+1. Install the Bitcoin Core service to StartOS from the Start9 Marketplace, if you have not already.
 
 2. Configure Bitcoin Core and allow it to begin the Initial Blockchain Download if you have not already.  You may continue even if this is still in progress, but you will need to let the sync complete before creating your first transaction.  Bitcoin Core MUST have the "Enable Wallet" feature turned on.  This is found in *Bitcoin Core > Config > Wallet*.
 
