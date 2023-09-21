@@ -72,6 +72,7 @@ RUN apk --no-cache add \
   sqlite-dev \
   tini \
   yq \
+  patch \
   nginx \
   php82 php82-fpm php82-curl php82-session
 RUN rm -rf /var/cache/apk/*
@@ -88,8 +89,15 @@ ENV BNM_PATH=/var/www/bitcoin-node-manager
 ADD ./bitcoin-node-manager ${BNM_PATH}
 RUN sed -i 's/^user = nobody$/user = nginx/; s/^group = nobody$/group = nginx/' ${FPM_CONF} && \
     sed -i 's|^listen = .*$|listen = /run/nginx/php-fpm.sock|' ${FPM_CONF} && \
-    sed -i 's|^;listen.owner = .*|listen.owner = nginx|; s|^;listen.group = .*|listen.group = nginx|; s|^;listen.mode = .*|listen.mode = 0660|' ${FPM_CONF}
+    sed -i 's|^;listen.owner = .*|listen.owner = nginx|; s|^;listen.group = .*|listen.group = nginx|; s|^;listen.mode = .*|listen.mode = 0660|' ${FPM_CONF} && \
+    sed -i '/p=wallet/d' /var/www/bitcoin-node-manager/views/header.phtml
+
 RUN chown -R nginx:nginx ${BNM_PATH} /run/nginx
+
+WORKDIR /var/www/bitcoin-node-manager
+COPY Utility.php.patch /var/www/bitcoin-node-manager/Utility.php.patch
+RUN patch -p1 < Utility.php.patch
+WORKDIR /root/.bitcoin
 
 COPY --from=bitcoin-core /opt /opt
 COPY ./manager/target/${ARCH}-unknown-linux-musl/release/bitcoind-manager \
