@@ -6,7 +6,7 @@ If you use tor, you will need to have Tor running natively on your device in ord
 
 ## Configuring Sparrow to use the Bitcoin Core RPC
 
-1. First, install the Bitcoin Core service to your Embassy from the Start9 Marketplace.
+1. First, install the Bitcoin Core service from the Start9 Marketplace.
 
 2. Configure Bitcoin Core and allow it to begin the Initial Blockchain Download if you have not already.  You may continue even if this is still in progress, but you will need to let the sync complete before creating your first transaction.  Bitcoin Core MUST have the "Enable Wallet" feature turned on.  This is found in *Bitcoin Core > Config > Wallet*.
 
@@ -14,13 +14,13 @@ If you use tor, you will need to have Tor running natively on your device in ord
 
     ![Sparrow Server Setup](./assets/sparrow-server-setup2.png "Setup Your Bitcoin Server")
 
-4. From your Embassy's Bitcoin Core service page, click "Interfaces," and copy the `LAN Address` under **RPC Interface**.  Paste this into Sparrow's "URL" field, removing the `http://` prefix, as Sparrow will not accept it.  In the "Port" field, type `443`:
+4. From your Bitcoin Core service page, click "Interfaces," and copy the `LAN Address` under **RPC Interface**.  Paste this into Sparrow's "URL" field, removing the `http://` prefix, as Sparrow will not accept it.  In the "Port" field, type `443`:
 
     ![Sparrow Server Setup](./assets/sparrow-server-setup3.png "Enter URL & Port")
 
     **Note**: Use port `8332` if you are using your `Tor Address`.
 
-5. Return to your Embassy's Bitcoin Core service page again, and click "Properties" -> "RPC Username".  Copy the Username using the button to the right:
+5. Return to your Bitcoin Core service page again, and click "Properties" -> "RPC Username".  Copy the Username using the button to the right:
 
     ![Bitcoin RPC Credentials](./assets/sparrow-server-setup4-rpc-user-pass.png "Copy Bitcoin RPC Username and Password")
 
@@ -42,7 +42,7 @@ From here you can click **[Close]** complete your wallet setup and begin using S
 
 ## Using an Electrum Server
 
-Electrs on Embassy:
+Electrs on StartOS:
 
 https://github.com/Start9Labs/electrs-wrapper/blob/master/docs/integrations/sparrow/guide.md
 

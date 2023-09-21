@@ -10,7 +10,7 @@ Original Author: Community Member @julian
 
 ## Step 2 - Configure Specter RPC user in Bitcoin Proxy
 
-- Connect to your Embassy via browser on your Windows computer. 
+- Connect to your Start9 server via browser on your Windows computer. 
 
 - Open the “Bitcoin Proxy” service
 
@@ -70,11 +70,11 @@ Connect Specter to Bitcoin Proxy
 
 ![Specter RPC configuration test results view](./assets/specter_test_results.png "Specter RPC configuration test results view")
 
-**That's it!** Your Embassy's Bitcoin node is now connected to Specter. 
+**That's it!** Your Bitcoin node is now connected to Specter. 
 
 ### Note:
 If you notice this message:
 
 ![Bitcoin Core Node info](./assets/core_info_error.jpg "Bitcoin Core Node info")
 
-Currently, ``blockfilterindex`` is disabled for pruned Bitcoin Core nodes, so you won't be able to enable it on your Embassy. Start9 is working on a workaround.
+Currently, ``blockfilterindex`` is disabled for pruned Bitcoin Core nodes, so you won't be able to enable it on your Start9 Server. We are working on a workaround.
