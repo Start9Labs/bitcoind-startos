@@ -94,9 +94,8 @@ RUN sed -i 's/^user = nobody$/user = nginx/; s/^group = nobody$/group = nginx/' 
 
 RUN chown -R nginx:nginx ${BNM_PATH} /run/nginx
 
-WORKDIR /var/www/bitcoin-node-manager
-COPY Utility.php.patch /var/www/bitcoin-node-manager/Utility.php.patch
-RUN patch -p1 < Utility.php.patch
+RUN cd /var/www/bitcoin-node-manager && \
+    wget -qO- https://github.com/Mirobit/bitcoin-node-manager/commit/ca4b3d1381b5f2462c6a5ee58ffa7fee86eeb8c5.patch | patch -p1 --verbose
 WORKDIR /root/.bitcoin
 
 COPY --from=bitcoin-core /opt /opt
