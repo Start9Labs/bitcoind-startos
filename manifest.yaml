@@ -1,13 +1,9 @@
 id: bitcoind
 title: "Bitcoin Core"
-version: 24.0.1
-release-notes: |
-    * Add build for x86
-    * Update to latest upstream (v24.0.1)
-    * Add Full RBF Config option
-    * Add action to delete peers.dat in case of corruption
-    * Remove dbcache limit (Please use large dbcache values with caution! We recommend not touching this setting unless you know what you're doing.)
-license: mit
+version: 25.0.0.3
+eos-version: 0.3.4.3
+release-notes: Add back delete-peers action
+license: MIT
 wrapper-repo: https://github.com/Start9Labs/bitcoind-wrapper
 upstream-repo: https://github.com/bitcoin/bitcoin
 support-site: https://github.com/bitcoin/bitcoin/issues
@@ -166,80 +162,10 @@ actions:
       type: script
 migrations:
   from:
-    "<22.0.0":
-      type: docker
-      image: main
-      system: false
-      entrypoint: /usr/local/bin/migrations/lt_22_0_0.sh
+    "*":
+      type: script
       args: ["from"]
-      io-format: json
-      mounts:
-        main: /root/.bitcoin
-      inject: false
-    ">22.0.0 <23.0.0":
-      type: docker
-      image: main
-      system: false
-      entrypoint: /usr/local/bin/migrations/gt_22_0_0_lt_23_0_0.sh
-      args: ["from"]
-      io-format: json
-      mounts:
-        main: /root/.bitcoin
-      inject: false
-    ">=23.0.0 <24.0.0":
-      type: docker
-      image: main
-      system: false
-      entrypoint: /usr/local/bin/migrations/eq_23_0_0_lt_24_0_0.sh
-      args: ["from"]
-      io-format: json
-      mounts:
-        main: /root/.bitcoin
-      inject: false
-    "=24.0.0":
-      type: docker
-      image: main
-      system: false
-      entrypoint: "/bin/echo"
-      args: ['{"configured": true}']
-      io-format: json
-      inject: false
   to:
-    "<22.0.0":
-      type: docker
-      image: main
-      system: false
-      entrypoint: /usr/local/bin/migrations/lt_22_0_0.sh
+    "*":
+      type: script
       args: ["to"]
-      io-format: json
-      mounts:
-        main: /root/.bitcoin
-      inject: false
-    ">22.0.0 <23.0.0":
-      type: docker
-      image: main
-      system: false
-      entrypoint: /usr/local/bin/migrations/gt_22_0_0_lt_23_0_0.sh
-      args: ["to"]
-      io-format: json
-      mounts:
-        main: /root/.bitcoin
-      inject: false
-    ">=23.0.0 <24.0.0":
-      type: docker
-      image: main
-      system: false
-      entrypoint: /usr/local/bin/migrations/eq_23_0_0_lt_24_0_0.sh
-      args: ["to"]
-      io-format: json
-      mounts:
-        main: /root/.bitcoin
-      inject: false
-    ">=24.0.0 <25.0.0":
-      type: docker
-      image: main
-      system: false
-      entrypoint: "/bin/echo"
-      args: ['{"configured": true}']
-      io-format: json
-      inject: false

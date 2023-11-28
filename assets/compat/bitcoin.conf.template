@@ -4,19 +4,19 @@
 
 ## RPC
 {{#IF rpc.enable
+{{#IF advanced.pruning.mode = "automatic"
+rpcbind=127.0.0.1:18332
+rpcallowip=127.0.0.1/32
+}}
+{{#IF advanced.pruning.mode != "automatic"
 rpcbind=0.0.0.0:8332
 rpcallowip=0.0.0.0/0
+}}
 }}
 rpcuser={{rpc.username}}
 rpcpassword={{rpc.password}}
 {{#FOREACH rpc.advanced.auth
 rpcauth={{rpc.advanced.auth}}
-}}
-{{#IF rpc.advanced.serialversion = "segwit"
-rpcserialversion=1
-}}
-{{#IF rpc.advanced.serialversion = "non-segwit"
-rpcserialversion=0
 }}
 rpcservertimeout={{rpc.advanced.servertimeout}}
 rpcthreads={{rpc.advanced.threads}}
@@ -77,9 +77,6 @@ onlynet=onion
 whitelist=172.18.0.0/16
 
 ## PRUNING
-{{#IF advanced.pruning.mode = "manual"
-prune=1
-}}
 {{#IF advanced.pruning.mode = "automatic"
 prune={{advanced.pruning.size}}
 }}
