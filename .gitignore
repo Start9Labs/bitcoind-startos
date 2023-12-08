@@ -1,6 +1,6 @@
 manager/target/
 **/*.rs.bk
-bitcoind.s9pk
+*.s9pk
 .DS_Store
 .vscode/
 scripts/embassy.js
