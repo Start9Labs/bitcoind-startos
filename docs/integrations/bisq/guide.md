@@ -1,6 +1,6 @@
 # Bisq Setup Guide
 
-Note:  You must have "Bloom Filters" set to "Enabled" in your Bitcoin Core service on Embassy.
+Note:  You must have "Bloom Filters" set to "Enabled" in your Bitcoin Core service on StartOS.
 
 1. Open Bisq and select "Settings" from the menu at the top
 
@@ -10,7 +10,7 @@ Note:  You must have "Bloom Filters" set to "Enabled" in your Bitcoin Core servi
 
     ![Bisq Settings](./assets/bisq1.png "Click Network Info")
 
-1. Select "Use Custom Bitcoin Core Nodes." Enter your Bitcoin Core **PEER** Tor address (found in your Embassy's Bitcoin service page, under "Interfaces").  Be certain to remove the "http://" prefix; Bisq will complain if you do not.
+1. Select "Use Custom Bitcoin Core Nodes." Enter your Bitcoin Core **PEER** Tor address (found in your StartOS's Bitcoin service page, under "Interfaces").  Be certain to remove the "http://" prefix; Bisq will complain if you do not.
 
     ![Bitcoin Core Node](./assets/bisq2.png "Enter Your Node's Peer Onion Address")
 
@@ -22,7 +22,7 @@ Note:  You must have "Bloom Filters" set to "Enabled" in your Bitcoin Core servi
     
     ![Node Warning](./assets/bisq4.png "Your Node is Trustworthy")
 
-    Fortunately, you already run a soverign Bitcoin node on your Embassy, so you can proceed confidently.  Click "OK"
+    Fortunately, you already run a soverign Bitcoin node on your Start9 server, so you can proceed confidently.  Click "OK"
 
 1. At this point you should see that Bisq is syncing with your Bitcoin node in the very bottom left of the application window.  If you do not see this, make sure you have selected "Use Custom Bitcoin Core Node" and restart Bisq again.
 
@@ -33,4 +33,4 @@ Note:  You must have "Bloom Filters" set to "Enabled" in your Bitcoin Core servi
 
     ![Bitcoin Synced](./assets/bisq6.png "Bitcoin Synced")
 
-    That's it!  You're synced and ready to use Bisq with your own Bitcoin node on Embassy!!
+    That's it!  You're synced and ready to use Bisq with your own Bitcoin node on Start9 server!!

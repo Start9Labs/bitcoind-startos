@@ -1,14 +1,12 @@
 # Sparrow Wallet Setup Guide
 
-You have two options for connecting Sparrow directly to Bitcoin's RPC: LAN (.local) and Tor (.onion).  LAN of course only works on the lan but is very fast, while Tor works remotely but is slow.  Switching between them is just a matter of changing .local to .onion (or vice versa) and switching the Tor proxy off or on, respectively, and changing the Port used to connect.
+You have two options for connecting Sparrow directly to Bitcoin's RPC: LAN (.local) and Tor (.onion).  LAN of course only works on the lan but is very fast, while Tor works remotely but is slow.  Switching between them is just a matter of changing .local to .onion (or vice versa) and switching the Tor proxy off or on, respectively.
 
-If you use LAN (.local), and you run Windows, make sure you have [Bonjour set up](https://docs.start9.com/latest/guides/device-guides/dg-windows/lan-windows#install-bonjour).
-
-If you use Tor (.onion), you will need to have Tor running natively on your device in order to use Sparrow remotely.  You can find the relevant setup documentation in the Resources section at the bottom of this page.
+If you use tor, you will need to have Tor running natively on your device in order to use Sparrow remotely.  You can find the relevant setup documentation in the Resources section at the bottom of this page.
 
 ## Configuring Sparrow to use the Bitcoin Core RPC
 
-1. Install the Bitcoin Core service to StartOS from the Start9 Marketplace, if you have not already.
+1. First, install the Bitcoin Core service from the Start9 Marketplace.
 
 2. Configure Bitcoin Core and allow it to begin the Initial Blockchain Download if you have not already.  You may continue even if this is still in progress, but you will need to let the sync complete before creating your first transaction.  Bitcoin Core MUST have the "Enable Wallet" feature turned on.  This is found in *Bitcoin Core > Config > Wallet*.
 
@@ -16,13 +14,13 @@ If you use Tor (.onion), you will need to have Tor running natively on your devi
 
     ![Sparrow Server Setup](./assets/sparrow-server-setup2.png "Setup Your Bitcoin Server")
 
-4. From the Bitcoin Core service page in StartOS, click "Interfaces," and copy the `LAN Address` under **RPC Interface**.  Paste this into Sparrow's "URL" field, removing the `http://` prefix, as Sparrow will not accept it.  In the "Port" field, type `443`:
+4. From your Bitcoin Core service page, click "Interfaces," and copy the `LAN Address` under **RPC Interface**.  Paste this into Sparrow's "URL" field, removing the `http://` prefix, as Sparrow will not accept it.  In the "Port" field, type `443`:
 
     ![Sparrow Server Setup](./assets/sparrow-server-setup3.png "Enter URL & Port")
 
     **Note**: Use port `8332` if you are using your `Tor Address`.
 
-5. Return to your server's Bitcoin Core service page again, and click "Properties" -> "RPC Username".  Copy the Username using the button to the right:
+5. Return to your Bitcoin Core service page again, and click "Properties" -> "RPC Username".  Copy the Username using the button to the right:
 
     ![Bitcoin RPC Credentials](./assets/sparrow-server-setup4-rpc-user-pass.png "Copy Bitcoin RPC Username and Password")
 

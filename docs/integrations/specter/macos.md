@@ -2,7 +2,7 @@
 
 Original Author: Community Member [@Chiefmonkey](https://twitter.com/HodlrDotRocks>)
 
-The Tor address provided by the Embassy's Bitcoin service can be used in the configuration settings for [Specter Desktop](https://github.com/cryptoadvance/specter-desktop>).
+The Tor address provided by the Bitcoin service can be used in the configuration settings for [Specter Desktop](https://github.com/cryptoadvance/specter-desktop>).
 
 ## Step 1 - Install Homebrew
 
@@ -75,7 +75,7 @@ Surprisingly, Homebrew uses Google Analytics to collect anonymous usage data. Yo
 ![Welcome](./assets/welcome.png "Welcome")
 
 - Disable `Auto-detect`
-- Obtain your credentials for Bitcoin Proxy from your Embassy:
+- Obtain your credentials for Bitcoin Proxy from your StartOS:
   - Navigate to the Bitcoin Proxy service
   - If you have not yet already created a Bitcoin Proxy user for Specter, navigate to `Config > RPC Users` and click the (+) in the top right corner to add a new RPC user
   - Once a RPC user for Specter is created, copy the password under this user in `Config options > RPC Users` OR navigate to `Properties > RPC users` from the Bitcoin Proxy service menu and select the user created for Specter to copy the password
