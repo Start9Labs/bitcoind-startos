@@ -1,0 +1,35 @@
+name: Build Service
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths-ignore: ['*.md']
+    branches: ['main', 'master']
+  push:
+    paths-ignore: ['*.md']
+    branches: ['main', 'master']
+
+jobs:
+  BuildPackage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare StartOS SDK
+        uses: Start9Labs/sdk@v1
+
+      - name: Checkout services repository
+        uses: actions/checkout@v3
+
+      - name: Build the service package
+        run: |
+          git submodule update --init --recursive
+          start-sdk init
+          make
+          PACKAGE_ID=$(yq e ".id" manifest.yaml)
+          mv ${PACKAGE_ID}*s9pk ~/
+        shell: bash
+
+      - name: Upload .s9pk
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.PACKAGE_ID }}.s9pk
+          path: ~/*.s9pk
