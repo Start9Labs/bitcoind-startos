@@ -38,6 +38,7 @@ export const getConfig: T.ExpectedExports.getConfig = async (effects) => {
           nullable: false,
           name: "Username",
           description: "The username for connecting to Bitcoin over RPC.",
+          warning: "You will need to restart all services that depend on Bitcoin.",
           default: "bitcoin",
           masked: true,
           pattern: "^[a-zA-Z0-9_]+$",
@@ -49,6 +50,7 @@ export const getConfig: T.ExpectedExports.getConfig = async (effects) => {
           nullable: false,
           name: "RPC Password",
           description: "The password for connecting to Bitcoin over RPC.",
+          warning: "You will need to restart all services that depend on Bitcoin.",
           default: {
             charset: "a-z,2-7",
             len: 20,
