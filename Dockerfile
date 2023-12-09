@@ -38,7 +38,7 @@ RUN ./configure LDFLAGS=-L`ls -d /opt/db*`/lib/ CPPFLAGS=-I`ls -d /opt/db*`/incl
   # If building on Mac make sure to increase Docker VM memory, or uncomment this line. See https://github.com/bitcoin/bitcoin/issues/6658 for more info.
   # CXXFLAGS="--param ggc-min-expand=1 --param ggc-min-heapsize=32768" \
   CXXFLAGS="-O2" \
-  CXX=clang++ CC=clang \
+  # CXX=clang++ CC=clang \
   --prefix=${BITCOIN_PREFIX} \
   --disable-man \
   --disable-tests \
