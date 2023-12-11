@@ -4,6 +4,7 @@ version: 26.0.0
 eos-version: 0.3.4.3
 release-notes: |
   * Upstream code update
+  * Added support for v2 transport protocol (BIP 324)
   * Update services base image to alpine 3.18
   * Minor instructions update
 license: MIT

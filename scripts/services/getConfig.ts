@@ -216,8 +216,7 @@ export const getConfig: T.ExpectedExports.getConfig = async (effects) => {
             listen: {
               type: "boolean",
               name: "Make Public",
-              description:
-                "Allow other nodes to find your server on the network.",
+              description: "Allow other nodes to find your server on the network.",
               default: true,
             },
             onlyconnect: {
@@ -230,6 +229,12 @@ export const getConfig: T.ExpectedExports.getConfig = async (effects) => {
               type: "boolean",
               name: "Disable Clearnet",
               description: "Only connect to peers over Tor.",
+              default: false,
+            },
+            v2transport: {
+              type: "boolean",
+              name: "Use V2 P2P Transport Protocol",
+              description: "Enable or disable the use of BIP324 V2 P2P transport protocol.",
               default: false,
             },
             addnode: {
@@ -255,8 +260,7 @@ export const getConfig: T.ExpectedExports.getConfig = async (effects) => {
                     type: "number",
                     nullable: true,
                     name: "Port",
-                    description:
-                      "Port that peer is listening on for inbound p2p connections",
+                    description: "Port that peer is listening on for inbound p2p connections",
                     range: "[0,65535]",
                     integral: true,
                   },
