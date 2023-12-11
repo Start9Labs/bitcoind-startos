@@ -81,4 +81,4 @@ make install
 
 ## Integrations
 
-Our [documentation](https://docs.start9.com/latest/guides/service-guides/bitcoin/bitcoin-integrations) includes guides for integrating Bitcoin with external applications.
+Our [documentation](https://docs.start9.com/latest/service-guides/bitcoin/bitcoin-integrations) includes guides for integrating Bitcoin with external applications.
