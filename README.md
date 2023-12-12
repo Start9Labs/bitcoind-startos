@@ -27,7 +27,7 @@ Install the following system dependencies to build this project by following the
 - [rust-musl-cross](https://github.com/Start9Labs/rust-musl-cross)
 - [yq](https://mikefarah.gitbook.io/yq)
 - [rust](https://rustup.rs)
-- [start-sdk](https://github.com/Start9Labs/start-os/blob/sdk/backend/install-sdk.sh)
+- [start-sdk](https://github.com/Start9Labs/start-os/tree/sdk)
 - [make](https://www.gnu.org/software/make/)
 
 ## Cloning
