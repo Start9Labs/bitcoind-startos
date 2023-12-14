@@ -16,7 +16,7 @@ For technical contributors, please fork this repository, make your changes accor
 
 ### Adding Config Options
 
-To add config options, include the new config options in *both* `config_spec.yaml` and `assets/bitcoin.conf.template`, adhering to the syntax and conventions of those files. To view the full list of config options, complete with descriptions and specifications, check out this [site](https://jlopp.github.io/bitcoin-core-config-generator) from Jameson Lopp.
+To add config options, include the new config options in *both* `scripts/services/getConfig.ts` and `assets/compat/bitcoin.conf.template`, adhering to the syntax and conventions of those files. To view the full list of config options, complete with descriptions and specifications, check out this [site](https://jlopp.github.io/bitcoin-core-config-generator) from Jameson Lopp.
 
 ## Dependencies
 
