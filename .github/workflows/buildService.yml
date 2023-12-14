@@ -20,16 +20,17 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Build the service package
+        id: build
         run: |
           git submodule update --init --recursive
           start-sdk init
           make
-          PACKAGE_ID=$(yq e ".id" manifest.yaml)
-          mv ${PACKAGE_ID}*s9pk ~/
+          PACKAGE_ID=$(yq -oy ".id" manifest.*)
+          echo "::set-output name=package_id::$PACKAGE_ID"
         shell: bash
 
       - name: Upload .s9pk
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ env.PACKAGE_ID }}.s9pk
-          path: ~/*.s9pk
+          name: ${{ steps.build.outputs.package_id }}.s9pk
+          path: ./${{ steps.build.outputs.package_id }}.s9pk
