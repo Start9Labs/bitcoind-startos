@@ -236,7 +236,7 @@ export const migration: T.ExpectedExports.migration =
 
             return config;
           },
-          false,
+          true,
           { version: "26.0.0", type: "up" }
         ),
         down: compat.migrations.updateConfig(
@@ -245,7 +245,7 @@ export const migration: T.ExpectedExports.migration =
 
             return config;
           },
-          false,
+          true,
           { version: "26.0.0", type: "down" }
         ),
       },
