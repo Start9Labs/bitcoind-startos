@@ -1,8 +1,12 @@
 id: bitcoind
 title: "Bitcoin Core"
-version: 25.0.0.3
+version: 26.0.0
 eos-version: 0.3.4.3
-release-notes: Add back delete-peers action
+release-notes: |
+  * Latest release from Core - see full release notes [here](https://github.com/bitcoin/bitcoin/blob/master/doc/release-notes/release-notes-26.0.md)
+  * Added support for v2 transport protocol (BIP 324)
+  * Update services base image to alpine 3.18
+  * Minor readme and instructions update
 license: MIT
 wrapper-repo: https://github.com/Start9Labs/bitcoind-wrapper
 upstream-repo: https://github.com/bitcoin/bitcoin

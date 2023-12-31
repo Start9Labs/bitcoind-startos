@@ -1,6 +1,10 @@
-# Wrapper for Bitcoin Core
+<p align="center">
+  <img src="icon.png" alt="Project Logo" width="21%">
+</p>
 
-This project wraps [Bitcoin](https://bitcoin.org) for EmbassyOS. Bitcoin uses peer-to-peer technology to operate with no central authority or banks - managing transactions and the issuing of bitcoins is carried out collectively by the network. 
+# Bitcoin Core for StartOS
+
+This project packages [Bitcoin](https://bitcoin.org) for StartOS. Bitcoin uses peer-to-peer technology to operate with no central authority or banks - managing transactions and the issuing of bitcoins is carried out collectively by the network. 
 
 ## Contributing
 
@@ -12,7 +16,7 @@ For technical contributors, please fork this repository, make your changes accor
 
 ### Adding Config Options
 
-To add config options, include the new config options in *both* `config_spec.yaml` and `assets/bitcoin.conf.template`, adhering to the syntax and conventions of those files. To view the full list of config options, complete with descriptions and specifications, check out this [site](https://jlopp.github.io/bitcoin-core-config-generator) from Jameson Lopp.
+To add config options, include the new config options in *both* `scripts/services/getConfig.ts` and `assets/compat/bitcoin.conf.template`, adhering to the syntax and conventions of those files. To view the full list of config options, complete with descriptions and specifications, check out this [site](https://jlopp.github.io/bitcoin-core-config-generator) from Jameson Lopp.
 
 ## Dependencies
 
@@ -23,7 +27,7 @@ Install the following system dependencies to build this project by following the
 - [rust-musl-cross](https://github.com/Start9Labs/rust-musl-cross)
 - [yq](https://mikefarah.gitbook.io/yq)
 - [rust](https://rustup.rs)
-- [embassy-sdk](https://github.com/Start9Labs/embassy-os/blob/master/backend/install-sdk.sh)
+- [start-sdk](https://github.com/Start9Labs/start-os/tree/sdk)
 - [make](https://www.gnu.org/software/make/)
 
 ## Cloning
@@ -38,18 +42,43 @@ git submodule update --init
 
 ## Building
 
+To build the project for all supported platforms, run the following command:
+
 ```
 make
 ```
 
-## Installing (on Embassy)
+To build the project for a single platform, run:
 
 ```
-scp bitcoind.s9pk root@embassy-<id>.local:/embassy-data/package-data/tmp # Copy S9PK to the external disk. Make sure to create the directory if it doesn't already exist
-ssh root@embassy-<id>.local
-embassy-cli auth login
-embassy-cli package install /embassy-data/pacakge-data/tmp/bitcoind.s9pk # Install the sideloaded package
+# for amd64
+make x86
 ```
+or
+```
+# for arm64
+make arm
+```
+
+## Installing (on Start9 server)
+
+Run the following commands to determine successful install:
+> :information_source: Change server-name.local to your Start9 server address
+
+```
+start-cli auth login
+# Enter your StartOS password
+start-cli --host https://server-name.local package install bitcoind.s9pk
+```
+
+If you already have your `start-cli` config file setup with a default `host`, you can install simply by running:
+
+```
+make install
+```
+
+> **Tip:** You can also install the `bitcoind.s9pk` using **Sideload Service** under the **System > Manage** section.
+
 ## Integrations
 
-Documentation guides for integrating with external applications can be found under [docs/integrations](/docs/integrations).
+Our [documentation](https://docs.start9.com/latest/service-guides/bitcoin/bitcoin-integrations) includes guides for integrating Bitcoin with external applications.

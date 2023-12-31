@@ -13,35 +13,35 @@ clean:
 	rm -f scripts/*.js
 
 verify: $(PKG_ID).s9pk
-	@embassy-sdk verify s9pk $(PKG_ID).s9pk
+	@start-sdk verify s9pk $(PKG_ID).s9pk
 	@echo " Done!"
 	@echo "   Filesize: $(shell du -h $(PKG_ID).s9pk) is ready"
 
 # for rebuilding just the arm image.
 arm:
 	@rm -f docker-images/x86_64.tar
-	ARCH=aarch64 $(MAKE)
+	@ARCH=aarch64 $(MAKE) -s
 
 # for rebuilding just the x86 image.
 x86:
 	@rm -f docker-images/aarch64.tar
-	ARCH=x86_64 $(MAKE)
+	@ARCH=x86_64 $(MAKE) -s
 
 $(PKG_ID).s9pk: manifest.yaml assets/compat/* docker-images/aarch64.tar docker-images/x86_64.tar instructions.md scripts/embassy.js
 ifeq ($(ARCH),aarch64)
-	@echo "embassy-sdk: Preparing aarch64 package ..."
+	@echo "start-sdk: Preparing aarch64 package ..."
 else ifeq ($(ARCH),x86_64)
-	@echo "embassy-sdk: Preparing x86_64 package ..."
+	@echo "start-sdk: Preparing x86_64 package ..."
 else
-	@echo "embassy-sdk: Preparing Universal Package ..."
+	@echo "start-sdk: Preparing Universal Package ..."
 endif
-	@embassy-sdk pack
+	@start-sdk pack
 
-install: $(PKG_ID).s9pk
+install:
 ifeq (,$(wildcard ~/.embassy/config.yaml))
-	@echo; echo "You must define \"host: http://embassy-server-name.local\" in ~/.embassy/config.yaml config file first"; echo
+	@echo; echo "You must define \"host: http://server-name.local\" in ~/.embassy/config.yaml config file first"; echo
 else
-	embassy-cli package install $(PKG_ID).s9pk
+	start-cli package install $(PKG_ID).s9pk
 endif
 
 docker-images/aarch64.tar: Dockerfile docker_entrypoint.sh manager/target/aarch64-unknown-linux-musl/release/bitcoind-manager manifest.yaml check-rpc.sh check-synced.sh actions/*
@@ -59,10 +59,10 @@ else
 endif
 
 manager/target/aarch64-unknown-linux-musl/release/bitcoind-manager: $(MANAGER_SRC)
-	docker run --rm -it -v ~/.cargo/registry:/root/.cargo/registry -v "$(shell pwd)"/manager:/home/rust/src messense/rust-musl-cross:aarch64-musl cargo build --release
+	docker run --rm -v ~/.cargo/registry:/root/.cargo/registry -v "$(shell pwd)"/manager:/home/rust/src messense/rust-musl-cross:aarch64-musl cargo build --release
 
 manager/target/x86_64-unknown-linux-musl/release/bitcoind-manager: $(MANAGER_SRC)
-	docker run --rm -it -v ~/.cargo/registry:/root/.cargo/registry -v "$(shell pwd)"/manager:/home/rust/src messense/rust-musl-cross:x86_64-musl cargo build --release
+	docker run --rm -v ~/.cargo/registry:/root/.cargo/registry -v "$(shell pwd)"/manager:/home/rust/src messense/rust-musl-cross:x86_64-musl cargo build --release
 
 scripts/embassy.js: scripts/**/*.ts
 	deno bundle scripts/embassy.ts scripts/embassy.js

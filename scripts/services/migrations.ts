@@ -229,6 +229,26 @@ export const migration: T.ExpectedExports.migration =
           { version: "25.0.0.2", type: "down" }
         ),
       },
+      "26.0.0": {
+        up: compat.migrations.updateConfig(
+          (config: any) => {
+            config.advanced.peers.v2transport = false;
+
+            return config;
+          },
+          true,
+          { version: "26.0.0", type: "up" }
+        ),
+        down: compat.migrations.updateConfig(
+          (config: any) => {
+            delete config.advanced.peers.v2transport;
+
+            return config;
+          },
+          true,
+          { version: "26.0.0", type: "down" }
+        ),
+      },
     },
-    "25.0.0.3"
+    "26.0.0"
   );

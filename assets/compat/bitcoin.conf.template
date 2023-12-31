@@ -46,7 +46,6 @@ bind=0.0.0.0:8333
 {{#IF !advanced.peers.listen
 listen=0
 }}
-
 {{#IF advanced.peers.onlyconnect
 {{#FOREACH advanced.peers.addnode
 {{#IF advanced.peers.addnode.port
@@ -57,7 +56,6 @@ connect={{advanced.peers.addnode.hostname}}
 }}
 }}
 }}
-
 {{#IF !advanced.peers.onlyconnect
 {{#FOREACH advanced.peers.addnode
 {{#IF advanced.peers.addnode.port
@@ -70,6 +68,12 @@ addnode={{advanced.peers.addnode.hostname}}
 }}
 {{#IF advanced.peers.onlyonion
 onlynet=onion
+}}
+{{#IF advanced.peers.v2transport
+v2transport=1
+}}
+{{#IF !advanced.peers.v2transport
+v2transport=0
 }}
 
 ## WHITELIST
@@ -92,6 +96,7 @@ disablewallet=1
 }}
 {{#IF wallet.enable
 disablewallet=0
+deprecatedrpc=create_bdb
 }}
 {{#IF wallet.avoidpartialspends
 avoidpartialspends=1
