@@ -128,6 +128,8 @@ datacarrier=1
 datacarrier=0
 }}
 
+datacarriersize={{datacarriersize}}
+
 ## PERMITBAREMULTISIG
 {{#IF permitbaremultisig
 permitbaremultisig=1

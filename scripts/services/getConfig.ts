@@ -130,6 +130,17 @@ export const getConfig: T.ExpectedExports.getConfig = async (effects) => {
       description: "Relay and mine data carrier transactions",
       default: true,
     },
+    datacarriersize: {
+      type: "number",
+      nullable: false,
+      name: "Datacarrier size",
+      description:
+        "Maximum size of arbitrary data to relay and mine.",
+      range: "[1,10000]",
+      integral: true,
+      units: "bytes",
+      default: 83,
+    },
     permitbaremultisig: {
       type: "boolean",
       name: "Permitbaremultisig",
