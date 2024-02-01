@@ -124,6 +124,18 @@ export const getConfig: T.ExpectedExports.getConfig = async (effects) => {
       description: "Enable the ZeroMQ interface",
       default: true,
     },
+    datacarrier: {
+      type: "boolean",
+      name: "Datacarrier",
+      description: "Relay and mine data carrier transactions",
+      default: true,
+    },
+    permitbaremultisig: {
+      type: "boolean",
+      name: "Permitbaremultisig",
+      description: "Relay non-P2SH multisig",
+      default: true,
+    },
     txindex: {
       type: "boolean",
       name: "Transaction Index",

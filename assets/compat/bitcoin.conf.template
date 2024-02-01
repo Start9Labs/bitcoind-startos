@@ -120,6 +120,22 @@ zmqpubsequence=tcp://0.0.0.0:28333
 txindex=1
 }}
 
+## DATACARRIER
+{{#IF datacarrier
+datacarrier=1
+}}
+{{#IF !datacarrier
+datacarrier=0
+}}
+
+## PERMITBAREMULTISIG
+{{#IF permitbaremultisig
+permitbaremultisig=1
+}}
+{{#IF !permitbaremultisig
+permitbaremultisig=0
+}}
+
 ## BIP37
 {{#IF advanced.bloomfilters.peerbloomfilters
 peerbloomfilters=1
