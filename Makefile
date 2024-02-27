@@ -37,7 +37,7 @@ else
 endif
 	@start-sdk pack
 
-install: $(PKG_ID).s9pk
+install: 
 ifeq (,$(wildcard ./start9/config.yaml))
 	@echo; echo "You must define \"host: http://server-name.local\" in ./start9/config.yaml config file first"; echo
 else
