@@ -37,9 +37,9 @@ else
 endif
 	@start-sdk pack
 
-install:
-ifeq (,$(wildcard ~/.embassy/config.yaml))
-	@echo; echo "You must define \"host: http://server-name.local\" in ~/.embassy/config.yaml config file first"; echo
+install: $(PKG_ID).s9pk
+ifeq (,$(wildcard ./start9/config.yaml))
+	@echo; echo "You must define \"host: http://server-name.local\" in ./start9/config.yaml config file first"; echo
 else
 	start-cli package install $(PKG_ID).s9pk
 endif
