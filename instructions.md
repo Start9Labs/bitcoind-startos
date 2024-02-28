@@ -24,4 +24,4 @@ Pruning is a process by which your node discards old blocks and transactions aft
 
 ## Backups
 
-When your Embassy backs up this service, it will *not* include the blocks, chainstate, or indexes, so you don't need to worry about it eating your backup drive if you run an archival node.
+When your server backs up this service, it will *not* include the blocks, chainstate, or indexes, so you don't need to worry about it eating your backup drive if you run an archival node.
