@@ -1,15 +1,15 @@
-import { exists, types as T } from "../dependencies.ts";
+import { util, types as T } from "../dependencies.ts";
 
 export const action = {
   async "delete-txindex"(
     effect: T.Effects,
-    _input?: T.Config,
+    _input?: T.Config
   ): Promise<T.ResultType<T.ActionResult>> {
     const txinfoLocation = {
       path: "indexes/txindex",
       volumeId: "main",
     };
-    if (await exists(effect, txinfoLocation) === false) {
+    if ((await util.exists(effect, txinfoLocation)) === false) {
       return {
         result: {
           copyable: false,
@@ -31,13 +31,13 @@ export const action = {
   },
   async "delete-peers"(
     effect: T.Effects,
-    _input?: T.Config,
+    _input?: T.Config
   ): Promise<T.ResultType<T.ActionResult>> {
     const peersLocation = {
       path: "peers.dat",
       volumeId: "main",
     };
-    if (await exists(effect, peersLocation) === false) {
+    if ((await util.exists(effect, peersLocation)) === false) {
       return {
         result: {
           copyable: false,

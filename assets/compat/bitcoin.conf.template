@@ -4,19 +4,19 @@
 
 ## RPC
 {{#IF rpc.enable
+{{#IF advanced.pruning.mode = "automatic"
+rpcbind=127.0.0.1:18332
+rpcallowip=127.0.0.1/32
+}}
+{{#IF advanced.pruning.mode != "automatic"
 rpcbind=0.0.0.0:8332
 rpcallowip=0.0.0.0/0
+}}
 }}
 rpcuser={{rpc.username}}
 rpcpassword={{rpc.password}}
 {{#FOREACH rpc.advanced.auth
 rpcauth={{rpc.advanced.auth}}
-}}
-{{#IF rpc.advanced.serialversion = "segwit"
-rpcserialversion=1
-}}
-{{#IF rpc.advanced.serialversion = "non-segwit"
-rpcserialversion=0
 }}
 rpcservertimeout={{rpc.advanced.servertimeout}}
 rpcthreads={{rpc.advanced.threads}}
@@ -46,7 +46,6 @@ bind=0.0.0.0:8333
 {{#IF !advanced.peers.listen
 listen=0
 }}
-
 {{#IF advanced.peers.onlyconnect
 {{#FOREACH advanced.peers.addnode
 {{#IF advanced.peers.addnode.port
@@ -57,7 +56,6 @@ connect={{advanced.peers.addnode.hostname}}
 }}
 }}
 }}
-
 {{#IF !advanced.peers.onlyconnect
 {{#FOREACH advanced.peers.addnode
 {{#IF advanced.peers.addnode.port
@@ -71,15 +69,18 @@ addnode={{advanced.peers.addnode.hostname}}
 {{#IF advanced.peers.onlyonion
 onlynet=onion
 }}
+{{#IF advanced.peers.v2transport
+v2transport=1
+}}
+{{#IF !advanced.peers.v2transport
+v2transport=0
+}}
 
 ## WHITELIST
 ## whitelist all services subnet
 whitelist=172.18.0.0/16
 
 ## PRUNING
-{{#IF advanced.pruning.mode = "manual"
-prune=1
-}}
 {{#IF advanced.pruning.mode = "automatic"
 prune={{advanced.pruning.size}}
 }}
@@ -95,6 +96,7 @@ disablewallet=1
 }}
 {{#IF wallet.enable
 disablewallet=0
+deprecatedrpc=create_bdb
 }}
 {{#IF wallet.avoidpartialspends
 avoidpartialspends=1

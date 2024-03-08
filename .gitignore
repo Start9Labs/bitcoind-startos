@@ -1,7 +1,7 @@
 manager/target/
 **/*.rs.bk
-bitcoind.s9pk
-image.tar
+*.s9pk
+.DS_Store
 .vscode/
 scripts/embassy.js
 docker-images/
