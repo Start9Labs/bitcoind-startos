@@ -65,7 +65,7 @@ export const action = {
       path: "indexes/coinstats",
       volumeId: "main",
     };
-    if (await exists(effect, coinstatsinfoLocation) === false) {
+    if (await util.exists(effect, coinstatsinfoLocation) === false) {
       return {
         result: {
           copyable: false,
