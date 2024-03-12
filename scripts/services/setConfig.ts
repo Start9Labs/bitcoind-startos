@@ -23,6 +23,13 @@ export const setConfig: types.ExpectedExports.setConfig = async (
       error: "Txindex not allowed on pruned nodes.",
     };
   }
+  if (
+    !(!newConfig.coinstatsindex || (newConfig.advanced?.pruning?.mode === "disabled"))
+  ) {
+    return {
+      error: "Coinstats index not allowed on pruned nodes.",
+    };
+  }
   // true, false only fail case
   if (
     !(!newConfig.advanced.blockfilters.peerblockfilters ||
@@ -81,7 +88,7 @@ export const setConfig: types.ExpectedExports.setConfig = async (
   } else {
     effects.debug("No reindex required");
   }
-  
+
   await effects.writeFile({
     path: "start9/config.yaml",
     toWrite: YAML.stringify(newConfig),

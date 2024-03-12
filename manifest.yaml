@@ -157,6 +157,14 @@ actions:
       - stopped
     implementation:
       type: script
+  delete-coinstatsindex:
+    name: "Delete Coinstats Index"
+    description: "Deletes the Coinstats Index (coinstatsindex) in case it gets corrupted."
+    warning: The Coinstats Index will be rebuilt once Bitcoin Core is started again, unless you deactivate it in the config settings. Please don't do this unless instructed to by Start9 support staff.
+    allowed-statuses:
+      - stopped
+    implementation:
+      type: script
   delete-peers:
     name: "Delete Peer List"
     description: "Deletes the Peer List (peers.dat) in case it gets corrupted."

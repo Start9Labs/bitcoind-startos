@@ -130,6 +130,12 @@ export const getConfig: T.ExpectedExports.getConfig = async (effects) => {
       description: "Enable the Transaction Index (txindex)",
       default: allowUnpruned,
     },
+    coinstatsindex: {
+      type: "boolean",
+      name: "Coinstats Index",
+      description: "Enable the Coinstats Index (coinstatsindex)",
+      default: false,
+    },
     wallet: {
       type: "object",
       name: "Wallet",

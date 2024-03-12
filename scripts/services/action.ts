@@ -57,4 +57,32 @@ export const action = {
       },
     };
   },
+  async "delete-coinstatsindex"(
+    effect: T.Effects,
+    _input?: T.Config,
+  ): Promise<T.ResultType<T.ActionResult>> {
+    const coinstatsinfoLocation = {
+      path: "indexes/coinstats",
+      volumeId: "main",
+    };
+    if (await util.exists(effect, coinstatsinfoLocation) === false) {
+      return {
+        result: {
+          copyable: false,
+          message: "coinstatsindex doesn't exist",
+          version: "0",
+          qr: false,
+        },
+      };
+    }
+    await effect.removeDir(coinstatsinfoLocation);
+    return {
+      result: {
+        copyable: false,
+        message: "Deleted coinstatsindex",
+        version: "0",
+        qr: false,
+      },
+    };
+  },
 };
