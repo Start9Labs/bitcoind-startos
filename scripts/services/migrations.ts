@@ -249,6 +249,24 @@ export const migration: T.ExpectedExports.migration =
           { version: "26.0.0", type: "down" }
         ),
       },
+      "26.0.0.1": {
+        up: compat.migrations.updateConfig((config: any) => config, false, {
+          version: "26.0.0.1",
+          type: "up",
+        }),
+        down: compat.migrations.updateConfig(
+          (config: any) => {
+            delete config.coinstatsindex;
+            delete config.advanced.mempool.permitbaremultisig;
+            delete config.advanced.mempool.datacarrier;
+            delete config.advanced.mempool.datacarriersize;
+
+            return config;
+          },
+          true,
+          { version: "26.0.0.1", type: "down" }
+        ),
+      },
     },
     "26.0.0.1"
   );
