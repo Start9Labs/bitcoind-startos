@@ -37,6 +37,19 @@ persistmempool=0
 }}
 maxmempool={{advanced.mempool.maxmempool}}
 mempoolexpiry={{advanced.mempool.mempoolexpiry}}
+{{#IF advanced.mempool.datacarrier
+datacarrier=1
+}}
+{{#IF !advanced.mempool.datacarrier
+datacarrier=0
+}}
+datacarriersize={{advanced.mempool.datacarriersize}}
+{{#IF advanced.mempool.permitbaremultisig
+permitbaremultisig=1
+}}
+{{#IF !advanced.mempool.permitbaremultisig
+permitbaremultisig=0
+}}
 
 ## PEERS
 {{#IF advanced.peers.listen
@@ -123,25 +136,6 @@ txindex=1
 ## COINSTATSINDEX
 {{#IF coinstatsindex
 coinstatsindex=1
-}}
-
-## DATACARRIER
-{{#IF advanced.mempool.datacarrier
-datacarrier=1
-}}
-{{#IF !advanced.mempool.datacarrier
-datacarrier=0
-}}
-
-## DATACARRIER SIZE
-datacarriersize={{advanced.mempool.datacarriersize}}
-
-## PERMIT BARE MULTISIG
-{{#IF advanced.mempool.permitbaremultisig
-permitbaremultisig=1
-}}
-{{#IF !advanced.mempool.permitbaremultisig
-permitbaremultisig=0
 }}
 
 ## BIP37
