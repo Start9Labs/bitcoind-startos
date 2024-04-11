@@ -1,10 +1,10 @@
 id: bitcoind
 title: "Bitcoin Core"
-version: 26.0.0.1
+version: 26.1.0
 eos-version: 0.3.4.3
 release-notes: |
-  * New config options for mempool filtering: permitbaremultisig, datacarrier, datacarriersize
-  * New config option for coinstatsindex
+  * Update Bitcoin to [v26.1](https://github.com/bitcoin/bitcoin/releases/tag/v26.1)
+  * Default mempoolfullrbf=1 on fresh installs
   * Notice! If Bitcoin gets stuck in "Stopping" status after the update, the solution is to restart your server. System -> Restart.
 license: MIT
 wrapper-repo: https://github.com/Start9Labs/bitcoind-wrapper
