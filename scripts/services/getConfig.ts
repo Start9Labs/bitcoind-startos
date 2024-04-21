@@ -231,7 +231,7 @@ export const getConfig: T.ExpectedExports.getConfig = async (effects) => {
               nullable: false,
               name: "Max OP_RETURN Size",
               description: "Maximum size of data in OP_RETURN outputs to relay",
-              range: "[1,10000]",
+              range: "[0,10000]",
               integral: true,
               units: "bytes",
               default: 83,
