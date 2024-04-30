@@ -15,7 +15,7 @@ jobs:
         uses: Start9Labs/sdk@v1
 
       - name: Checkout services repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Build the service package
         run: |
@@ -26,21 +26,21 @@ jobs:
       - name: Setting package ID and title from the manifest
         id: package
         run: |
-          echo "::set-output name=package_id::$(yq -oy ".id" manifest.*)"
-          echo "::set-output name=package_title::$(yq -oy ".title" manifest.*)"
+          echo "package_id=$(yq -oy ".id" manifest.*)" >> $GITHUB_ENV
+          echo "package_title=$(yq -oy ".title" manifest.*)" >> $GITHUB_ENV
         shell: bash
 
       - name: Generate sha256 checksum
         run: |
-          PACKAGE_ID=${{ steps.package.outputs.package_id }}
+          PACKAGE_ID=${{ env.package_id }}
           sha256sum ${PACKAGE_ID}.s9pk > ${PACKAGE_ID}.s9pk.sha256
         shell: bash
 
       - name: Generate changelog
         run: |
-          PACKAGE_ID=${{ steps.package.outputs.package_id }}
+          PACKAGE_ID=${{ env.package_id }}
           echo "## What's Changed" > change-log.txt
-          yq e '.release-notes' manifest.yaml >> change-log.txt
+          yq -oy '.release-notes' manifest.* >> change-log.txt
           echo "## SHA256 Hash" >> change-log.txt
           echo '```' >> change-log.txt
           sha256sum ${PACKAGE_ID}.s9pk >> change-log.txt
@@ -48,15 +48,15 @@ jobs:
         shell: bash
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
-          name: ${{ steps.package.outputs.package_title }} ${{ github.ref_name }}
+          name: ${{ env.package_title }} ${{ github.ref_name }}
           prerelease: true
           body_path: change-log.txt
           files: |
-            ./${{ steps.package.outputs.package_id }}.s9pk
-            ./${{ steps.package.outputs.package_id }}.s9pk.sha256
+            ./${{ env.package_id }}.s9pk
+            ./${{ env.package_id }}.s9pk.sha256
 
       - name: Publish to Registry
         env:
@@ -67,5 +67,5 @@ jobs:
           if [[ -z "$S9USER" || -z "$S9PASS" || -z "$S9REGISTRY" ]]; then
             echo "Publish skipped: missing registry credentials."
           else
-            start-sdk publish https://$S9USER:$S9PASS@$S9REGISTRY ${{ steps.package.outputs.package_id }}.s9pk
+            start-sdk publish https://$S9USER:$S9PASS@$S9REGISTRY ${{ env.package_id }}.s9pk
           fi
