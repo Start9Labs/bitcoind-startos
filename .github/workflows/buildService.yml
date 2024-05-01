@@ -17,7 +17,7 @@ jobs:
         uses: Start9Labs/sdk@v1
 
       - name: Checkout services repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Build the service package
         id: build
@@ -26,11 +26,11 @@ jobs:
           start-sdk init
           make
           PACKAGE_ID=$(yq -oy ".id" manifest.*)
-          echo "::set-output name=package_id::$PACKAGE_ID"
+          echo "package_id=$PACKAGE_ID" >> $GITHUB_ENV
         shell: bash
 
       - name: Upload .s9pk
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.build.outputs.package_id }}.s9pk
-          path: ./${{ steps.build.outputs.package_id }}.s9pk
+          name: ${{ env.package_id }}.s9pk
+          path: ./${{ env.package_id }}.s9pk
