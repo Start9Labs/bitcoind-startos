@@ -129,13 +129,13 @@ export const getConfig: T.ExpectedExports.getConfig = async (effects) => {
     txindex: {
       type: "boolean",
       name: "Transaction Index",
-      description: "Enable the Transaction Index (txindex)",
+      description: "By enabling Transaction Index (txindex) Bitcoin Core will build a complete transaction index. This allows Bitcoin Core to access any transaction with commands like `gettransaction`.",
       default: allowUnpruned,
     },
     coinstatsindex: {
       type: "boolean",
       name: "Coinstats Index",
-      description: "Enable the Coinstats Index (coinstatsindex)",
+      description: "Enabling Coinstats Index reduces the time for the gettxoutsetinfo RPC to complete at the cost of using additional disk space",
       default: false,
     },
     wallet: {
