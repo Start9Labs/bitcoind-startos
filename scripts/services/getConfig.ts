@@ -210,7 +210,7 @@ export const getConfig: T.ExpectedExports.getConfig = async (effects) => {
             mempoolfullrbf: {
               name: "Enable Full RBF",
               description:
-                "Policy for your node to use for relaying and mining unconfirmed transactions.  For details, see https://github.com/bitcoin/bitcoin/blob/master/doc/release-notes/release-notes-24.0.md#notice-of-new-option-for-transaction-replacement-policies",
+                "Policy for your node to use for relaying and mining unconfirmed transactions.  For details, see https://github.com/bitcoin/bitcoin/blob/master/doc/release-notes/release-notes-24.0.1.md#notice-of-new-option-for-transaction-replacement-policies",
               type: "boolean",
               default: true,
             },
@@ -308,7 +308,7 @@ export const getConfig: T.ExpectedExports.getConfig = async (effects) => {
           description:
             "Blockchain Pruning Options\nReduce the blockchain size on disk\n",
           warning:
-            "Disabling pruning will convert your node into a full archival node. This requires a resync of the entire blockchain, a process that may take several days. Make sure you have enough free disk space or you may fill up your disk.\n",
+            "Disabling pruning will convert your node into a full archival node. This requires a resync of the entire blockchain, a process that may take several days.\n",
           tag: {
             id: "mode",
             name: "Pruning Mode",
