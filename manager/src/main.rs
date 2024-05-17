@@ -418,7 +418,7 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
+fn inner_main(reindex: bool, reindex_chainstate: bool) -> Result<(), Box<dyn Error>> {
     while !Path::new("/root/.bitcoin/start9/config.yaml").exists() {
         std::thread::sleep(std::time::Duration::from_secs(1));
     }
@@ -455,6 +455,8 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
     }
     if reindex {
         btc_args.push("-reindex".to_owned());
+    } else if reindex_chainstate {
+        btc_args.push("-reindex-chainstate".to_owned());
     }
 
     std::io::copy(
@@ -533,6 +535,7 @@ fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
 fn main() -> Result<(), Box<dyn Error>> {
     env_logger::Builder::from_env(Env::default().default_filter_or("warn")).init();
     let reindex = Path::new("/root/.bitcoin/requires.reindex").exists();
+    let reindex_chainstate = Path::new("/root/.bitcoin/requires.reindex_chainstate").exists();
     ctrlc::set_handler(move || {
         if let Some(raw_child) = *CHILD_PID.lock().unwrap() {
             use nix::{
@@ -544,7 +547,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             std::process::exit(143)
         }
     })?;
-    inner_main(reindex)
+    inner_main(reindex, reindex_chainstate)
 }
 
 fn human_readable_timestamp(unix_time: u64) -> String {
