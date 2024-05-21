@@ -123,7 +123,7 @@ export const getConfig: T.ExpectedExports.getConfig = async (effects) => {
     "zmq-enabled": {
       type: "boolean",
       name: "ZeroMQ Enabled",
-      description: "Enable the ZeroMQ interface",
+      description: "The ZeroMQ interface is useful for some applications which might require data related to block and transaction events from Bitcoin Core. For example, LND requires ZeroMQ be enabled for LND to get the latest block data",
       default: true,
     },
     txindex: {
