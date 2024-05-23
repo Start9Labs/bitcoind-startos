@@ -8,7 +8,7 @@ Your node is highly configurable. Many settings are considered _advanced_ and sh
 
 ### Syncing
 
-Depending on your Internet bandwidth, how many other services are running, and what peers your node happens to connect to, your node should take anywhere from 2-7 days to sync from genesis to present.
+Depending on your hardware resources, internet bandwidth, how many other services are running, and what peers your node happens to connect to, your node should take anywhere from under a day to several days to sync from genesis to present.
 
 ### Using a Wallet
 
