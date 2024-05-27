@@ -150,7 +150,7 @@ actions:
       mounts:
         main: /root/.bitcoin
       io-format: json
-  reindex_chainstate:
+  reindex-chainstate:
     name: "Reindex Chainstate"
     description: "Rebuilds the chainstate database using existing block index data; as the block index is not rebuilt 'reindex_chainstate' should be strictly faster than 'reindex'. This action should only be used in the case of chainstate corruption; if the blocks stored on disk are corrupted the 'reindex' action will need to be run instead."
     warning: Blocks not stored on disk will be redownloaded in order to rebuild the database. If your node is pruned, this action is equivalent to syncing the node from scratch, so this process could take a couple of weeks.
