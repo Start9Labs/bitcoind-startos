@@ -37,12 +37,11 @@ else
 endif
 	@start-sdk pack
 
-install: 
-ifeq (,$(wildcard ./start9/config.yaml))
-	@echo; echo "You must define \"host: http://server-name.local\" in ./start9/config.yaml config file first"; echo
-else
-	start-cli package install $(PKG_ID).s9pk
-endif
+install:
+	@if [ ! -f ~/.embassy/config.yaml ]; then echo "You must define \"host: http://server-name.local\" in ~/.embassy/config.yaml config file first."; exit 1; fi
+	@echo "\nInstalling to $$(grep -v '^#' ~/.embassy/config.yaml | cut -d'/' -f3) ...\n"
+	@[ -f $(PKG_ID).s9pk ] || ( $(MAKE) && echo "\nInstalling to $$(grep -v '^#' ~/.embassy/config.yaml | cut -d'/' -f3) ...\n" )
+	@start-cli package install $(PKG_ID).s9pk
 
 docker-images/aarch64.tar: Dockerfile docker_entrypoint.sh manager/target/aarch64-unknown-linux-musl/release/bitcoind-manager manifest.yaml check-rpc.sh check-synced.sh actions/*
 ifeq ($(ARCH),x86_64)

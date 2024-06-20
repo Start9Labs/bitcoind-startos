@@ -27,6 +27,7 @@ jobs:
           make
           PACKAGE_ID=$(yq -oy ".id" manifest.*)
           echo "package_id=$PACKAGE_ID" >> $GITHUB_ENV
+          printf "\n SHA256SUM: $(sha256sum ${PACKAGE_ID}.s9pk) \n"
         shell: bash
 
       - name: Upload .s9pk

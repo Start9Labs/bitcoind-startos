@@ -24,7 +24,6 @@ Install the following system dependencies to build this project by following the
 
 - [docker](https://docs.docker.com/get-docker)
 - [docker-buildx](https://docs.docker.com/buildx/working-with-buildx/)
-- [rust-musl-cross](https://github.com/Start9Labs/rust-musl-cross)
 - [yq](https://mikefarah.gitbook.io/yq)
 - [rust](https://rustup.rs)
 - [start-sdk](https://github.com/Start9Labs/start-os/tree/sdk)
@@ -35,8 +34,8 @@ Install the following system dependencies to build this project by following the
 Clone the project locally. Note the submodule link to the original project(s). 
 
 ```
-git clone git@github.com:Start9Labs/bitcoind-wrapper.git
-cd bitcoind-wrapper
+git clone git@github.com:Start9Labs/bitcoind-startos.git
+cd bitcoind-startos
 git submodule update --init
 ```
 

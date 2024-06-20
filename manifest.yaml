@@ -1,14 +1,14 @@
 id: bitcoind
 title: "Bitcoin Core"
-version: 27.0.0
-eos-version: 0.3.4.3
+version: 27.1.0
+eos-version: 0.3.4.4
 release-notes: |
-  * Update Bitcoin to [v27.0](https://github.com/bitcoin/bitcoin/releases/tag/v27.0)
-  * Default mempoolfullrbf=1 on fresh installs
-  * Minor config description improvements
+  * Update Bitcoin to [v27.1](https://github.com/bitcoin/bitcoin/releases/tag/v27.1)
+  * Add 'Reindex Chainstate' Action
+  * Improve config descriptions and instructions
   * Notice! If Bitcoin gets stuck in "Stopping" status after the update, the solution is to restart your server. System -> Restart.
 license: MIT
-wrapper-repo: https://github.com/Start9Labs/bitcoind-wrapper
+wrapper-repo: https://github.com/Start9Labs/bitcoind-startos
 upstream-repo: https://github.com/bitcoin/bitcoin
 support-site: https://github.com/bitcoin/bitcoin/issues
 marketing-site: https://bitcoincore.org/
@@ -153,7 +153,7 @@ actions:
   reindex-chainstate:
     name: "Reindex Chainstate"
     description: "Rebuilds the chainstate database using existing block index data; as the block index is not rebuilt, 'reindex_chainstate' should be strictly faster than 'reindex'. This action should only be used in the case of chainstate corruption; if the blocks stored on disk are corrupted, the 'reindex' action will need to be run instead."
-    warning: Blocks not stored on disk will be redownloaded in order to rebuild the database. If your node is pruned, this action is equivalent to syncing the node from scratch, so this process could take weeks on low-end hardware.
+    warning: While faster than 'Reindex', 'Reindex Chainstate' can still take several days or more to complete. Pruned nodes do not allow 'reindex-chainstate'; if you are running a pruned node and suspect chainstate corruption the 'reindex' action (requiring redownloading the entire Blockchain) should be run instead.
     allowed-statuses:
       - running
       - stopped

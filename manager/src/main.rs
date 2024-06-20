@@ -455,8 +455,18 @@ fn inner_main(reindex: bool, reindex_chainstate: bool) -> Result<(), Box<dyn Err
     }
     if reindex {
         btc_args.push("-reindex".to_owned());
+        match fs::remove_file("/root/.bitcoin/requires.reindex") {
+            Ok(()) => (),
+            Err(e) if e.kind() == std::io::ErrorKind::NotFound => (),
+            a => a?,
+        }
     } else if reindex_chainstate {
         btc_args.push("-reindex-chainstate".to_owned());
+        match fs::remove_file("/root/.bitcoin/requires.reindex_chainstate") {
+            Ok(()) => (),
+            Err(e) if e.kind() == std::io::ErrorKind::NotFound => (),
+            a => a?,
+        }
     }
 
     std::io::copy(
@@ -471,13 +481,6 @@ fn inner_main(reindex: bool, reindex_chainstate: bool) -> Result<(), Box<dyn Err
     let mut child = std::process::Command::new("bitcoind")
         .args(btc_args)
         .spawn()?;
-    if reindex {
-        match fs::remove_file("/root/.bitcoin/requires.reindex") {
-            Ok(()) => (),
-            Err(e) if e.kind() == std::io::ErrorKind::NotFound => (),
-            a => a?,
-        }
-    }
     let raw_child = child.id();
     *CHILD_PID.lock().unwrap() = Some(raw_child);
     let pruned = {

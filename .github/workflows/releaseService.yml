@@ -33,6 +33,7 @@ jobs:
       - name: Generate sha256 checksum
         run: |
           PACKAGE_ID=${{ env.package_id }}
+          printf "\n SHA256SUM: $(sha256sum ${PACKAGE_ID}.s9pk) \n"
           sha256sum ${PACKAGE_ID}.s9pk > ${PACKAGE_ID}.s9pk.sha256
         shell: bash
 
