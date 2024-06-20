@@ -153,7 +153,7 @@ actions:
   reindex-chainstate:
     name: "Reindex Chainstate"
     description: "Rebuilds the chainstate database using existing block index data; as the block index is not rebuilt, 'reindex_chainstate' should be strictly faster than 'reindex'. This action should only be used in the case of chainstate corruption; if the blocks stored on disk are corrupted, the 'reindex' action will need to be run instead."
-    warning: Pruned nodes do not allow 'reindex-chainstate'; if you are running a pruned node and suspect chainstate corruption the 'reindex' action (requiring redownloading the entire Blockchain) should be run instead.
+    warning: While faster than 'Reindex', 'Reindex Chainstate' can still take several days or more to complete. Pruned nodes do not allow 'reindex-chainstate'; if you are running a pruned node and suspect chainstate corruption the 'reindex' action (requiring redownloading the entire Blockchain) should be run instead.
     allowed-statuses:
       - running
       - stopped
