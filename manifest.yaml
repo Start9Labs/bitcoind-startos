@@ -8,7 +8,7 @@ release-notes: |
   * Improve config descriptions and instructions
   * Notice! If Bitcoin gets stuck in "Stopping" status after the update, the solution is to restart your server. System -> Restart.
 license: MIT
-wrapper-repo: https://github.com/Start9Labs/bitcoind-wrapper
+wrapper-repo: https://github.com/Start9Labs/bitcoind-startos
 upstream-repo: https://github.com/bitcoin/bitcoin
 support-site: https://github.com/bitcoin/bitcoin/issues
 marketing-site: https://bitcoincore.org/
