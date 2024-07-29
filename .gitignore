@@ -1,7 +1,7 @@
-manager/target/
-**/*.rs.bk
 *.s9pk
+startos/*.js
+node_modules/
 .DS_Store
 .vscode/
-scripts/embassy.js
-docker-images/
+docker-images
+javascript

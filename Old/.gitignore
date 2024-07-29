@@ -1,0 +1,7 @@
+manager/target/
+**/*.rs.bk
+*.s9pk
+.DS_Store
+.vscode/
+scripts/embassy.js
+docker-images/
