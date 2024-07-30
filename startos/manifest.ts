@@ -21,8 +21,8 @@ export const manifest = setupManifest({
     main: {
       source: {
         dockerBuild: {
-          workdir: "../",
-          dockerfile: 'Dockerfile'
+          workdir: '../',
+          dockerfile: 'Dockerfile',
         },
       },
     },
@@ -31,8 +31,10 @@ export const manifest = setupManifest({
   alerts: {
     install: null,
     update: null,
-    uninstall: "Uninstalling Bitcoin Core will result in permanent loss of data. Without a backup, any funds stored on your node's default hot wallet will be lost forever. If you are unsure, we recommend making a backup, just to be safe.",
-    restore: 'Restoring Bitcoin Core will overwrite its current data. You will lose any transactions recorded in watch-only wallets, and any funds you have received to the hot wallet, since the last backup.',
+    uninstall:
+      "Uninstalling Bitcoin Core will result in permanent loss of data. Without a backup, any funds stored on your node's default hot wallet will be lost forever. If you are unsure, we recommend making a backup, just to be safe.",
+    restore:
+      'Restoring Bitcoin Core will overwrite its current data. You will lose any transactions recorded in watch-only wallets, and any funds you have received to the hot wallet, since the last backup.',
     start: null,
     stop: null,
   },

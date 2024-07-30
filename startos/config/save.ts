@@ -87,6 +87,7 @@ export const save = sdk.setupConfigSave(
 
     if (blockfilters.peerblockfilters) config.peerblockfilters = 1
 
+    // @TODO how does merge work with arrays like addnode?
     await bitcoinConfFile.merge(config, effects)
 
     return {

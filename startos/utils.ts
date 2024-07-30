@@ -1,8 +1,3 @@
-export const randomPassword = {
-  charset: 'a-zA-Z0-9_',
-  len: 20,
-}
-
 export type GetBlockchainInfo = {
   chain: string
   blocks: number
@@ -22,7 +17,7 @@ export type GetBlockchainInfo = {
     string,
     {
       type: string
-      bip9: {
+      bip9?: {
         status: string
         bit?: number
         start_time: number

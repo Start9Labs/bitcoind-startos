@@ -37,6 +37,9 @@ export const setInterfaces = sdk.setupInterfaces(
       path: '',
       search: {},
     })
+    const rpcReceipt = await rpcMultiOrigin.export([rpc])
+
+    const receipts = [rpcReceipt]
 
     // PEER
     const peerMulti = sdk.host.multi(effects, 'peer')
@@ -57,31 +60,36 @@ export const setInterfaces = sdk.setupInterfaces(
       path: '',
       search: {},
     })
+    const peerReceipt = await peerMultiOrigin.export([peer])
 
-    // ZMQ
-    
+    receipts.push(peerReceipt)
 
-    const zmqMulti = sdk.host.multi(effects, 'zmq')
-    const zmqMultiOrigin = await zmqMulti.bindPort(zmqPort, zmqProtocol)
-    const zmq = sdk.createInterface(effects, {
-      name: 'ZeroMQ Interface',
-      id: zmqInterfaceId,
-      description:
-        'Listens for incoming connections from peers on the bitcoin network',
-      type: 'api',
-      hasPrimary: false,
-      disabled: input ? !input['zmq-enabled'] : !(await bitcoinConfFile.read(effects))?.zmqpubhashblock,
-      masked: false,
-      schemeOverride: null,
-      username: null,
-      path: '',
-      search: {},
-    })
+    // ZMQ (conditional)
+    if (
+      (input && input.zmqEnabled) ||
+      (!input && (await bitcoinConfFile.read(effects))?.zmqpubhashblock)
+    ) {
+      const zmqMulti = sdk.host.multi(effects, 'zmq')
+      const zmqMultiOrigin = await zmqMulti.bindPort(zmqPort, zmqProtocol)
+      const zmq = sdk.createInterface(effects, {
+        name: 'ZeroMQ Interface',
+        id: zmqInterfaceId,
+        description:
+          'Listens for incoming connections from peers on the bitcoin network',
+        type: 'api',
+        hasPrimary: false,
+        disabled: false,
+        masked: false,
+        schemeOverride: null,
+        username: null,
+        path: '',
+        search: {},
+      })
+      const zmqReceipt = await zmqMultiOrigin.export([zmq])
 
-    const rpcMultiReceipt = await rpcMultiOrigin.export([rpc])
-    const peerMultiReceipt = await peerMultiOrigin.export([peer])
-    const zmqMultiReceipt = await zmqMultiOrigin.export([zmq])
+      receipts.push(zmqReceipt)
+    }
 
-    return [rpcMultiReceipt, peerMultiReceipt, zmqMultiReceipt]
+    return receipts
   },
 )

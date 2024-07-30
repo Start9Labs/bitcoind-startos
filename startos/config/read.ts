@@ -17,7 +17,7 @@ export const read = sdk.setupConfigRead(configSpec, async ({ effects }) => {
         workqueue: bitcoinConf.rpcworkqueue,
       },
     },
-    'zmq-enabled': Object.keys(bitcoinConf).includes('zmqpubrawblock'),
+    zmqEnabled: Object.keys(bitcoinConf).includes('zmqpubrawblock'),
     txindex: bitcoinConf.txindex === 1,
     coinstatsindex: bitcoinConf.coinstatsindex === 1,
     wallet: {
@@ -25,27 +25,27 @@ export const read = sdk.setupConfigRead(configSpec, async ({ effects }) => {
       avoidpartialspends: bitcoinConf.avoidpartialspends === 1,
       discardfee: bitcoinConf.discardfee,
     },
+    mempool: {
+      persistmempool: bitcoinConf.persistmempool === 1,
+      maxmempool: bitcoinConf.maxmempool,
+      mempoolexpiry: bitcoinConf.mempoolexpiry,
+      mempoolfullrbf: bitcoinConf.mempoolfullrbf === 1,
+      permitbaremultisig: bitcoinConf.permitbaremultisig === 1,
+      datacarrier: bitcoinConf.datacarrier === 1,
+      datacarriersize: bitcoinConf.datacarriersize,
+    },
+    peers: {
+      listen: bitcoinConf.listen === 1,
+      // TODO: onlyconnect probably needs to be saved to Store. But maybe not if config spec is updated to require min length of 1 for addnode if enabling onlyconnect (which we should be doing anyway)
+      onlyconnect: Object.keys(bitcoinConf).includes('connect'),
+      onlyonion: bitcoinConf.onlynet === 'onion',
+      v2transport: bitcoinConf.v2transport === 1,
+      addnode:
+        bitcoinConf.addnode.length !== 0
+          ? bitcoinConf.addnode
+          : bitcoinConf.connect,
+    },
     advanced: {
-      mempool: {
-        persistmempool: bitcoinConf.persistmempool === 1,
-        maxmempool: bitcoinConf.maxmempool,
-        mempoolexpiry: bitcoinConf.mempoolexpiry,
-        mempoolfullrbf: bitcoinConf.mempoolfullrbf === 1,
-        permitbaremultisig: bitcoinConf.permitbaremultisig === 1,
-        datacarrier: bitcoinConf.datacarrier === 1,
-        datacarriersize: bitcoinConf.datacarriersize,
-      },
-      peers: {
-        listen: bitcoinConf.listen === 1,
-        // TODO: onlyconnect probably needs to be saved to Store. But maybe not if config spec is updated to require min length of 1 for addnode if enabling onlyconnect (which we should be doing anyway)
-        onlyconnect: Object.keys(bitcoinConf).includes('connect'),
-        onlyonion: bitcoinConf.onlynet === 'onion',
-        v2transport: bitcoinConf.v2transport === 1,
-        addnode:
-          bitcoinConf.addnode.length !== 0
-            ? bitcoinConf.addnode
-            : bitcoinConf.connect,
-      },
       prune: bitcoinConf.prune,
       dbcache: bitcoinConf.dbcache,
       blockfilters: {

@@ -1,15 +1,12 @@
 import { sdk } from './sdk'
-import { Overlay, T } from '@start9labs/start-sdk'
+import { T } from '@start9labs/start-sdk'
 import * as fs from 'fs'
 import { rpcPort, peerInterfaceId } from './interfaces'
 import { GetBlockchainInfo } from './utils'
-import { CheckResult } from '@start9labs/start-sdk/cjs/lib/health/checkFns'
 
 export const main = sdk.setupMain(async ({ effects, started }) => {
   /**
    * ======================== Setup (optional) ========================
-   *
-   * In this section, we fetch any resources or run any desired preliminary commands.
    */
   const containerIp = await effects.getContainerIp()
   const peerAddr = (
@@ -42,13 +39,11 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   /**
    * ======================== Additional Health Checks (optional) ========================
    */
-
-  // @TODO add trigger to reduce polling after initialblockchaindownloaded is true
   const syncCheck = sdk.HealthCheck.of({
     effects,
     name: 'Blockchain Sync Progress',
     image: { id: 'main' },
-    fn: async (overlay) => {
+    fn: async () => {
       const res = await sdk.runCommand(
         effects,
         { id: 'main' },
@@ -60,31 +55,30 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
         {},
       )
 
-      const result: CheckResult = {
-        status: 'success',
-        message: null,
-      }
-
-      // @TODO why does res have both stdout and stderr?
-      if (res.stdout) {
-        const info: GetBlockchainInfo = JSON.parse(res.stdout as string)
+      if (res.stdout && typeof res.stdout === 'string') {
+        const info: GetBlockchainInfo = JSON.parse(res.stdout)
 
         if (info.initialblockdownload) {
           const percentage = (info.blocks / info.headers).toFixed(2)
-          result.status = 'loading'
-          result.message = `Syncing blocks...${percentage}%`
-        } else {
-          result.status = 'success'
-          result.message = 'Bitcoin is fully synced'
+          return {
+            status: 'loading',
+            message: `Syncing blocks...${percentage}%`,
+          }
         }
-      } else {
-        // @TODO what type is stderr
-        const error = JSON.parse(res.stderr as string)
 
-        result.status = error.code === 28 ? 'starting' : 'failure'
+        return {
+          status: 'success',
+          message: 'Bitcoin is fully synced',
+        }
       }
 
-      return result
+      return {
+        status:
+          typeof res.stderr === 'string' && JSON.parse(res.stderr).code === 28
+            ? 'starting'
+            : 'failure',
+        message: null,
+      }
     },
     // @TODO add trigger to reduce polling rate after IBD completion
   })
