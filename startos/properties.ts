@@ -7,7 +7,6 @@ import { T } from '@start9labs/start-sdk'
 export const properties = sdk.setupProperties(async ({ effects }) => {
   const conf = await bitcoinConfFile.read(effects)
 
-  // @TODO figure out why "as any" is needed
   if (!conf) return {} as any
 
   /** Basic Info */

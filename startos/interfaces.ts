@@ -3,8 +3,6 @@ import { configSpec } from './config/spec'
 import { BindOptions } from '@start9labs/start-sdk/cjs/lib/osBindings'
 import { bitcoinConfFile } from './file-models/bitcoin.conf'
 
-// TODO Expose rpc client on http://127.0.0.1:18332/ if pruned
-
 export const rpcPort = 8332
 export const rpcInterfaceId = 'rpc'
 export const peerPort = 8333
