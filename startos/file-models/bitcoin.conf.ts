@@ -81,7 +81,7 @@ function parseStringToObj(text: string): BitcoinConf {
 
   Object.keys(bitcoinConf).forEach((key) => {
     if (Array.isArray(bitcoinConf[key]) && bitcoinConf[key].length === 1) {
-      if (key === 'rpcauth' || key === 'addnode') return
+      if (key === 'rpcauth' || key === 'addnode' || key === 'connect') return
       const val = (bitcoinConf[key] as string[])[0]
       const maybeNum = Number(val)
       if (isNaN(maybeNum)) {

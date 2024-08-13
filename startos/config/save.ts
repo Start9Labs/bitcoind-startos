@@ -40,7 +40,7 @@ export const save = sdk.setupConfigSave(
       // Peers
       listen: peers.listen ? 1 : 0,
       v2transport: peers.v2transport ? 1 : 0,
-      whitelist: '172.18.0.0/16', // @TODO should be always set this value, irregardless of user changes?
+      whitelist: '172.18.0.0/16',
 
       // Wallet
       disablewallet: wallet.enable ? 0 : 1,
@@ -87,7 +87,6 @@ export const save = sdk.setupConfigSave(
 
     if (blockfilters.peerblockfilters) config.peerblockfilters = 1
 
-    // @TODO how does merge work with arrays like addnode?
     await bitcoinConfFile.merge(config, effects)
 
     return {

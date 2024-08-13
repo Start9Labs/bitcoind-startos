@@ -36,14 +36,21 @@ export const read = sdk.setupConfigRead(configSpec, async ({ effects }) => {
     },
     peers: {
       listen: bitcoinConf.listen === 1,
-      // TODO: onlyconnect probably needs to be saved to Store. But maybe not if config spec is updated to require min length of 1 for addnode if enabling onlyconnect (which we should be doing anyway)
-      onlyconnect: Object.keys(bitcoinConf).includes('connect'),
       onlyonion: bitcoinConf.onlynet === 'onion',
       v2transport: bitcoinConf.v2transport === 1,
-      addnode:
-        bitcoinConf.addnode.length !== 0
-          ? bitcoinConf.addnode
-          : bitcoinConf.connect,
+      connectpeer: Object.keys(bitcoinConf).includes('connect')
+        ? {
+            selection: 'connect' as const,
+            value: {
+              peers: bitcoinConf['connect'] || [],
+            },
+          }
+        : {
+            selection: 'addnode' as const,
+            value: {
+              peers: bitcoinConf['addnode'] || [],
+            },
+          },
     },
     advanced: {
       prune: bitcoinConf.prune,
