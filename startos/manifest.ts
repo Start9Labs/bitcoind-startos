@@ -25,10 +25,9 @@ export const manifest = setupManifest(versions, {
         },
       },
     },
-    // TODO Add ghci image for btc_rpc_proxy
     proxy: {
       source: {
-        dockerTag: ''
+        dockerTag: 'ghcr.io/start9labs/btc-rpc-proxy:0.4.0'
       }
     }
   },
