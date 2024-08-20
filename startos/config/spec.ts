@@ -4,7 +4,6 @@ const { Config, List, Value, Variants } = sdk
 import * as diskusage from 'diskusage'
 
 const diskUsage = once(() => diskusage.check('/'))
-// TODO: audit default values
 export const configSpec = Config.of({
   rpc: Value.object(
     {
@@ -309,7 +308,7 @@ export const configSpec = Config.of({
       }),
       v2transport: Value.toggle({
         name: 'Use V2 P2P Transport Protocol',
-        default: false,
+        default: true,
         description:
           'Enable or disable the use of BIP324 V2 P2P transport protocol.',
         warning: null,
