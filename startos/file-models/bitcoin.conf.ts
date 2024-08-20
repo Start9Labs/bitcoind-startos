@@ -62,6 +62,9 @@ export type BitcoinConf = {
   // BIP157
   blockfilterindex?: 'basic'
   peerblockfilters?: 1
+
+  // Testnet
+  testnet: 0 | 1
 }
 
 function parseStringToObj(text: string): BitcoinConf {

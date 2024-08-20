@@ -1,13 +1,17 @@
 import { sdk } from './sdk'
 import { T } from '@start9labs/start-sdk'
 import * as fs from 'fs'
-import { rpcPort, peerInterfaceId } from './interfaces'
-import { GetBlockchainInfo } from './utils'
+import { peerInterfaceId } from './interfaces'
+import { GetBlockchainInfo, getRpcPort } from './utils'
+import { bitcoinConfFile } from './file-models/bitcoin.conf'
 
 export const main = sdk.setupMain(async ({ effects, started }) => {
   /**
    * ======================== Setup (optional) ========================
    */
+  const config = (await bitcoinConfFile.read(effects))!
+  const rpcPort = getRpcPort(config.testnet)
+  
   const containerIp = await effects.getContainerIp()
   const peerAddr = (
     await sdk.serviceInterface.getOwn(effects, peerInterfaceId).once()
@@ -36,13 +40,14 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     }
   }
 
+  // TODO Proxy if Pruned
+
   /**
    * ======================== Additional Health Checks (optional) ========================
    */
   const syncCheck = sdk.HealthCheck.of({
     effects,
     name: 'Blockchain Sync Progress',
-    image: { id: 'main' },
     fn: async () => {
       const res = await sdk.runCommand(
         effects,
@@ -63,12 +68,14 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
           return {
             status: 'loading',
             message: `Syncing blocks...${percentage}%`,
+            result: 'loading'
           }
         }
 
         return {
           status: 'success',
           message: 'Bitcoin is fully synced',
+          result: 'success',
         }
       }
 
@@ -78,9 +85,9 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
             ? 'starting'
             : 'failure',
         message: null,
+        result: 'failure'
       }
     },
-    // @TODO add trigger to reduce polling rate after IBD completion
   })
 
   const healthReceipts: T.HealthReceipt[] = [syncCheck]

@@ -2,10 +2,9 @@ import { sdk } from './sdk'
 import { configSpec } from './config/spec'
 import { BindOptions } from '@start9labs/start-sdk/cjs/lib/osBindings'
 import { bitcoinConfFile } from './file-models/bitcoin.conf'
+import { getPeerPort, getRpcPort } from './utils'
 
-export const rpcPort = 8332
 export const rpcInterfaceId = 'rpc'
-export const peerPort = 8333
 export const peerInterfaceId = 'peer'
 export const zmqPort = 28332
 export const zmqInterfaceId = 'zmq'
@@ -17,7 +16,10 @@ const zmqProtocol = {
 export const setInterfaces = sdk.setupInterfaces(
   configSpec,
   async ({ effects, input }) => {
+    // TODO: Why might `read` return `null`?
+    const config = (await bitcoinConfFile.read(effects))!
     // RPC
+    const rpcPort = getRpcPort(config.testnet)
     const rpcMulti = sdk.host.multi(effects, 'rpc')
     const rpcMultiOrigin = await rpcMulti.bindPort(rpcPort, {
       protocol: 'grpc',
@@ -28,7 +30,6 @@ export const setInterfaces = sdk.setupInterfaces(
       description: 'Listens for JSON-RPC commands',
       type: 'api',
       hasPrimary: false,
-      disabled: false,
       masked: false,
       schemeOverride: null,
       username: null,
@@ -40,6 +41,7 @@ export const setInterfaces = sdk.setupInterfaces(
     const receipts = [rpcReceipt]
 
     // PEER
+    const peerPort = (await getPeerPort(config.testnet))
     const peerMulti = sdk.host.multi(effects, 'peer')
     const peerMultiOrigin = await peerMulti.bindPort(peerPort, {
       protocol: 'bitcoin',
@@ -51,7 +53,6 @@ export const setInterfaces = sdk.setupInterfaces(
         'Listens for incoming connections from peers on the bitcoin network',
       type: 'p2p',
       hasPrimary: false,
-      disabled: false,
       masked: false,
       schemeOverride: null,
       username: null,
@@ -76,7 +77,6 @@ export const setInterfaces = sdk.setupInterfaces(
           'Listens for incoming connections from peers on the bitcoin network',
         type: 'api',
         hasPrimary: false,
-        disabled: false,
         masked: false,
         schemeOverride: null,
         username: null,

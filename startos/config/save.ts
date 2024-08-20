@@ -12,6 +12,7 @@ export const save = sdk.setupConfigSave(
       wallet,
       txindex,
       coinstatsindex,
+      testnet,
       mempool,
       peers,
       advanced: { prune, dbcache, bloomfilters, blockfilters },
@@ -46,6 +47,8 @@ export const save = sdk.setupConfigSave(
       disablewallet: wallet.enable ? 0 : 1,
       avoidpartialspends: wallet.avoidpartialspends ? 1 : 0,
       discardfee: wallet.discardfee,
+
+      testnet: testnet ? 1 : 0,
     }
 
     if (peers.listen) config.bind = '0.0.0.0:8333'

@@ -20,6 +20,7 @@ export const read = sdk.setupConfigRead(configSpec, async ({ effects }) => {
     zmqEnabled: Object.keys(bitcoinConf).includes('zmqpubrawblock'),
     txindex: bitcoinConf.txindex === 1,
     coinstatsindex: bitcoinConf.coinstatsindex === 1,
+    testnet: bitcoinConf.testnet === 1,
     wallet: {
       enable: bitcoinConf.disablewallet === 0,
       avoidpartialspends: bitcoinConf.avoidpartialspends === 1,
