@@ -21,6 +21,8 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
 
   bitcoinArgs.push(`-onion=${containerIp}:9050`)
   bitcoinArgs.push(`-externalip=${peerAddr}`)
+  bitcoinArgs.push('-datadir=/root/.bitcoin"')
+  bitcoinArgs.push('-conf=/root/.bitcoin/bitcoin.conf')
 
   if (fs.existsSync('/root/.bitcoin/requires.reindex')) {
     bitcoinArgs.push('-reindex')
