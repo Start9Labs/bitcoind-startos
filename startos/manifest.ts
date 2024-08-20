@@ -1,10 +1,9 @@
 import { setupManifest } from '@start9labs/start-sdk'
+import { versions } from './versions'
 
-export const manifest = setupManifest({
+export const manifest = setupManifest(versions, {
   id: 'bitcoind',
   title: 'Bitcoin Core',
-  version: '27.1:0',
-  releaseNotes: 'Revamped for StartOS 0.3.6',
   license: 'MIT',
   donationUrl: null,
   wrapperRepo: 'https://github.com/Start9Labs/bitcoind-startos',
@@ -21,11 +20,17 @@ export const manifest = setupManifest({
     main: {
       source: {
         dockerBuild: {
-          workdir: '../',
+          workdir: '../bitcoin',
           dockerfile: 'Dockerfile',
         },
       },
     },
+    // TODO Add ghci image for btc_rpc_proxy
+    proxy: {
+      source: {
+        dockerTag: ''
+      }
+    }
   },
   hardwareRequirements: {},
   alerts: {
