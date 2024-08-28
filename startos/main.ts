@@ -42,8 +42,6 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     }
   }
 
-  // TODO Proxy if Pruned
-
   /**
    * ======================== Additional Health Checks (optional) ========================
    */
@@ -97,22 +95,59 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   /**
    * ======================== Daemons ========================
    */
-  return sdk.Daemons.of({
-    effects,
-    started,
-    healthReceipts,
-  }).addDaemon('primary', {
-    image: { id: 'main' },
-    command: ['bitcoind', ...bitcoinArgs],
-    mounts: sdk.Mounts.of().addVolume('main', null, '/data', false),
-    ready: {
-      display: 'RPC Interface',
-      fn: () =>
-        sdk.healthCheck.checkPortListening(effects, rpcPort, {
-          successMessage: 'The Bitcoin RPC interface is ready',
-          errorMessage: 'The Bitcoin RPC interface is not ready',
-        }),
-    },
-    requires: [],
-  })
+
+  if (config.prune) {
+    return sdk.Daemons.of({
+      effects,
+      started,
+      healthReceipts,
+    }).addDaemon('primary', {
+      image: { id: 'main' },
+      command: ['bitcoind', ...bitcoinArgs],
+      mounts: sdk.Mounts.of().addVolume('main', null, '/data', false),
+      ready: {
+        display: 'RPC Interface',
+        fn: () =>
+          sdk.healthCheck.checkPortListening(effects, rpcPort, {
+            successMessage: 'The Bitcoin RPC interface is ready',
+            errorMessage: 'The Bitcoin RPC interface is not ready',
+          }),
+      },
+      requires: [],
+    })
+    // TODO: Confirm command and add toml file
+    .addDaemon('proxy', {
+      image: { id: 'proxy' },
+      command: ['docker run', '-v', '/path/to/btc_rpc_proxy.toml:/etc/btc-rpc-proxy/btc-rpc-proxy.toml', '--name', 'proxy', 'btc-rpc-proxy'],
+      mounts: sdk.Mounts.of().addVolume('proxy', null, '/data', false),
+      ready: {
+        display: 'RPC Proxy',
+        fn: () =>
+          sdk.healthCheck.checkPortListening(effects, 28332, {
+            successMessage: 'The Bitcoin RPC Proxy is ready',
+            errorMessage: 'The Bitcoin RPC Proxy is not ready',
+          }),
+      },
+      requires: [],
+    })
+  } else {
+    return sdk.Daemons.of({
+      effects,
+      started,
+      healthReceipts,
+    }).addDaemon('primary', {
+      image: { id: 'main' },
+      command: ['bitcoind', ...bitcoinArgs],
+      mounts: sdk.Mounts.of().addVolume('main', null, '/data', false),
+      ready: {
+        display: 'RPC Interface',
+        fn: () =>
+          sdk.healthCheck.checkPortListening(effects, rpcPort, {
+            successMessage: 'The Bitcoin RPC interface is ready',
+            errorMessage: 'The Bitcoin RPC interface is not ready',
+          }),
+      },
+      requires: [],
+    })
+  }
 })
