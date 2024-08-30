@@ -16,7 +16,6 @@ const zmqProtocol = {
 export const setInterfaces = sdk.setupInterfaces(
   configSpec,
   async ({ effects, input }) => {
-    // TODO: Why might `read` return `null`?
     const config = (await bitcoinConfFile.read(effects))!
     // RPC
     const rpcPort = getRpcPort(config.testnet)
@@ -65,8 +64,7 @@ export const setInterfaces = sdk.setupInterfaces(
 
     // ZMQ (conditional)
     if (
-      (input && input.zmqEnabled) ||
-      (!input && (await bitcoinConfFile.read(effects))?.zmqpubhashblock)
+      (await bitcoinConfFile.read(effects))?.zmqpubhashblock
     ) {
       const zmqMulti = sdk.host.multi(effects, 'zmq')
       const zmqMultiOrigin = await zmqMulti.bindPort(zmqPort, zmqProtocol)
