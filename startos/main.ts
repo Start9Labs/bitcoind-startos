@@ -9,6 +9,8 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   /**
    * ======================== Setup (optional) ========================
    */
+
+  // TODO if pruned: create proxy container, util.subcontainer
   const config = (await bitcoinConfFile.read(effects))!
   const rpcPort = getRpcPort(config.testnet)
   
@@ -117,9 +119,9 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     })
     // TODO: Confirm command and add toml file
     .addDaemon('proxy', {
-      image: { id: 'proxy' },
-      command: ['docker run', '-v', '/path/to/btc_rpc_proxy.toml:/etc/btc-rpc-proxy/btc-rpc-proxy.toml', '--name', 'proxy', 'btc-rpc-proxy'],
-      mounts: sdk.Mounts.of().addVolume('proxy', null, '/data', false),
+      image: { id: 'proxy' }, // subcontainer: 
+      command: ['btc-rpc-proxy'],
+      mounts: sdk.Mounts.of().addVolume('proxy', null, '/data', false), // add mount for toml file
       ready: {
         display: 'RPC Proxy',
         fn: () =>

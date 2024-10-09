@@ -7,6 +7,9 @@ export type BitcoinConf = {
   rpcuser: string
   rpcpassword: string
   rpcauth: string[]
+  // list of objects 
+  // null pw = noop
+  // index = identifier for rpcauth entries
   rpcservertimeout: number
   rpcthreads: number
   rpcworkqueue: number
@@ -114,6 +117,6 @@ function parseBitcoinConfToString(conf: BitcoinConf): string {
 
 export const bitcoinConfFile = FileHelper.raw(
   './bitcoin/bitcoin.conf',
-  (obj: BitcoinConf) => parseBitcoinConfToString(obj),
+  (obj: BitcoinConf) => parseBitcoinConfToString(obj), // BitcoinConf.typeof
   (str) => parseStringToObj(str),
 )

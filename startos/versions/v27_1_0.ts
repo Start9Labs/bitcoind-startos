@@ -6,7 +6,7 @@ export const v27_1_0 = VersionInfo.of({
   releaseNotes: 'Revamped for StartOS 0.3.6',
   migrations: {
     up: async ({ effects }) => {
-      // TODO: `merge` should accept a Partial?
+      // TODO: migrate existing rpcuser and rpcpass to rpcauth
       bitcoinConfFile.merge({ testnet: 0 }, effects)
       await effects.setConfigured({ configured: true })
     },
