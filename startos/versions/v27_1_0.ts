@@ -1,5 +1,8 @@
 import { VersionInfo, IMPOSSIBLE } from '@start9labs/start-sdk'
-import { bitcoinConfFile } from '../file-models/bitcoin.conf'
+import {
+  bitcoinConfFile,
+  fromTypedBitcoinConf,
+} from '../file-models/bitcoin.conf'
 
 export const v27_1_0 = VersionInfo.of({
   version: '27.1.0:0',
@@ -7,8 +10,7 @@ export const v27_1_0 = VersionInfo.of({
   migrations: {
     up: async ({ effects }) => {
       // TODO: migrate existing rpcuser and rpcpass to rpcauth
-      bitcoinConfFile.merge({ testnet: 0 }, effects)
-      await effects.setConfigured({ configured: true })
+      await bitcoinConfFile.merge(fromTypedBitcoinConf({ testnet: 0 }))
     },
     down: IMPOSSIBLE,
   },

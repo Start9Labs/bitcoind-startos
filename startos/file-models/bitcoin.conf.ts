@@ -1,13 +1,13 @@
 import { FileHelper } from '@start9labs/start-sdk'
 
-export type BitcoinConf = {
+export type TypedBitcoinConf = {
   // RPC
   rpcbind: string
   rpcallowip: string
   rpcuser: string
   rpcpassword: string
   rpcauth: string[]
-  // list of objects 
+  // list of objects
   // null pw = noop
   // index = identifier for rpcauth entries
   rpcservertimeout: number
@@ -70,37 +70,25 @@ export type BitcoinConf = {
   testnet: 0 | 1
 }
 
-function parseStringToObj(text: string): BitcoinConf {
+function fromBitcoinConf(text: string): Record<string, string[]> {
   const lines = text.split('/n')
-  const bitcoinConf: { [key: string]: number | string | string[] } = {}
+  const dictionary = {} as Record<string, string[]>
 
   for (const line of lines) {
-    const [key, value] = line.split('=')
+    const [key, value] = line.split('=', 2)
     const trimmedKey = key.trim()
     const trimmedValue = value.trim()
 
-    if (!bitcoinConf[trimmedKey]) {
-      bitcoinConf[trimmedKey] = []
+    if (!dictionary[trimmedKey]) {
+      dictionary[trimmedKey] = []
     }
-    ;(bitcoinConf[trimmedKey] as string[]).push(trimmedValue)
+    dictionary[trimmedKey].push(trimmedValue)
   }
 
-  Object.keys(bitcoinConf).forEach((key) => {
-    if (Array.isArray(bitcoinConf[key]) && bitcoinConf[key].length === 1) {
-      if (key === 'rpcauth' || key === 'addnode' || key === 'connect') return
-      const val = (bitcoinConf[key] as string[])[0]
-      const maybeNum = Number(val)
-      if (isNaN(maybeNum)) {
-        bitcoinConf[key] = val
-      } else {
-        bitcoinConf[key] = maybeNum
-      }
-    }
-  })
-  return bitcoinConf as BitcoinConf
+  return dictionary
 }
 
-function parseBitcoinConfToString(conf: BitcoinConf): string {
+function toBitcoinConf(conf: Record<string, string[]>): string {
   let bitcoinConfStr = ''
 
   Object.entries(conf).forEach(([key, value]) => {
@@ -117,6 +105,40 @@ function parseBitcoinConfToString(conf: BitcoinConf): string {
 
 export const bitcoinConfFile = FileHelper.raw(
   './bitcoin/bitcoin.conf',
-  (obj: BitcoinConf) => parseBitcoinConfToString(obj), // BitcoinConf.typeof
-  (str) => parseStringToObj(str),
+  (obj: Record<string, string[]>) => toBitcoinConf(obj), // BitcoinConf.typeof
+  (str) => fromBitcoinConf(str),
 )
+
+export function toTypedBitcoinConf(
+  obj: Record<string, string[]>,
+): TypedBitcoinConf {
+  const typed = {} as TypedBitcoinConf
+
+  Object.keys(obj).forEach((key) => {
+    if (TypedBitcoinConf.contains(key)) {
+      const expectedType = TypedBitcoinConf.typeof(key)
+      let val: string | string[] | number
+      if (expectedType === 'array') {
+        val = obj[key]
+      } else if (expectedType === 'number') {
+        val = Number(obj[key])
+      } else {
+        val = obj[key][0 || -1] // @TODO 0 or -1 depends on Bitcoin's behavior
+      }
+      typed[key] = val
+    }
+  })
+  return typed
+}
+
+export function fromTypedBitcoinConf(
+  typed: Partial<TypedBitcoinConf>,
+): Record<string, string[]> {
+  return Object.entries(typed).reduce(
+    (obj, [key, val]) => ({
+      ...obj,
+      [key]: [typeof val === 'number' ? String(val) : val].flat(),
+    }),
+    {},
+  )
+}

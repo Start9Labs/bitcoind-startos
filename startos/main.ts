@@ -1,9 +1,8 @@
 import { sdk } from './sdk'
-import { T } from '@start9labs/start-sdk'
-import * as fs from 'fs'
+import { Daemons, T } from '@start9labs/start-sdk'
 import { peerInterfaceId } from './interfaces'
 import { GetBlockchainInfo, getRpcPort } from './utils'
-import { bitcoinConfFile } from './file-models/bitcoin.conf'
+import { bitcoinConfFile, toTypedBitcoinConf } from './file-models/bitcoin.conf'
 
 export const main = sdk.setupMain(async ({ effects, started }) => {
   /**
@@ -11,9 +10,10 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
    */
 
   // TODO if pruned: create proxy container, util.subcontainer
-  const config = (await bitcoinConfFile.read(effects))!
+  const conf = (await bitcoinConfFile.read.const(effects))!
+  const config = toTypedBitcoinConf(conf)
+
   const rpcPort = getRpcPort(config.testnet)
-  
   const containerIp = await effects.getContainerIp()
   const peerAddr = (
     await sdk.serviceInterface.getOwn(effects, peerInterfaceId).once()
@@ -26,22 +26,14 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   bitcoinArgs.push('-datadir=/root/.bitcoin"')
   bitcoinArgs.push('-conf=/root/.bitcoin/bitcoin.conf')
 
-  if (fs.existsSync('/root/.bitcoin/requires.reindex')) {
+  if (await sdk.store.getOwn(effects, sdk.StorePath.reindexBlockchain).once()) {
     bitcoinArgs.push('-reindex')
-    try {
-      fs.unlinkSync('/root/.bitcoin/requires.reindex')
-      console.log('Deleted requires.reindex')
-    } catch (err) {
-      console.error('Error deleting requires.reindex:', err)
-    }
-  } else if (fs.existsSync('/root/.bitcoin/requires.reindex-chainstate')) {
+    sdk.store.setOwn(effects, sdk.StorePath.reindexBlockchain, false)
+  } else if (
+    await sdk.store.getOwn(effects, sdk.StorePath.reindexChainstate).once()
+  ) {
     bitcoinArgs.push('-reindex-chainstate')
-    try {
-      fs.unlinkSync('/root/.bitcoin/requires.reindex-chainstate')
-      console.log('Deleted requires.reindex-chainstate')
-    } catch (err) {
-      console.error('Error deleting requires.reindex-chainstate:', err)
-    }
+    sdk.store.setOwn(effects, sdk.StorePath.reindexChainstate, false)
   }
 
   /**
@@ -60,6 +52,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
           'getblockchaininfo',
         ],
         {},
+        'getblockchaininfo',
       )
 
       if (res.stdout && typeof res.stdout === 'string') {
@@ -70,7 +63,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
           return {
             status: 'loading',
             message: `Syncing blocks...${percentage}%`,
-            result: 'loading'
+            result: 'loading',
           }
         }
 
@@ -87,7 +80,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
             ? 'starting'
             : 'failure',
         message: null,
-        result: 'failure'
+        result: 'failure',
       }
     },
   })
@@ -98,28 +91,28 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
    * ======================== Daemons ========================
    */
 
+  const daemons = sdk.Daemons.of({
+    effects,
+    started,
+    healthReceipts,
+  }).addDaemon('primary', {
+    image: { id: 'main' },
+    command: ['bitcoind', ...bitcoinArgs],
+    mounts: sdk.Mounts.of().addVolume('main', null, '/data', false),
+    ready: {
+      display: 'RPC Interface',
+      fn: () =>
+        sdk.healthCheck.checkPortListening(effects, rpcPort, {
+          successMessage: 'The Bitcoin RPC interface is ready',
+          errorMessage: 'The Bitcoin RPC interface is not ready',
+        }),
+    },
+    requires: [],
+  })
+
   if (config.prune) {
-    return sdk.Daemons.of({
-      effects,
-      started,
-      healthReceipts,
-    }).addDaemon('primary', {
-      image: { id: 'main' },
-      command: ['bitcoind', ...bitcoinArgs],
-      mounts: sdk.Mounts.of().addVolume('main', null, '/data', false),
-      ready: {
-        display: 'RPC Interface',
-        fn: () =>
-          sdk.healthCheck.checkPortListening(effects, rpcPort, {
-            successMessage: 'The Bitcoin RPC interface is ready',
-            errorMessage: 'The Bitcoin RPC interface is not ready',
-          }),
-      },
-      requires: [],
-    })
-    // TODO: Confirm command and add toml file
-    .addDaemon('proxy', {
-      image: { id: 'proxy' }, // subcontainer: 
+    return daemons.addDaemon('proxy', {
+      image: { id: 'proxy' }, // subcontainer:
       command: ['btc-rpc-proxy'],
       mounts: sdk.Mounts.of().addVolume('proxy', null, '/data', false), // add mount for toml file
       ready: {
@@ -132,24 +125,6 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
       },
       requires: [],
     })
-  } else {
-    return sdk.Daemons.of({
-      effects,
-      started,
-      healthReceipts,
-    }).addDaemon('primary', {
-      image: { id: 'main' },
-      command: ['bitcoind', ...bitcoinArgs],
-      mounts: sdk.Mounts.of().addVolume('main', null, '/data', false),
-      ready: {
-        display: 'RPC Interface',
-        fn: () =>
-          sdk.healthCheck.checkPortListening(effects, rpcPort, {
-            successMessage: 'The Bitcoin RPC interface is ready',
-            errorMessage: 'The Bitcoin RPC interface is not ready',
-          }),
-      },
-      requires: [],
-    })
   }
+  return daemons
 })

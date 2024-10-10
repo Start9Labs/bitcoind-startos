@@ -1,9 +1,13 @@
-import { sdk } from '../sdk'
-import { bitcoinConfFile } from '../file-models/bitcoin.conf'
-import { configSpec } from './spec'
+import {
+  bitcoinConfFile,
+  toTypedBitcoinConf,
+} from '../../file-models/bitcoin.conf'
+import { ConfigSpec } from './spec'
 
-export const read = sdk.setupConfigRead(configSpec, async ({ effects }) => {
-  const bitcoinConf = (await bitcoinConfFile.read(effects))!
+export async function read(effects: any): Promise<ConfigSpec> {
+  const bitcoinConf = await bitcoinConfFile.read
+    .const(effects)
+    .then((conf) => toTypedBitcoinConf(conf || {}))
 
   return {
     rpc: {
@@ -65,4 +69,4 @@ export const read = sdk.setupConfigRead(configSpec, async ({ effects }) => {
       },
     },
   }
-})
+}

@@ -38,10 +38,10 @@ export type GetBlockchainInfo = {
   warnings: string
 }
 
-export function getRpcPort(testnet: number) {
-  return testnet === 1 ? 18332 : 8332
+export function getRpcPort(testnet: 0 | 1) {
+  return testnet ? 18332 : 8332
 }
 
-export function getPeerPort(testnet: number) {
-  return testnet === 1 ? 18333 : 8333
+export function getPeerPort(testnet: 0 | 1) {
+  return testnet ? 18333 : 8333
 }
