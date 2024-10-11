@@ -1,3 +1,9 @@
+export type GetNetworkInfo = {
+  connections: number
+  connectionsIn: number
+  connectionsOut: number
+}
+
 export type GetBlockchainInfo = {
   chain: string
   blocks: number
