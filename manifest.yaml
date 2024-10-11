@@ -1,12 +1,9 @@
 id: bitcoind
 title: "Bitcoin Core"
-version: 27.1.0
+version: 28.0.0
 eos-version: 0.3.4.4
 release-notes: |
-  * Update Bitcoin to [v27.1](https://github.com/bitcoin/bitcoin/releases/tag/v27.1)
-  * Add 'Reindex Chainstate' Action
-  * Improve config descriptions and instructions
-  * Notice! If Bitcoin gets stuck in "Stopping" status after the update, the solution is to restart your server. System -> Restart.
+  * Update Bitcoin to [v28.0](https://github.com/bitcoin/bitcoin/releases/tag/v28.0)
 license: MIT
 wrapper-repo: https://github.com/Start9Labs/bitcoind-startos
 upstream-repo: https://github.com/bitcoin/bitcoin
