@@ -1,7 +1,6 @@
 import { setupManifest } from '@start9labs/start-sdk'
-import { versions } from './versions'
 
-export const manifest = setupManifest(versions, {
+export const manifest = setupManifest({
   id: 'bitcoind',
   title: 'Bitcoin Core',
   license: 'MIT',
@@ -27,9 +26,9 @@ export const manifest = setupManifest(versions, {
     },
     proxy: {
       source: {
-        dockerTag: 'ghcr.io/start9labs/btc-rpc-proxy:0.4.0'
-      }
-    }
+        dockerTag: 'ghcr.io/start9labs/btc-rpc-proxy:0.4.0',
+      },
+    },
   },
   hardwareRequirements: {},
   alerts: {

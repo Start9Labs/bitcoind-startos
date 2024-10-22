@@ -1,7 +1,7 @@
 import { setupExposeStore } from '@start9labs/start-sdk'
 
 export type Store = {
-  reindexBlockchain: boolean
+  reindexBlockchain: number | null
   reindexChainstate: boolean
 }
 

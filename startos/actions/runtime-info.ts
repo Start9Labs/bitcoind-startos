@@ -51,20 +51,23 @@ export const runtimeInfo = sdk.Action.withoutInput(
 
     return {
       version: '1',
-      type: 'object',
-      name: 'Runtime Info',
-      value: [
-        getConnections(networkInfoRaw),
-        getBlockchainInfo(blockchainInfoRaw),
-        getSoftforkInfo(blockchainInfoRaw),
-      ],
+      title: 'Node Runtime Info',
+      message: null,
+      result: {
+        type: 'group',
+        value: [
+          getConnections(networkInfoRaw),
+          getBlockchainInfo(blockchainInfoRaw),
+          getSoftforkInfo(blockchainInfoRaw),
+        ],
+      },
     }
   },
 )
 
-function getConnections(networkInfoRaw: GetNetworkInfo): T.ActionResultV1 {
+function getConnections(networkInfoRaw: GetNetworkInfo): T.ActionResultMember {
   return {
-    type: 'string',
+    type: 'single',
     name: 'Connections',
     description: 'The number of peers connected (inbound and outbound)',
     value: `${networkInfoRaw.connections} (${networkInfoRaw.connectionsIn} in / ${networkInfoRaw.connectionsOut} out)`,
@@ -76,13 +79,14 @@ function getConnections(networkInfoRaw: GetNetworkInfo): T.ActionResultV1 {
 
 function getBlockchainInfo(
   blockchainInfoRaw: GetBlockchainInfo,
-): T.ActionResultV1 {
+): T.ActionResultMember {
   return {
-    type: 'object',
+    type: 'group',
     name: 'Blockchain Info',
+    description: null,
     value: [
       {
-        type: 'string',
+        type: 'single',
         name: 'Block Height',
         value: String(blockchainInfoRaw.headers),
         description: 'The current block height for the network',
@@ -91,7 +95,7 @@ function getBlockchainInfo(
         qr: false,
       },
       {
-        type: 'string',
+        type: 'single',
         name: 'Synced Block Height',
         value: String(blockchainInfoRaw.blocks),
         description: 'The number of blocks the node has verified',
@@ -100,7 +104,7 @@ function getBlockchainInfo(
         qr: false,
       },
       {
-        type: 'string',
+        type: 'single',
         name: 'Sync Progress',
         value:
           blockchainInfoRaw.blocks < blockchainInfoRaw.headers
@@ -117,14 +121,16 @@ function getBlockchainInfo(
 
 function getSoftforkInfo(
   blockchainInfoRaw: GetBlockchainInfo,
-): T.ActionResultV1 {
+): T.ActionResultMember {
   return {
-    type: 'object',
+    type: 'group',
     name: 'Softfork Info',
+    description: null,
     value: [
       {
-        type: 'object',
+        type: 'group',
         name: 'Softforks',
+        description: null,
         value: getSoftforks(blockchainInfoRaw),
       },
     ],
@@ -133,11 +139,11 @@ function getSoftforkInfo(
 
 function getSoftforks(
   blockchainInfoRaw: GetBlockchainInfo,
-): T.ActionResultV1[] {
+): T.ActionResultMember[] {
   return Object.entries(blockchainInfoRaw.softforks).map(([key, val]) => {
-    const value: T.ActionResultV1[] = [
+    const value: T.ActionResultMember[] = [
       {
-        type: 'string',
+        type: 'single',
         name: 'Type',
         value: val.type,
         description: 'Either "buried", "bip9"',
@@ -146,7 +152,7 @@ function getSoftforks(
         qr: false,
       },
       {
-        type: 'string',
+        type: 'single',
         name: 'Height',
         value: val.height ? String(val.height) : 'N/A',
         description:
@@ -156,7 +162,7 @@ function getSoftforks(
         qr: false,
       },
       {
-        type: 'string',
+        type: 'single',
         name: 'Active',
         value: String(val.active),
         description:
@@ -176,22 +182,24 @@ function getSoftforks(
     }
 
     return {
-      type: 'object',
+      type: 'group',
       name: key,
+      description: null,
       value,
     }
   })
 }
 
-function getBip9Info(bip9: Bip9): T.ActionResultV1 {
+function getBip9Info(bip9: Bip9): T.ActionResultMember {
   const { status, bit, start_time, timeout, since } = bip9
 
   return {
-    type: 'object',
+    type: 'group',
     name: 'Bip9',
+    description: null,
     value: [
       {
-        type: 'string',
+        type: 'single',
         name: 'Status',
         value: status,
         description:
@@ -201,7 +209,7 @@ function getBip9Info(bip9: Bip9): T.ActionResultV1 {
         qr: false,
       },
       {
-        type: 'string',
+        type: 'single',
         name: 'Bit',
         value: bit ? String(bit) : 'N/A',
         description:
@@ -211,7 +219,7 @@ function getBip9Info(bip9: Bip9): T.ActionResultV1 {
         qr: false,
       },
       {
-        type: 'string',
+        type: 'single',
         name: 'Start Time',
         value: String(start_time),
         description:
@@ -221,7 +229,7 @@ function getBip9Info(bip9: Bip9): T.ActionResultV1 {
         qr: false,
       },
       {
-        type: 'string',
+        type: 'single',
         name: 'Timeout',
         value: String(timeout),
         description:
@@ -231,7 +239,7 @@ function getBip9Info(bip9: Bip9): T.ActionResultV1 {
         qr: false,
       },
       {
-        type: 'string',
+        type: 'single',
         name: 'Since',
         value: String(since),
         description: 'height of the first block to which the status applies',
@@ -243,15 +251,16 @@ function getBip9Info(bip9: Bip9): T.ActionResultV1 {
   }
 }
 
-function getBip9Statistics(statistics: Bip9Stats): T.ActionResultV1 {
+function getBip9Statistics(statistics: Bip9Stats): T.ActionResultMember {
   const { period, threshold, elapsed, count, possible } = statistics
 
   return {
-    type: 'object',
+    type: 'group',
     name: 'Statistics',
+    description: null,
     value: [
       {
-        type: 'string',
+        type: 'single',
         name: 'Period',
         value: String(period),
         description: 'The length in blocks of the BIP9 signalling period',
@@ -260,7 +269,7 @@ function getBip9Statistics(statistics: Bip9Stats): T.ActionResultV1 {
         qr: false,
       },
       {
-        type: 'string',
+        type: 'single',
         name: 'Threshold',
         value: String(threshold),
         description:
@@ -270,7 +279,7 @@ function getBip9Statistics(statistics: Bip9Stats): T.ActionResultV1 {
         qr: false,
       },
       {
-        type: 'string',
+        type: 'single',
         name: 'Elapsed',
         value: String(elapsed),
         description:
@@ -280,7 +289,7 @@ function getBip9Statistics(statistics: Bip9Stats): T.ActionResultV1 {
         qr: false,
       },
       {
-        type: 'string',
+        type: 'single',
         name: 'Count',
         value: String(count),
         description:
@@ -290,7 +299,7 @@ function getBip9Statistics(statistics: Bip9Stats): T.ActionResultV1 {
         qr: false,
       },
       {
-        type: 'string',
+        type: 'single',
         name: 'Possible',
         value: String(possible),
         description:

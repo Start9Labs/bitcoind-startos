@@ -1,36 +1,29 @@
 import { sdk } from '../sdk'
 import * as fs from 'fs/promises'
-const { Config } = sdk
 
-const input = Config.of({})
-
-export const deletePeers = sdk.createDynamicAction(
+export const deletePeers = sdk.Action.withoutInput(
+  // id
   'deletePeers',
+
+  // metadata
+  async ({ effects }) => ({
+    name: 'Delete Peer List',
+    description: 'Deletes the Peer List (peers.dat) in case it gets corrupted.',
+    warning: null,
+    allowedStatuses: 'only-stopped',
+    group: 'Delete Corrupted Files',
+    visibility: 'enabled',
+  }),
+
+  // execution function
   async ({ effects }) => {
-    return {
-      name: 'Delete Peer List',
-      description:
-        'Deletes the Peer List (peers.dat) in case it gets corrupted.',
-      warning: null,
-      disabled: false,
-      allowedStatuses: 'onlyStopped',
-      group: 'Delete Corrupted File(s)',
-    }
-  },
-  async ({ effects, input }) => {
-    try {
-      await fs.rm('/root/.bitcoin/peers.dat')
-    } catch (err) {
-      return {
-        message: `Error deleting peers.dat file: ${err}`,
-        value: null,
-      }
-    }
+    await fs.rm('/root/.bitcoin/peers.dat')
 
     return {
-      message: 'Successfully deleted peers.dat.',
-      value: null,
+      version: '1',
+      title: 'Success',
+      message: 'Successfully deleted peers.dat',
+      result: null,
     }
   },
-  input,
 )

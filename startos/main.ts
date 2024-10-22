@@ -1,5 +1,5 @@
 import { sdk } from './sdk'
-import { Daemons, T } from '@start9labs/start-sdk'
+import { T } from '@start9labs/start-sdk'
 import { peerInterfaceId } from './interfaces'
 import { GetBlockchainInfo, getRpcPort } from './utils'
 import { bitcoinConfFile, toTypedBitcoinConf } from './file-models/bitcoin.conf'
@@ -26,21 +26,31 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   bitcoinArgs.push('-datadir=/root/.bitcoin"')
   bitcoinArgs.push('-conf=/root/.bitcoin/bitcoin.conf')
 
-  if (await sdk.store.getOwn(effects, sdk.StorePath.reindexBlockchain).once()) {
-    bitcoinArgs.push('-reindex')
-    sdk.store.setOwn(effects, sdk.StorePath.reindexBlockchain, false)
-  } else if (
-    await sdk.store.getOwn(effects, sdk.StorePath.reindexChainstate).once()
-  ) {
+  // @TODO fix syntax for watch()
+  const reindexBlockchainSub = await sdk.store
+    .getOwn(effects, sdk.StorePath.reindexBlockchain)
+    .watch()
+    .return()
+  if (reindexBlockchainSub.value) {
+    bitcoinArgs.push(`-reindex ${reindexBlockchainSub.value}`) // @TODO confirm syntax for reindexing from specific block height
+    await sdk.store.setOwn(effects, sdk.StorePath.reindexBlockchain, null)
+  }
+
+  // @TODO fix syntax for watch()
+  const reindexChainstateSub = await sdk.store
+    .getOwn(effects, sdk.StorePath.reindexChainstate)
+    .watch()
+    .return()
+  if (reindexChainstateSub.value) {
     bitcoinArgs.push('-reindex-chainstate')
-    sdk.store.setOwn(effects, sdk.StorePath.reindexChainstate, false)
+    await sdk.store.setOwn(effects, sdk.StorePath.reindexChainstate, false)
   }
 
   /**
    * ======================== Additional Health Checks (optional) ========================
    */
-  const syncCheck = sdk.HealthCheck.of({
-    effects,
+
+  const syncCheck = sdk.HealthCheck.of(effects, {
     name: 'Blockchain Sync Progress',
     fn: async () => {
       const res = await sdk.runCommand(
@@ -61,26 +71,23 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
         if (info.initialblockdownload) {
           const percentage = (info.blocks / info.headers).toFixed(2)
           return {
-            status: 'loading',
             message: `Syncing blocks...${percentage}%`,
             result: 'loading',
           }
         }
 
         return {
-          status: 'success',
           message: 'Bitcoin is fully synced',
           result: 'success',
         }
       }
 
       return {
-        status:
+        message: null,
+        result:
           typeof res.stderr === 'string' && JSON.parse(res.stderr).code === 28
             ? 'starting'
             : 'failure',
-        message: null,
-        result: 'failure',
       }
     },
   })
@@ -91,24 +98,23 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
    * ======================== Daemons ========================
    */
 
-  const daemons = sdk.Daemons.of({
-    effects,
-    started,
-    healthReceipts,
-  }).addDaemon('primary', {
-    image: { id: 'main' },
-    command: ['bitcoind', ...bitcoinArgs],
-    mounts: sdk.Mounts.of().addVolume('main', null, '/data', false),
-    ready: {
-      display: 'RPC Interface',
-      fn: () =>
-        sdk.healthCheck.checkPortListening(effects, rpcPort, {
-          successMessage: 'The Bitcoin RPC interface is ready',
-          errorMessage: 'The Bitcoin RPC interface is not ready',
-        }),
+  const daemons = sdk.Daemons.of(effects, started, healthReceipts).addDaemon(
+    'primary',
+    {
+      image: { id: 'main' },
+      command: ['bitcoind', ...bitcoinArgs],
+      mounts: sdk.Mounts.of().addVolume('main', null, '/data', false),
+      ready: {
+        display: 'RPC Interface',
+        fn: () =>
+          sdk.healthCheck.checkPortListening(effects, rpcPort, {
+            successMessage: 'The Bitcoin RPC interface is ready',
+            errorMessage: 'The Bitcoin RPC interface is not ready',
+          }),
+      },
+      requires: [],
     },
-    requires: [],
-  })
+  )
 
   if (config.prune) {
     return daemons.addDaemon('proxy', {
