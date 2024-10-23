@@ -26,24 +26,24 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   bitcoinArgs.push('-datadir=/root/.bitcoin"')
   bitcoinArgs.push('-conf=/root/.bitcoin/bitcoin.conf')
 
-  // @TODO fix syntax for watch()
-  const reindexBlockchainSub = await sdk.store
+  for await (const reindexBlockchain of sdk.store
     .getOwn(effects, sdk.StorePath.reindexBlockchain)
-    .watch()
-    .return()
-  if (reindexBlockchainSub.value) {
-    bitcoinArgs.push(`-reindex ${reindexBlockchainSub.value}`) // @TODO confirm syntax for reindexing from specific block height
-    await sdk.store.setOwn(effects, sdk.StorePath.reindexBlockchain, null)
+    .watch()) {
+    if (reindexBlockchain) {
+      bitcoinArgs.push('-reindex') // @TODO confirm syntax for re-indexing from specific block height
+      await sdk.store.setOwn(effects, sdk.StorePath.reindexBlockchain, false)
+      await sdk.restart(effects)
+    }
   }
 
-  // @TODO fix syntax for watch()
-  const reindexChainstateSub = await sdk.store
+  for await (const reindexChainstate of sdk.store
     .getOwn(effects, sdk.StorePath.reindexChainstate)
-    .watch()
-    .return()
-  if (reindexChainstateSub.value) {
-    bitcoinArgs.push('-reindex-chainstate')
-    await sdk.store.setOwn(effects, sdk.StorePath.reindexChainstate, false)
+    .watch()) {
+    if (reindexChainstate) {
+      bitcoinArgs.push('-reindex-chainstate')
+      await sdk.store.setOwn(effects, sdk.StorePath.reindexChainstate, false)
+      await sdk.restart(effects)
+    }
   }
 
   /**

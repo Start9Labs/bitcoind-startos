@@ -1,18 +1,6 @@
 import { sdk } from '../sdk'
-const { InputSpec, Value } = sdk
 
-const inputSpec = InputSpec.of({
-  blockheight: Value.number({
-    name: 'Block Height (optional)',
-    description:
-      'Optionally provide a block height from which to reindex. If no value is provided, Bitcoin will be reindexed from the genesis block.',
-    required: false,
-    integer: true,
-    min: 1,
-  }),
-})
-
-export const reindexBlockchain = sdk.Action.withInput(
+export const reindexBlockchain = sdk.Action.withoutInput(
   // id
   'reindexBlockchain',
 
@@ -28,23 +16,14 @@ export const reindexBlockchain = sdk.Action.withInput(
     visibility: 'enabled',
   }),
 
-  // input
-  inputSpec,
-
-  // optionally pre-fill the input form
-  async ({ effects }) => {},
-
   // execution function
-  async ({ effects, input }) => {
-    await sdk.store.setOwn(
-      effects,
-      sdk.StorePath.reindexBlockchain,
-      input.blockheight || null,
-    )
+  async ({ effects }) => {
+    await sdk.store.setOwn(effects, sdk.StorePath.reindexBlockchain, true)
     return {
       version: '1',
       title: 'Success',
-      message: `Blockchain will be reindexed from ${input.blockheight ? 'block ' + input.blockheight : 'genesis'} on next startup. If Bitcoin was already running, it will be automatically restarted now.`,
+      message:
+        'Blockchain will be reindexed on next startup. If Bitcoin is already running, it will be automatically restarted now.',
       result: null,
     }
   },
