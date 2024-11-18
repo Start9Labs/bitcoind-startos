@@ -33,8 +33,11 @@ pub struct ChainInfo {
 
 #[derive(Clone, Debug, serde::Deserialize)]
 pub struct NetworkInfo {
+    #[allow(dead_code)]
     connections: usize,
+    #[allow(dead_code)]
     connections_in: usize,
+    #[allow(dead_code)]
     connections_out: usize,
 }
 
@@ -112,6 +115,50 @@ pub struct Stat {
 
 fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
     let mut stats = LinearMap::new();
+    // Node uptime with years included
+    let uptime_info = std::process::Command::new("bitcoin-cli")
+        .arg("-conf=/root/.bitcoin/bitcoin.conf")
+        .arg("uptime")
+        .output()?;
+
+    if uptime_info.status.success() {
+        let uptime_seconds = String::from_utf8_lossy(&uptime_info.stdout)
+            .trim()
+            .parse::<u64>()
+            .unwrap_or(0);
+
+        let years = uptime_seconds / 31_536_000;
+        let days = (uptime_seconds % 31_536_000) / 86400;
+        let hours = (uptime_seconds % 86400) / 3600;
+        let minutes = (uptime_seconds % 3600) / 60;
+
+        let uptime_formatted = if years > 0 {
+            format!("{} years, {} days, {} hours, {} minutes", years, days, hours, minutes)
+        } else if days > 0 {
+            format!("{} days, {} hours, {} minutes", days, hours, minutes)
+        } else if hours > 0 {
+            format!("{} hours, {} minutes", hours, minutes)
+        } else {
+            format!("{} minutes", minutes)
+        };
+
+        stats.insert(
+            Cow::from("Node Uptime"),
+            Stat {
+                value_type: "string",
+                value: uptime_formatted,
+                description: Some(Cow::from("Total time the Bitcoin node has been running")),
+                copyable: false,
+                qr: false,
+                masked: false,
+            },
+        );
+    } else {
+        eprintln!(
+            "Error retrieving uptime info: {}",
+            std::str::from_utf8(&uptime_info.stderr).unwrap_or("UNKNOWN ERROR")
+        );
+    }
     if let (Some(user), Some(pass)) = (
         config
             .get(&Value::String("rpc".to_owned()))
@@ -168,51 +215,132 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
             },
         );
     }
+    
+    // Calculate total supply and progress to the next halving
+    let blockchain_info = std::process::Command::new("bitcoin-cli")
+        .arg("-conf=/root/.bitcoin/bitcoin.conf")
+        .arg("getblockchaininfo")
+        .output()?;
+
+    if blockchain_info.status.success() {
+        let blockchain_data: serde_json::Value = serde_json::from_slice(&blockchain_info.stdout)?;
+        let current_height = blockchain_data["blocks"].as_u64().unwrap_or(0);
+
+        // Calculate total supply based on height and halving intervals
+        let halving_interval = 210_000;
+        let mut subsidy = 50.0; // Initial subsidy in BTC
+        let mut total_supply = 0.0;
+        let mut remaining_height = current_height;
+
+        while remaining_height > 0 {
+            let blocks_in_this_epoch = remaining_height.min(halving_interval);
+            total_supply += blocks_in_this_epoch as f64 * subsidy;
+            remaining_height = remaining_height.saturating_sub(halving_interval);
+            subsidy /= 2.0;
+        }
+
+        stats.insert(
+            Cow::from("Total Bitcoin Supply"),
+            Stat {
+                value_type: "string",
+                value: format!("{:.8} BTC", total_supply),
+                description: Some(Cow::from("Current total supply of Bitcoin based on issuance schedule")),
+                copyable: false,
+                qr: false,
+                masked: false,
+            },
+        );
+
+        // Progress to Next Halving calculation
+        let last_halving_block = (current_height / halving_interval) * halving_interval;
+        let blocks_since_last_halving = current_height - last_halving_block;
+        let progress_to_next_halving = (blocks_since_last_halving as f64 / halving_interval as f64) * 100.0;
+
+        stats.insert(
+            Cow::from("Progress to Next Halving"),
+            Stat {
+                value_type: "string",
+                value: format!("{:.2}%", progress_to_next_halving),
+                description: Some(Cow::from("Percentage of blocks completed until the next Bitcoin halving")),
+                copyable: false,
+                qr: false,
+                masked: false,
+            },
+        );
+    }
+
+// New section to fetch and display a simplified mempool summary
+let mempool_info = std::process::Command::new("bitcoin-cli")
+    .arg("-conf=/root/.bitcoin/bitcoin.conf")
+    .arg("getmempoolinfo")
+    .output()?;
+
+if mempool_info.status.success() {
+    let mempool_data: serde_json::Value = serde_json::from_slice(&mempool_info.stdout)?;
+
+    let max_mempool = mempool_data["maxmempool"].as_u64().unwrap_or(0) as f64 / 1024_f64.powf(2.0); // Convert to MB
+    let mempool_usage = mempool_data["usage"].as_u64().unwrap_or(0) as f64 / 1024_f64.powf(2.0); // Convert to MB
+    let mempool_percent = if max_mempool > 0.0 {
+        (mempool_usage / max_mempool) * 100.0
+    } else {
+        0.0
+    };
+    let tx_count = mempool_data["size"].as_u64().unwrap_or(0); // Number of transactions
+
+    // Insert the simplified mempool summary
+    stats.insert(
+        Cow::from("Mempool Summary"),
+        Stat {
+            value_type: "string",
+            value: format!(
+                "{:.2}/{:.2} MB ({:.2}%), {} Transactions",
+                mempool_usage, max_mempool, mempool_percent, tx_count
+            ),
+            description: Some(Cow::from("Summary of current mempool usage and transaction count")),
+            copyable: false,
+            qr: false,
+            masked: false,
+        },
+    );
+} else {
+    eprintln!(
+        "Error retrieving mempool info: {}",
+        std::str::from_utf8(&mempool_info.stderr).unwrap_or("UNKNOWN ERROR")
+    );
+}
+
+    // Existing code for blockchain and network info retrieval continues here...
     let info_res = std::process::Command::new("bitcoin-cli")
         .arg("-conf=/root/.bitcoin/bitcoin.conf")
         .arg("getblockchaininfo")
         .output()?;
     if info_res.status.success() {
         let info: ChainInfo = serde_json::from_slice(&info_res.stdout)?;
+        // Consolidated block height and sync progress information
+        // Extract values for current synced blocks, total headers, and sync progress percentage
+        let current_blocks = info.blocks;
+        let total_headers = info.headers;
+        let sync_progress = if current_blocks < total_headers {
+            100.0 * info.verificationprogress
+        } else {
+            100.0
+        };
+
+        // Insert the simplified blockchain sync summary
         stats.insert(
-            Cow::from("Block Height"),
+            Cow::from("Blockchain Sync Summary"),
             Stat {
                 value_type: "string",
-                value: format!("{}", info.headers),
-                description: Some(Cow::from("The current block height for the network")),
+                value: format!(
+                    "{}/{} ({:.2}%)",
+                    current_blocks, total_headers, sync_progress
+                ),
+                description: Some(Cow::from("Current synced block height out of total headers and sync progress")),
                 copyable: false,
                 qr: false,
                 masked: false,
             },
-        );
-        stats.insert(
-            Cow::from("Synced Block Height"),
-            Stat {
-                value_type: "string",
-                value: format!("{}", info.blocks),
-                description: Some(Cow::from("The number of blocks the node has verified")),
-                copyable: false,
-                qr: false,
-                masked: false,
-            },
-        );
-        stats.insert(
-            Cow::from("Sync Progress"),
-            Stat {
-                value_type: "string",
-                value: if info.blocks < info.headers {
-                    format!("{:.2}%", 100.0 * info.verificationprogress)
-                } else {
-                    "100%".to_owned()
-                },
-                description: Some(Cow::from(
-                    "The percentage of the blockchain that has been verified",
-                )),
-                copyable: false,
-                qr: false,
-                masked: false,
-            },
-        );
+        );   
         for (sf_name, sf_data) in info.softforks {
             let sf_name_pretty = sf_name.to_title_case();
             let status_desc = Some(Cow::from(format!(
@@ -417,8 +545,9 @@ fn sidecar(config: &Mapping, addr: &str) -> Result<(), Box<dyn Error>> {
     )?;
     Ok(())
 }
+    
 
-fn inner_main(reindex: bool, reindex_chainstate: bool) -> Result<(), Box<dyn Error>> {
+fn inner_main(reindex: bool) -> Result<(), Box<dyn Error>> {
     while !Path::new("/root/.bitcoin/start9/config.yaml").exists() {
         std::thread::sleep(std::time::Duration::from_secs(1));
     }
@@ -431,7 +560,6 @@ fn inner_main(reindex: bool, reindex_chainstate: bool) -> Result<(), Box<dyn Err
         format!("-onion={}:9050", var("EMBASSY_IP")?),
         format!("-externalip={}", peer_addr),
         "-datadir=/root/.bitcoin".to_owned(),
-        "-deprecatedrpc=warnings".to_owned(),
         "-conf=/root/.bitcoin/bitcoin.conf".to_owned(),
     ];
     if config
@@ -456,18 +584,6 @@ fn inner_main(reindex: bool, reindex_chainstate: bool) -> Result<(), Box<dyn Err
     }
     if reindex {
         btc_args.push("-reindex".to_owned());
-        match fs::remove_file("/root/.bitcoin/requires.reindex") {
-            Ok(()) => (),
-            Err(e) if e.kind() == std::io::ErrorKind::NotFound => (),
-            a => a?,
-        }
-    } else if reindex_chainstate {
-        btc_args.push("-reindex-chainstate".to_owned());
-        match fs::remove_file("/root/.bitcoin/requires.reindex_chainstate") {
-            Ok(()) => (),
-            Err(e) if e.kind() == std::io::ErrorKind::NotFound => (),
-            a => a?,
-        }
     }
 
     std::io::copy(
@@ -482,6 +598,13 @@ fn inner_main(reindex: bool, reindex_chainstate: bool) -> Result<(), Box<dyn Err
     let mut child = std::process::Command::new("bitcoind")
         .args(btc_args)
         .spawn()?;
+    if reindex {
+        match fs::remove_file("/root/.bitcoin/requires.reindex") {
+            Ok(()) => (),
+            Err(e) if e.kind() == std::io::ErrorKind::NotFound => (),
+            a => a?,
+        }
+    }
     let raw_child = child.id();
     *CHILD_PID.lock().unwrap() = Some(raw_child);
     let pruned = {
@@ -539,7 +662,6 @@ fn inner_main(reindex: bool, reindex_chainstate: bool) -> Result<(), Box<dyn Err
 fn main() -> Result<(), Box<dyn Error>> {
     env_logger::Builder::from_env(Env::default().default_filter_or("warn")).init();
     let reindex = Path::new("/root/.bitcoin/requires.reindex").exists();
-    let reindex_chainstate = Path::new("/root/.bitcoin/requires.reindex_chainstate").exists();
     ctrlc::set_handler(move || {
         if let Some(raw_child) = *CHILD_PID.lock().unwrap() {
             use nix::{
@@ -551,7 +673,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             std::process::exit(143)
         }
     })?;
-    inner_main(reindex, reindex_chainstate)
+    inner_main(reindex)
 }
 
 fn human_readable_timestamp(unix_time: u64) -> String {
