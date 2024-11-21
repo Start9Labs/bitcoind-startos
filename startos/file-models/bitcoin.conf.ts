@@ -1,74 +1,112 @@
-import { FileHelper } from '@start9labs/start-sdk'
+import { FileHelper, matches } from '@start9labs/start-sdk'
 
-export type TypedBitcoinConf = {
-  // RPC
-  rpcbind: string
-  rpcallowip: string
-  rpcuser: string
-  rpcpassword: string
-  rpcauth: string[]
-  // list of objects
-  // null pw = noop
-  // index = identifier for rpcauth entries
-  rpcservertimeout: number
-  rpcthreads: number
-  rpcworkqueue: number
+const { object, string, literal, number, arrayOf, anyOf } = matches
 
-  // Mempool
-  mempoolfullrbf: 0 | 1
-  persistmempool: 0 | 1
-  maxmempool: number
-  mempoolexpiry: number
-  datacarrier: 0 | 1
-  datacarriersize: number
-  permitbaremultisig: 0 | 1
+export const shape = object(
+  {
+    // RPC
+    rpcbind: string,
+    rpcallowip: string,
+    rpcauth: arrayOf(string),
+    rpcservertimeout: number,
+    rpcthreads: number,
+    rpcworkqueue: number,
 
-  // Peers
-  listen: 0 | 1
-  bind?: string
-  connect?: string[]
-  addnode?: string[]
-  onlynet?: 'onion'
-  v2transport: 0 | 1
+    // Mempool
+    mempoolfullrbf: anyOf(literal(0), literal(1)),
+    persistmempool: anyOf(literal(0), literal(1)),
+    maxmempool: number,
+    mempoolexpiry: number,
+    datacarrier: anyOf(literal(0), literal(1)),
+    datacarriersize: number,
+    permitbaremultisig: anyOf(literal(0), literal(1)),
 
-  // Whitelist
-  whitelist: string
+    // Peers
+    listen: anyOf(literal(0), literal(1)),
+    bind: string,
+    connect: arrayOf(string),
+    addnode: arrayOf(string),
+    onlynet: literal('onion'),
+    v2transport: anyOf(literal(0), literal(1)),
 
-  // Pruning
-  prune?: number
+    // Whitelist
+    whitelist: string,
 
-  // Performance Tuning
-  dbcache?: number
+    // Pruning
+    prune: number,
 
-  // Wallet
-  disablewallet: 0 | 1
-  deprecatedrpc?: string
-  avoidpartialspends: 0 | 1
-  discardfee: number
+    // Performance Tuning
+    dbcache: number,
 
-  // Zero MQ
-  zmqpubrawblock?: string
-  zmqpubhashblock?: string
-  zmqpubrawtx?: string
-  zmqpubhashtx?: string
-  zmqpubsequence?: string
+    // Wallet
+    disablewallet: anyOf(literal(0), literal(1)),
+    deprecatedrpc: string,
+    avoidpartialspends: anyOf(literal(0), literal(1)),
+    discardfee: number,
 
-  // TxIndex
-  txindex?: 1
+    // Zero MQ
+    zmqpubrawblock: string,
+    zmqpubhashblock: string,
+    zmqpubrawtx: string,
+    zmqpubhashtx: string,
+    zmqpubsequence: string,
 
-  // CoinstatsIndex
-  coinstatsindex?: 1
+    // TxIndex
+    txindex: literal(1),
 
-  // BIP37
-  peerbloomfilters?: 1
+    // CoinstatsIndex
+    coinstatsindex: literal(1),
 
-  // BIP157
-  blockfilterindex?: 'basic'
-  peerblockfilters?: 1
+    // BIP37
+    peerbloomfilters: literal(1),
 
-  // Testnet
-  testnet: 0 | 1
-}
+    // BIP157
+    blockfilterindex: literal('basic'),
+    peerblockfilters: literal(1),
+
+    // Testnet
+    testnet: anyOf(literal(0), literal(1)),
+  },
+  [
+    'rpcbind',
+    'rpcallowip',
+    'rpcauth',
+    'rpcservertimeout',
+    'rpcthreads',
+    'rpcworkqueue',
+    'mempoolfullrbf',
+    'persistmempool',
+    'maxmempool',
+    'mempoolexpiry',
+    'datacarrier',
+    'datacarriersize',
+    'permitbaremultisig',
+    'listen',
+    'bind',
+    'connect',
+    'addnode',
+    'onlynet',
+    'v2transport',
+    'whitelist',
+    'prune',
+    'dbcache',
+    'disablewallet',
+    'deprecatedrpc',
+    'avoidpartialspends',
+    'discardfee',
+    'zmqpubrawblock',
+    'zmqpubhashblock',
+    'zmqpubrawtx',
+    'zmqpubhashtx',
+    'zmqpubsequence',
+    'txindex',
+    'coinstatsindex',
+    'peerbloomfilters',
+    'blockfilterindex',
+    'peerblockfilters',
+    'testnet',
+  ],
+)
 
 function fromBitcoinConf(text: string): Record<string, string[]> {
   const lines = text.split('/n')
@@ -93,8 +131,8 @@ function toBitcoinConf(conf: Record<string, string[]>): string {
 
   Object.entries(conf).forEach(([key, value]) => {
     if (Array.isArray(value)) {
-      for (const v of value) {
-        bitcoinConfStr += `${key}=${v}\n`
+      for (const subValue of value) {
+        bitcoinConfStr += `${key}=${subValue}\n`
       }
     } else {
       bitcoinConfStr += `${key}=${value}\n`
@@ -111,28 +149,40 @@ export const bitcoinConfFile = FileHelper.raw(
 
 export function toTypedBitcoinConf(
   obj: Record<string, string[]>,
-): TypedBitcoinConf {
-  const typed = {} as TypedBitcoinConf
+): typeof shape._TYPE {
+  let typed: Record<string, string | string[] | number> = {}
+  const knownArrays: string[] = []
+  const knownNums: string[] = []
+  const knownStrings: string[] = []
 
-  Object.keys(obj).forEach((key) => {
-    if (TypedBitcoinConf.contains(key)) {
-      const expectedType = TypedBitcoinConf.typeof(key)
-      let val: string | string[] | number
-      if (expectedType === 'array') {
-        val = obj[key]
-      } else if (expectedType === 'number') {
-        val = Number(obj[key])
-      } else {
-        val = obj[key][0 || -1] // @TODO 0 or -1 depends on Bitcoin's behavior
+  shape.map((obj) => {
+    for (const [key, val] of Object.entries(obj)) {
+      if (Array.isArray(val)) {
+        knownArrays.push(key)
+      } else if (typeof val === 'number') {
+        knownNums.push(key)
+      } else if (typeof val === 'string') {
+        knownStrings.push(key)
       }
-      typed[key] = val
     }
   })
-  return typed
+
+  Object.keys(obj).forEach((key) => {
+    let val: string | string[] | number
+    if (knownArrays.includes(key)) {
+      val = obj[key]
+    } else if (knownNums.includes(key)) {
+      val = Number(obj[key])
+    } else {
+      val = obj[key][0]
+    }
+    typed[key] = val
+  })
+  return typed as unknown as typeof shape._TYPE
 }
 
 export function fromTypedBitcoinConf(
-  typed: Partial<TypedBitcoinConf>,
+  typed: Partial<typeof shape._TYPE>,
 ): Record<string, string[]> {
   return Object.entries(typed).reduce(
     (obj, [key, val]) => ({

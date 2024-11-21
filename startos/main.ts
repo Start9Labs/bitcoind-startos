@@ -9,7 +9,6 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
    * ======================== Setup (optional) ========================
    */
 
-  // TODO if pruned: create proxy container, util.subcontainer
   const conf = (await bitcoinConfFile.read.const(effects))!
   const config = toTypedBitcoinConf(conf)
 
@@ -30,7 +29,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     .getOwn(effects, sdk.StorePath.reindexBlockchain)
     .watch()) {
     if (reindexBlockchain) {
-      bitcoinArgs.push('-reindex') // @TODO confirm syntax for re-indexing from specific block height
+      bitcoinArgs.push('-reindex')
       await sdk.store.setOwn(effects, sdk.StorePath.reindexBlockchain, false)
       await sdk.restart(effects)
     }
@@ -120,7 +119,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     return daemons.addDaemon('proxy', {
       image: { id: 'proxy' }, // subcontainer:
       command: ['btc-rpc-proxy'],
-      mounts: sdk.Mounts.of().addVolume('proxy', null, '/data', false), // add mount for toml file
+      mounts: sdk.Mounts.of().addVolume('proxy', null, '/data', false), // @TODO add mount for toml file
       ready: {
         display: 'RPC Proxy',
         fn: () =>

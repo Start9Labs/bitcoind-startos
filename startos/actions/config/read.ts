@@ -11,15 +11,10 @@ export async function read(effects: any): Promise<ConfigSpec> {
 
   return {
     rpc: {
-      enable: Object.keys(bitcoinConf).includes('rpcbind'),
-      username: bitcoinConf.rpcuser,
-      password: bitcoinConf.rpcpassword,
-      advanced: {
-        auth: bitcoinConf.rpcauth,
-        servertimeout: bitcoinConf.rpcservertimeout,
-        threads: bitcoinConf.rpcthreads,
-        workqueue: bitcoinConf.rpcworkqueue,
-      },
+      auth: bitcoinConf.rpcauth,
+      servertimeout: bitcoinConf.rpcservertimeout,
+      threads: bitcoinConf.rpcthreads,
+      workqueue: bitcoinConf.rpcworkqueue,
     },
     zmqEnabled: Object.keys(bitcoinConf).includes('zmqpubrawblock'),
     txindex: bitcoinConf.txindex === 1,
@@ -28,7 +23,7 @@ export async function read(effects: any): Promise<ConfigSpec> {
     wallet: {
       enable: bitcoinConf.disablewallet === 0,
       avoidpartialspends: bitcoinConf.avoidpartialspends === 1,
-      discardfee: bitcoinConf.discardfee,
+      discardfee: bitcoinConf.discardfee ? bitcoinConf.discardfee : null,
     },
     mempool: {
       persistmempool: bitcoinConf.persistmempool === 1,

@@ -15,7 +15,7 @@ export const reindexChainstate = sdk.Action.withoutInput(
     allowedStatuses: 'any',
     group: 'Reindex',
     visibility:
-      (await bitcoinConfFile.read.const(effects))?.prune === 'enabled'
+      (await bitcoinConfFile.read.const(effects))?.prune
         ? 'hidden'
         : 'enabled',
   }),

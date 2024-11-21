@@ -16,6 +16,7 @@ export const credentials = sdk.Action.withoutInput(
     visibility: 'enabled',
   }),
 
+  // TODO: Update for RPC Auth array
   // execution function
   async ({ effects }) => {
     const conf = (await bitcoinConfFile.read.const(effects))!

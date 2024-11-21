@@ -1,10 +1,9 @@
-import { once } from '@start9labs/start-sdk/cjs/lib/util/once'
+import { utils } from '@start9labs/start-sdk'
 import { sdk } from '../../sdk'
 import * as diskusage from 'diskusage'
 
 const { InputSpec, Value, List, Variants } = sdk
-
-const diskUsage = once(() => diskusage.check('/'))
+const diskUsage = utils.once(() => diskusage.check('/'))
 
 export const configSpec = sdk.InputSpec.of({
   rpc: Value.object(
@@ -13,135 +12,90 @@ export const configSpec = sdk.InputSpec.of({
       description: 'RPC configuration options.',
     },
     InputSpec.of({
-      enable: Value.toggle({
-        name: 'Enable',
-        default: true,
-        description: 'Allow remote RPC requests.',
-        warning: null,
-      }),
-      username: Value.text({
-        name: 'Username',
-        required: {
-          default: 'bitcoin',
-        },
-        description: 'The username for connecting to Bitcoin over RPC.',
-        warning:
-          'You will need to restart all services that depend on Bitcoin.',
-        masked: true,
-        placeholder: null,
-        inputmode: 'text',
-        patterns: [
-          {
-            regex: '^[a-zA-Z0-9_]+$',
-            description: 'Must be alphanumeric (can contain underscore).',
-          },
-        ],
+      // auth: Value.list(
+      //   List.obj(
+      //     {
+      //       name: 'RPC Auth',
+      //       description: 'RPC Auth usernames and passwords',
+      //     },
+      //     {
+      //       spec: InputSpec.of({
+      //         user: Value.text({
+      //           name: 'Username',
+      //           required: true,
+      //           default: null,
+      //         }),
+      //         password: Value.text({
+      //           name: 'Password',
+      //           description:
+      //             'Bitcoin.conf only stores a salted hash of the password. To change the existing password for this RPC user, enter a new password here. Otherwise leave this field blank to keep the existing password.',
+      //           required: false,
+      //           default: null,
+      //         }),
+      //       }),
+      //     },
+      //   ),
+      // ),
+      auth: List.text({
+        name: 'RPCAuth Usernames',
+        description: 'Usernames for remote connections using RPCAuth',
+        default: [],
         minLength: null,
         maxLength: null,
-      }),
-      password: Value.text({
-        name: 'RPC Password',
-        required: {
-          default: {
-            charset: 'a-z,2-7',
-            len: 20,
-          },
         },
-        description: 'The password for connecting to Bitcoin over RPC.',
-        warning:
-          'You will need to restart all services that depend on Bitcoin.',
-        masked: true,
-        placeholder: null,
-        inputmode: 'text',
-        patterns: [
-          {
-            regex: '^[a-zA-Z0-9_]+$',
-            description: 'Must be alphanumeric (can contain underscore).',
-          },
-        ],
-        minLength: null,
-        maxLength: null,
-      }),
-      advanced: Value.object(
         {
-          name: 'Advanced',
-          description: 'Advanced RPC Settings',
-        },
-        InputSpec.of({
-          auth: Value.list(
-            List.text(
-              {
-                name: 'Authorization',
-                minLength: null,
-                maxLength: null,
-                default: [],
-                description:
-                  'Username and hashed password for JSON-RPC connections. RPC clients connect using the usual http basic authentication.',
-                warning: null,
-              },
-              {
-                masked: false,
-                placeholder: null,
-                patterns: [
-                  {
-                    regex:
-                      '^[a-zA-Z0-9_-]+:([0-9a-fA-F]{2})+\\$([0-9a-fA-F]{2})+$',
-                    description:
-                      'Each item must be of the form "<USERNAME>:<SALT>$<HASH>".',
-                  },
-                ],
-                minLength: 0,
-                maxLength: null,
-              },
-            ),
-          ),
-          servertimeout: Value.number({
-            name: 'Rpc Server Timeout',
-            description:
-              'Number of seconds after which an uncompleted RPC call will time out.',
-            warning: null,
-            required: {
-              default: 30,
-            },
-            min: 5,
-            max: 300,
-            step: null,
-            integer: true,
-            units: 'seconds',
-            placeholder: null,
-          }),
-          threads: Value.number({
-            name: 'Threads',
-            description:
-              'Set the number of threads for handling RPC calls. You may wish to increase this if you are making lots of calls via an integration.',
-            warning: null,
-            required: {
-              default: 16,
-            },
-            min: 4,
-            max: 64,
-            step: null,
-            integer: true,
-            units: null,
-            placeholder: null,
-          }),
-          workqueue: Value.number({
-            name: 'Work Queue',
-            description:
-              'Set the depth of the work queue to service RPC calls. Determines how long the backlog of RPC requests can get before it just rejects new ones.',
-            warning: null,
-            required: {
-              default: 128,
-            },
-            min: 8,
-            max: 256,
-            step: null,
-            integer: true,
-            units: 'requests',
-            placeholder: null,
-          }),
-        }),
+          masked: true,
+
+          patterns: [
+            {
+              regex: "^[a-zA-Z0-9_]+$",
+              description: "Must be alphanumeric (can contain underscore)."
+            }
+          ],
+        }
       ),
+      servertimeout: Value.number({
+        name: 'Rpc Server Timeout',
+        description:
+          'Number of seconds after which an uncompleted RPC call will time out.',
+        warning: null,
+        required: true,
+        default: 30,
+        min: 5,
+        max: 300,
+        step: null,
+        integer: true,
+        units: 'seconds',
+        placeholder: null,
+      }),
+      threads: Value.number({
+        name: 'Threads',
+        description:
+          'Set the number of threads for handling RPC calls. You may wish to increase this if you are making lots of calls via an integration.',
+        warning: null,
+        required: true,
+        default: 16,
+        min: 4,
+        max: 64,
+        step: null,
+        integer: true,
+        units: null,
+        placeholder: null,
+      }),
+      workqueue: Value.number({
+        name: 'Work Queue',
+        description:
+          'Set the depth of the work queue to service RPC calls. Determines how long the backlog of RPC requests can get before it just rejects new ones.',
+        warning: null,
+        required: true,
+        default: 128,
+        min: 8,
+        max: 256,
+        step: null,
+        integer: true,
+        units: 'requests',
+        placeholder: null,
+      }),
     }),
   ),
   zmqEnabled: Value.toggle({
@@ -198,9 +152,8 @@ export const configSpec = sdk.InputSpec.of({
         description:
           'The fee rate (in BTC/kB) that indicates your tolerance for discarding change by adding it to the fee.',
         warning: null,
-        required: {
-          default: 0.0001,
-        },
+        required: true,
+        default: 0.0001,
         min: 0,
         max: 0.01,
         step: null,
@@ -226,9 +179,8 @@ export const configSpec = sdk.InputSpec.of({
         name: 'Max Mempool Size',
         description: 'Keep the transaction memory pool below <n> megabytes.',
         warning: null,
-        required: {
-          default: 300,
-        },
+        required: true,
+        default: 300,
         min: 1,
         max: null,
         step: null,
@@ -241,9 +193,8 @@ export const configSpec = sdk.InputSpec.of({
         description:
           'Do not keep transactions in the mempool longer than <n> hours.',
         warning: null,
-        required: {
-          default: 336,
-        },
+        required: true,
+        default: 336,
         min: 1,
         max: null,
         step: null,
@@ -274,9 +225,8 @@ export const configSpec = sdk.InputSpec.of({
         name: 'Max OP_RETURN Size',
         description: 'Maximum size of data in OP_RETURN outputs to relay',
         warning: null,
-        required: {
-          default: 83,
-        },
+        required: true,
+        default: 83,
         min: 0,
         max: 10_000,
         step: null,
@@ -314,7 +264,7 @@ export const configSpec = sdk.InputSpec.of({
       connectpeer: Value.union(
         {
           name: 'Connect Peer',
-          required: { default: 'addnode' },
+          default: 'addnode',
         },
         Variants.of({
           connect: {
@@ -351,17 +301,17 @@ export const configSpec = sdk.InputSpec.of({
             }),
           },
           addnode: {
-            name: 'Connect',
+            name: 'Add Node',
             spec: InputSpec.of({
               peers: Value.list(
                 List.text(
                   {
-                    name: 'Connect Nodes',
+                    name: 'Add Nodes',
                     minLength: 0,
                     maxLength: null,
                     default: [],
                     description:
-                      'Add addresses of nodes for Bitcoin to EXCLUSIVELY connect to.',
+                      'Add addresses of nodes for Bitcoin to connect with in addition to default nodes.',
                     warning: null,
                   },
                   {
@@ -402,11 +352,12 @@ export const configSpec = sdk.InputSpec.of({
             'Set the maximum size of the blockchain you wish to store on disk.',
           warning: 'Increasing this value will require re-syncing your node.',
           placeholder: 'Enter max blockchain size',
-          required: disk.total < 900_000_000_000 ? { default: 550 } : false,
+          required: disk.total < 900_000_000_000 ? true : false,
+          default: disk.total < 900_000_000_000 ? 550 : null,
           integer: true,
           units: 'MiB',
           min: 550,
-          max: (disk.total * 0.9) / 1_000_000,
+          max: null,
         }
       }),
       dbcache: Value.number({
@@ -416,6 +367,7 @@ export const configSpec = sdk.InputSpec.of({
         warning:
           'WARNING: Increasing this value results in a higher chance of ungraceful shutdowns, which can leave your node unusable if it happens during the initial block download. Use this setting with caution. Be sure to set this back to the default (450 or leave blank) once your node is synced. DO NOT press the STOP button if your dbcache is large. Instead, set this number back to the default, hit save, and wait for bitcoind to restart on its own.',
         required: false,
+        default: 450,
         min: 0,
         max: null,
         step: null,
