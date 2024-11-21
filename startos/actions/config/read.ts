@@ -1,13 +1,9 @@
-import {
-  bitcoinConfFile,
-  toTypedBitcoinConf,
-} from '../../file-models/bitcoin.conf'
-import { ConfigSpec } from './spec'
+import { bitcoinConfFile } from '../../file-models/bitcoin.conf'
+import { PartialConfigSpec } from './spec'
 
-export async function read(effects: any): Promise<ConfigSpec> {
-  const bitcoinConf = await bitcoinConfFile.read
-    .const(effects)
-    .then((conf) => toTypedBitcoinConf(conf || {}))
+export async function read(effects: any): Promise<PartialConfigSpec> {
+  const bitcoinConf = await bitcoinConfFile.read.const(effects)
+  if (!bitcoinConf) return {}
 
   return {
     rpc: {
@@ -38,17 +34,17 @@ export async function read(effects: any): Promise<ConfigSpec> {
       listen: bitcoinConf.listen === 1,
       onlyonion: bitcoinConf.onlynet === 'onion',
       v2transport: bitcoinConf.v2transport === 1,
-      connectpeer: Object.keys(bitcoinConf).includes('connect')
+      connectpeer: bitcoinConf.connect
         ? {
             selection: 'connect' as const,
             value: {
-              peers: bitcoinConf['connect'] || [],
+              peers: bitcoinConf.connect,
             },
           }
         : {
             selection: 'addnode' as const,
             value: {
-              peers: bitcoinConf['addnode'] || [],
+              peers: bitcoinConf.addnode,
             },
           },
     },

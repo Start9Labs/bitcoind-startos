@@ -1,8 +1,4 @@
-import {
-  bitcoinConfFile,
-  fromTypedBitcoinConf,
-  shape,
-} from '../../file-models/bitcoin.conf'
+import { bitcoinConfFile, shape } from '../../file-models/bitcoin.conf'
 import { ConfigSpec } from './spec'
 
 export async function write(input: ConfigSpec) {
@@ -46,7 +42,6 @@ export async function write(input: ConfigSpec) {
     discardfee: wallet.discardfee,
 
     testnet: testnet ? 1 : 0,
-
   }
 
   if (peers.listen) shaped.bind = '0.0.0.0:8333'
@@ -88,5 +83,5 @@ export async function write(input: ConfigSpec) {
 
   if (blockfilters.peerblockfilters) shaped.peerblockfilters = 1
 
-  await bitcoinConfFile.merge(fromTypedBitcoinConf(shaped))
+  await bitcoinConfFile.merge(shaped)
 }

@@ -4,6 +4,7 @@ import * as diskusage from 'diskusage'
 
 const { InputSpec, Value, List, Variants } = sdk
 const diskUsage = utils.once(() => diskusage.check('/'))
+const archivalMin = 900_000_000_000
 
 export const configSpec = sdk.InputSpec.of({
   rpc: Value.object(
@@ -12,89 +13,63 @@ export const configSpec = sdk.InputSpec.of({
       description: 'RPC configuration options.',
     },
     InputSpec.of({
-      // auth: Value.list(
-      //   List.obj(
-      //     {
-      //       name: 'RPC Auth',
-      //       description: 'RPC Auth usernames and passwords',
-      //     },
-      //     {
-      //       spec: InputSpec.of({
-      //         user: Value.text({
-      //           name: 'Username',
-      //           required: true,
-      //           default: null,
-      //         }),
-      //         password: Value.text({
-      //           name: 'Password',
-      //           description:
-      //             'Bitcoin.conf only stores a salted hash of the password. To change the existing password for this RPC user, enter a new password here. Otherwise leave this field blank to keep the existing password.',
-      //           required: false,
-      //           default: null,
-      //         }),
-      //       }),
-      //     },
-      //   ),
-      // ),
-      auth: List.text({
-        name: 'RPCAuth Usernames',
-        description: 'Usernames for remote connections using RPCAuth',
-        default: [],
-        minLength: null,
-        maxLength: null,
-        },
-        {
-          masked: true,
-
-          patterns: [
-            {
-              regex: "^[a-zA-Z0-9_]+$",
-              description: "Must be alphanumeric (can contain underscore)."
-            }
-          ],
-        }
+      auth: Value.list(
+        List.text(
+          {
+            name: 'RPCAuth Usernames',
+            description: 'Usernames for remote connections using RPCAuth',
+            minLength: 1,
+          },
+          {
+            masked: true,
+            patterns: [
+              {
+                regex: '^[a-zA-Z0-9_]+$',
+                description: 'Must be alphanumeric (can contain underscore).',
+              },
+            ],
+          },
+        ),
       ),
       servertimeout: Value.number({
         name: 'Rpc Server Timeout',
         description:
           'Number of seconds after which an uncompleted RPC call will time out.',
-        warning: null,
-        required: true,
-        default: 30,
+        required: false,
+        default: null,
         min: 5,
         max: 300,
-        step: null,
         integer: true,
         units: 'seconds',
-        placeholder: null,
+        placeholder: '30',
       }),
       threads: Value.number({
         name: 'Threads',
         description:
           'Set the number of threads for handling RPC calls. You may wish to increase this if you are making lots of calls via an integration.',
-        warning: null,
-        required: true,
-        default: 16,
+
+        required: false,
+        default: null,
         min: 4,
         max: 64,
         step: null,
         integer: true,
         units: null,
-        placeholder: null,
+        placeholder: '16',
       }),
       workqueue: Value.number({
         name: 'Work Queue',
         description:
           'Set the depth of the work queue to service RPC calls. Determines how long the backlog of RPC requests can get before it just rejects new ones.',
-        warning: null,
-        required: true,
-        default: 128,
+
+        required: false,
+        default: null,
         min: 8,
         max: 256,
         step: null,
         integer: true,
         units: 'requests',
-        placeholder: null,
+        placeholder: '128',
       }),
     }),
   ),
@@ -103,16 +78,15 @@ export const configSpec = sdk.InputSpec.of({
     default: true,
     description:
       'The ZeroMQ interface is useful for some applications which might require data related to block and transaction events from Bitcoin Core. For example, LND requires ZeroMQ be enabled for LND to get the latest block data',
-    warning: null,
   }),
   txindex: Value.dynamicToggle(async ({ effects }) => {
     const disk = await diskUsage()
     return {
       name: 'Transaction Index',
-      default: disk.total >= 900_000_000_000,
+      default: disk.total >= archivalMin,
       description:
         'By enabling Transaction Index (txindex) Bitcoin Core will build a complete transaction index. This allows Bitcoin Core to access any transaction with commands like `getrawtransaction`.',
-      warning: null,
+      disabled: disk.total < archivalMin ? 'Not enough disk space' : false,
     }
   }),
   coinstatsindex: Value.toggle({
@@ -120,7 +94,6 @@ export const configSpec = sdk.InputSpec.of({
     default: false,
     description:
       'Enabling Coinstats Index reduces the time for the gettxoutsetinfo RPC to complete at the cost of using additional disk space',
-    warning: null,
   }),
   testnet: Value.toggle({
     name: 'Testnet',
@@ -138,28 +111,24 @@ export const configSpec = sdk.InputSpec.of({
         name: 'Enable Wallet',
         default: true,
         description: 'Load the wallet and enable wallet RPC calls.',
-        warning: null,
       }),
       avoidpartialspends: Value.toggle({
         name: 'Avoid Partial Spends',
         default: true,
         description:
           'Group outputs by address, selecting all or none, instead of selecting on a per-output basis. This improves privacy at the expense of higher transaction fees.',
-        warning: null,
       }),
       discardfee: Value.number({
         name: 'Discard Change Tolerance',
         description:
           'The fee rate (in BTC/kB) that indicates your tolerance for discarding change by adding it to the fee.',
-        warning: null,
-        required: true,
-        default: 0.0001,
+        required: false,
+        default: null,
         min: 0,
         max: 0.01,
-        step: null,
         integer: false,
         units: 'BTC/kB',
-        placeholder: null,
+        placeholder: '.0001',
       }),
     }),
   ),
@@ -173,66 +142,54 @@ export const configSpec = sdk.InputSpec.of({
         name: 'Persist Mempool',
         default: true,
         description: 'Save the mempool on shutdown and load on restart.',
-        warning: null,
       }),
       maxmempool: Value.number({
         name: 'Max Mempool Size',
         description: 'Keep the transaction memory pool below <n> megabytes.',
-        warning: null,
-        required: true,
-        default: 300,
+        required: false,
+        default: null,
         min: 1,
-        max: null,
-        step: null,
         integer: true,
         units: 'MiB',
-        placeholder: null,
+        placeholder: '300',
       }),
       mempoolexpiry: Value.number({
         name: 'Mempool Expiration',
         description:
           'Do not keep transactions in the mempool longer than <n> hours.',
-        warning: null,
-        required: true,
-        default: 336,
+        required: false,
+        default: null,
         min: 1,
-        max: null,
-        step: null,
         integer: true,
         units: 'Hr',
-        placeholder: null,
+        placeholder: '336',
       }),
       mempoolfullrbf: Value.toggle({
         name: 'Enable Full RBF',
         default: true,
         description:
           'Policy for your node to use for relaying and mining unconfirmed transactions.  For details, see https://github.com/bitcoin/bitcoin/blob/master/doc/release-notes/release-notes-24.0.1.md#notice-of-new-option-for-transaction-replacement-policies',
-        warning: null,
       }),
       permitbaremultisig: Value.toggle({
         name: 'Permit Bare Multisig',
         default: true,
         description: 'Relay non-P2SH multisig transactions',
-        warning: null,
       }),
       datacarrier: Value.toggle({
         name: 'Relay OP_RETURN Transactions',
         default: true,
         description: 'Relay transactions with OP_RETURN outputs',
-        warning: null,
       }),
       datacarriersize: Value.number({
         name: 'Max OP_RETURN Size',
         description: 'Maximum size of data in OP_RETURN outputs to relay',
-        warning: null,
-        required: true,
-        default: 83,
+        required: false,
+        default: null,
         min: 0,
         max: 10_000,
-        step: null,
         integer: true,
         units: 'bytes',
-        placeholder: null,
+        placeholder: '83',
       }),
     }),
   ),
@@ -246,20 +203,17 @@ export const configSpec = sdk.InputSpec.of({
         name: 'Make Public',
         default: true,
         description: 'Allow other nodes to find your server on the network.',
-        warning: null,
       }),
       onlyonion: Value.toggle({
         name: 'Disable Clearnet',
         default: false,
         description: 'Only connect to peers over Tor.',
-        warning: null,
       }),
       v2transport: Value.toggle({
         name: 'Use V2 P2P Transport Protocol',
         default: true,
         description:
           'Enable or disable the use of BIP324 V2 P2P transport protocol.',
-        warning: null,
       }),
       connectpeer: Value.union(
         {
@@ -275,16 +229,10 @@ export const configSpec = sdk.InputSpec.of({
                   {
                     name: 'Connect Nodes',
                     minLength: 1,
-                    maxLength: null,
-                    default: [],
                     description:
                       'Add addresses of nodes for Bitcoin to EXCLUSIVELY connect to.',
-                    warning: null,
                   },
                   {
-                    masked: false,
-                    placeholder: null,
-                    inputmode: 'text',
                     patterns: [
                       {
                         regex:
@@ -293,8 +241,6 @@ export const configSpec = sdk.InputSpec.of({
                           "Must be either a domain name, or an IPv4 or IPv6 address. Be sure to include the port number, but do not include protocol scheme (eg 'http://').",
                       },
                     ],
-                    minLength: null,
-                    maxLength: null,
                   },
                 ),
               ),
@@ -307,16 +253,10 @@ export const configSpec = sdk.InputSpec.of({
                 List.text(
                   {
                     name: 'Add Nodes',
-                    minLength: 0,
-                    maxLength: null,
-                    default: [],
                     description:
                       'Add addresses of nodes for Bitcoin to connect with in addition to default nodes.',
-                    warning: null,
                   },
                   {
-                    masked: false,
-                    placeholder: null,
                     inputmode: 'text',
                     patterns: [
                       {
@@ -326,8 +266,6 @@ export const configSpec = sdk.InputSpec.of({
                           "Must be either a domain name, or an IPv4 or IPv6 address. Be sure to include the port number, but do not include protocol scheme (eg 'http://').",
                       },
                     ],
-                    minLength: null,
-                    maxLength: null,
                   },
                 ),
               ),
@@ -352,12 +290,11 @@ export const configSpec = sdk.InputSpec.of({
             'Set the maximum size of the blockchain you wish to store on disk.',
           warning: 'Increasing this value will require re-syncing your node.',
           placeholder: 'Enter max blockchain size',
-          required: disk.total < 900_000_000_000 ? true : false,
-          default: disk.total < 900_000_000_000 ? 550 : null,
+          required: disk.total < archivalMin,
+          default: disk.total < archivalMin ? 550 : null,
           integer: true,
           units: 'MiB',
           min: 550,
-          max: null,
         }
       }),
       dbcache: Value.number({
@@ -367,13 +304,11 @@ export const configSpec = sdk.InputSpec.of({
         warning:
           'WARNING: Increasing this value results in a higher chance of ungraceful shutdowns, which can leave your node unusable if it happens during the initial block download. Use this setting with caution. Be sure to set this back to the default (450 or leave blank) once your node is synced. DO NOT press the STOP button if your dbcache is large. Instead, set this number back to the default, hit save, and wait for bitcoind to restart on its own.',
         required: false,
-        default: 450,
+        default: null,
         min: 0,
-        max: null,
-        step: null,
         integer: true,
         units: 'MiB',
-        placeholder: null,
+        placeholder: '450',
       }),
       blockfilters: Value.object(
         {
@@ -386,14 +321,12 @@ export const configSpec = sdk.InputSpec.of({
             default: true,
             description:
               "Generate Compact Block Filters during initial sync (IBD) to enable 'getblockfilter' RPC. This is useful if dependent services need block filters to efficiently scan for addresses/transactions etc.",
-            warning: null,
           }),
           peerblockfilters: Value.toggle({
             name: 'Serve Compact Block Filters to Peers (BIP157)',
             default: false,
             description:
               "Serve Compact Block Filters as a peer service to other nodes on the network. This is useful if you wish to connect an SPV client to your node to make it efficient to scan transactions without having to download all block data.  'Compute Compact Block Filters (BIP158)' is required.",
-            warning: null,
           }),
         }),
       ),
@@ -417,5 +350,5 @@ export const configSpec = sdk.InputSpec.of({
   ),
 })
 
-export const matchConfigSpec = configSpec.validator
-export type ConfigSpec = typeof matchConfigSpec._TYPE
+export type ConfigSpec = typeof configSpec._TYPE
+export type PartialConfigSpec = typeof configSpec._PARTIAL
