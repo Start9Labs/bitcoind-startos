@@ -1,3 +1,6 @@
+import { Effects } from '@start9labs/start-sdk/base/lib/Effects'
+import { bitcoinConfFile } from './file-models/bitcoin.conf'
+
 export type GetNetworkInfo = {
   connections: number
   connectionsIn: number
@@ -50,4 +53,13 @@ export function getRpcPort(testnet: 0 | 1) {
 
 export function getPeerPort(testnet: 0 | 1) {
   return testnet ? 18333 : 8333
+}
+
+export async function getRpcUsers(effects: Effects) {
+  const rpcauth = await getRpcAuth(effects)
+  return rpcauth?.map((e) => e.split(':', 2)[0])
+}
+
+export async function getRpcAuth(effects: Effects) {
+  return (await bitcoinConfFile.read.const(effects))?.rpcauth
 }
