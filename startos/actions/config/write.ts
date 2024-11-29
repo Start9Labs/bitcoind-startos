@@ -16,19 +16,19 @@ export async function write(input: ConfigSpec) {
   const shaped: typeof shape._TYPE = {
     // RPC
     rpcauth: rpc.auth,
-    rpcservertimeout: rpc.servertimeout,
-    rpcthreads: rpc.threads,
-    rpcworkqueue: rpc.workqueue,
+    rpcservertimeout: rpc.servertimeout || undefined,
+    rpcthreads: rpc.threads || undefined,
+    rpcworkqueue: rpc.workqueue || undefined,
     rpcbind: prune ? '127.0.0.1:18332' : '0.0.0.0:8332',
     rpcallowip: prune ? '127.0.0.1/32' : '0.0.0.0/0',
 
     // Mempool
     mempoolfullrbf: mempool.mempoolfullrbf === true ? 1 : 0,
     persistmempool: mempool.persistmempool === true ? 1 : 0,
-    maxmempool: mempool.maxmempool,
-    mempoolexpiry: mempool.mempoolexpiry,
+    maxmempool: mempool.maxmempool || undefined,
+    mempoolexpiry: mempool.mempoolexpiry || undefined,
     datacarrier: mempool.datacarrier === true ? 1 : 0,
-    datacarriersize: mempool.datacarriersize,
+    datacarriersize: mempool.datacarriersize || undefined,
     permitbaremultisig: mempool.permitbaremultisig === true ? 1 : 0,
 
     // Peers
@@ -39,7 +39,7 @@ export async function write(input: ConfigSpec) {
     // Wallet
     disablewallet: wallet.enable ? 0 : 1,
     avoidpartialspends: wallet.avoidpartialspends ? 1 : 0,
-    discardfee: wallet.discardfee,
+    discardfee: wallet.discardfee || undefined,
 
     testnet: testnet ? 1 : 0,
   }

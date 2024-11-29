@@ -18,57 +18,57 @@ export const shape = object({
   // Mempool
   mempoolfullrbf: anyOf(literal(0), literal(1)),
   persistmempool: anyOf(literal(0), literal(1)),
-  maxmempool: number,
-  mempoolexpiry: number,
+  maxmempool: number.optional().onMismatch(undefined),
+  mempoolexpiry: number.optional().onMismatch(undefined),
   datacarrier: anyOf(literal(0), literal(1)),
-  datacarriersize: number,
+  datacarriersize: number.optional().onMismatch(undefined),
   permitbaremultisig: anyOf(literal(0), literal(1)),
 
   // Peers
   listen: anyOf(literal(0), literal(1)),
-  bind: string,
-  connect: stringArray,
-  addnode: stringArray,
-  onlynet: literal('onion'),
+  bind: string.optional().onMismatch(undefined),
+  connect: stringArray.optional().onMismatch(undefined),
+  addnode: stringArray.optional().onMismatch(undefined),
+  onlynet: literal('onion').optional().onMismatch(undefined),
   v2transport: anyOf(literal(0), literal(1)),
 
   // Whitelist
-  whitelist: string,
+  whitelist: string.optional().onMismatch(undefined),
 
   // Pruning
-  prune: number,
+  prune: number.optional().onMismatch(undefined),
 
   // Performance Tuning
-  dbcache: number,
+  dbcache: number.optional().onMismatch(undefined),
 
   // Wallet
   disablewallet: anyOf(literal(0), literal(1)),
-  deprecatedrpc: string,
+  deprecatedrpc: string.optional().onMismatch(undefined),
   avoidpartialspends: anyOf(literal(0), literal(1)),
-  discardfee: number,
+  discardfee: number.optional().onMismatch(undefined),
 
   // Zero MQ
-  zmqpubrawblock: string,
-  zmqpubhashblock: string,
-  zmqpubrawtx: string,
-  zmqpubhashtx: string,
-  zmqpubsequence: string,
+  zmqpubrawblock: string.optional().onMismatch(undefined),
+  zmqpubhashblock: string.optional().onMismatch(undefined),
+  zmqpubrawtx: string.optional().onMismatch(undefined),
+  zmqpubhashtx: string.optional().onMismatch(undefined),
+  zmqpubsequence: string.optional().onMismatch(undefined),
 
   // TxIndex
-  txindex: literal(1),
+  txindex: literal(1).optional().onMismatch(undefined),
 
   // CoinstatsIndex
-  coinstatsindex: literal(1),
+  coinstatsindex: literal(1).optional().onMismatch(undefined),
 
   // BIP37
-  peerbloomfilters: literal(1),
+  peerbloomfilters: literal(1).optional().onMismatch(undefined),
 
   // BIP157
-  blockfilterindex: literal('basic'),
-  peerblockfilters: literal(1),
+  blockfilterindex: literal('basic').optional().onMismatch(undefined),
+  peerblockfilters: literal(1).optional().onMismatch(undefined),
 
   // Testnet
-  testnet: anyOf(literal(0), literal(1)),
+  testnet: anyOf(literal(0), literal(1)).optional().onMismatch(undefined),
 })
 
 function fromBitcoinConf(text: string): Record<string, string[]> {
