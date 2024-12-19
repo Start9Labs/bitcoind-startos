@@ -2,7 +2,7 @@ import { sdk } from './sdk'
 import { T } from '@start9labs/start-sdk'
 import { peerInterfaceId } from './interfaces'
 import { GetBlockchainInfo, getRpcPort } from './utils'
-import { bitcoinConfFile, toTypedBitcoinConf } from './file-models/bitcoin.conf'
+import { bitcoinConfFile } from './file-models/bitcoin.conf'
 
 export const main = sdk.setupMain(async ({ effects, started }) => {
   /**
@@ -10,9 +10,8 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
    */
 
   const conf = (await bitcoinConfFile.read.const(effects))!
-  const config = toTypedBitcoinConf(conf)
 
-  const rpcPort = getRpcPort(config.testnet)
+  const rpcPort = getRpcPort(conf.testnet || 0)
   const containerIp = await effects.getContainerIp()
   const peerAddr = (
     await sdk.serviceInterface.getOwn(effects, peerInterfaceId).once()
@@ -115,7 +114,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     },
   )
 
-  if (config.prune) {
+  if (conf.prune == 1) {
     return daemons.addDaemon('proxy', {
       image: { id: 'proxy' }, // subcontainer:
       command: ['btc-rpc-proxy'],

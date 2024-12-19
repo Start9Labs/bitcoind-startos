@@ -71,7 +71,7 @@ export const shape = object({
   testnet: anyOf(literal(0), literal(1)).optional().onMismatch(undefined),
 })
 
-function fromBitcoinConf(text: string): Record<string, string[]> {
+export function fromBitcoinConf(text: string): Record<string, string[]> {
   const lines = text.split('/n')
   const dictionary = {} as Record<string, string[]>
 
