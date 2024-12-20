@@ -1,7 +1,7 @@
-import { sdk } from './sdk'
-import { BindOptions } from '@start9labs/start-sdk/cjs/lib/osBindings'
-import { bitcoinConfFile, toTypedBitcoinConf } from './file-models/bitcoin.conf'
+import { BindOptions } from '@start9labs/start-sdk/base/lib/osBindings'
+import { bitcoinConfFile } from './file-models/bitcoin.conf'
 import { getPeerPort, getRpcPort } from './utils'
+import { sdk } from './sdk'
 
 export const rpcInterfaceId = 'rpc'
 export const peerInterfaceId = 'peer'
@@ -13,14 +13,12 @@ const zmqProtocol = {
 } as BindOptions
 
 export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
-  let conf = await bitcoinConfFile.read.const(effects)
+  let config = await bitcoinConfFile.read.const(effects)
 
-  if (!conf) return []
-
-  const config = toTypedBitcoinConf(conf)
+  if (!config) return []
 
   // RPC
-  const rpcPort = getRpcPort(config.testnet)
+  const rpcPort = getRpcPort(config.testnet || 0)
   const rpcMulti = sdk.host.multi(effects, 'rpc')
   const rpcMultiOrigin = await rpcMulti.bindPort(rpcPort, {
     protocol: 'grpc',
@@ -42,7 +40,7 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
   const receipts = [rpcReceipt]
 
   // PEER
-  const peerPort = getPeerPort(config.testnet)
+  const peerPort = getPeerPort(config.testnet || 0)
   const peerMulti = sdk.host.multi(effects, 'peer')
   const peerMultiOrigin = await peerMulti.bindPort(peerPort, {
     protocol: 'bitcoin',
