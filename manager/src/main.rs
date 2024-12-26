@@ -431,6 +431,7 @@ fn inner_main(reindex: bool, reindex_chainstate: bool) -> Result<(), Box<dyn Err
         format!("-onion={}:9050", var("EMBASSY_IP")?),
         format!("-externalip={}", peer_addr),
         "-datadir=/root/.bitcoin".to_owned(),
+        "-deprecatedrpc=warnings".to_owned(),
         "-conf=/root/.bitcoin/bitcoin.conf".to_owned(),
     ];
     if config
