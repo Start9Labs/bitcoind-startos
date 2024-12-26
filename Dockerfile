@@ -1,9 +1,7 @@
 # From https://github.com/ruimarinho/docker-bitcoin-core
 
 # Build stage for BerkeleyDB
-ARG PLATFORM
-
-FROM lncm/berkeleydb:v4.8.30.NC-${PLATFORM} as berkeleydb
+FROM lncm/berkeleydb as berkeleydb
 
 # Build stage for Bitcoin Core
 FROM alpine:3.18 as bitcoin-core
