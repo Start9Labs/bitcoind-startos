@@ -54,7 +54,7 @@ permitbaremultisig=0
 ## PEERS
 {{#IF advanced.peers.listen
 listen=1
-bind=0.0.0.0:8333=onion
+bind=0.0.0.0:8333
 }}
 {{#IF !advanced.peers.listen
 listen=0
