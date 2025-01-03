@@ -267,7 +267,7 @@ export const migration: T.ExpectedExports.migration =
           { version: "26.0.0.1", type: "down" }
         ),
       },
-      "28.0.0": {
+      "28.0.0.1": {
         up: compat.migrations.updateConfig(
           (config) => {
             if (
@@ -285,15 +285,15 @@ export const migration: T.ExpectedExports.migration =
           },
           true,
           {
-            version: "28.0.0",
+            version: "28.0.0.1",
             type: "up",
           }
         ),
         down: compat.migrations.updateConfig((config: any) => config, true, {
-          version: "28.0.0",
+          version: "28.0.0.1",
           type: "down",
         }),
       },
     },
-    "28.0.0"
+    "28.0.0.1"
   );
