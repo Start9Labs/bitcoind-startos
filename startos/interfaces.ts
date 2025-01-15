@@ -28,7 +28,6 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
     id: rpcInterfaceId,
     description: 'Listens for JSON-RPC commands',
     type: 'api',
-    hasPrimary: false,
     masked: false,
     schemeOverride: null,
     username: null,
@@ -51,7 +50,6 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
     description:
       'Listens for incoming connections from peers on the bitcoin network',
     type: 'p2p',
-    hasPrimary: false,
     masked: false,
     schemeOverride: null,
     username: null,
@@ -72,7 +70,6 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
       description:
         'Listens for incoming connections from peers on the bitcoin network',
       type: 'api',
-      hasPrimary: false,
       masked: false,
       schemeOverride: null,
       username: null,

@@ -99,7 +99,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   const daemons = sdk.Daemons.of(effects, started, healthReceipts).addDaemon(
     'primary',
     {
-      image: { id: 'main' },
+      subcontainer: { id: 'main' },
       command: ['bitcoind', ...bitcoinArgs],
       mounts: sdk.Mounts.of().addVolume('main', null, '/data', false),
       ready: {
@@ -116,7 +116,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
 
   if (conf.prune == 1) {
     return daemons.addDaemon('proxy', {
-      image: { id: 'proxy' }, // subcontainer:
+      subcontainer: { id: 'proxy' }, // subcontainer:
       command: ['btc-rpc-proxy'],
       mounts: sdk.Mounts.of().addVolume('proxy', null, '/data', false), // @TODO add mount for toml file
       ready: {
