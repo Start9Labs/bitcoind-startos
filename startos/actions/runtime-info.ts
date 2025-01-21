@@ -23,7 +23,7 @@ export const runtimeInfo = sdk.Action.withoutInput(
 
     const networkInfoRes = await sdk.runCommand(
       effects,
-      { id: 'main' },
+      { id: 'bitcoind' },
       ['bitcoin-cli', '-conf=/root/.bitcoin/bitcoin.conf', 'getnetworkinfo'],
       {},
       'getnetworkinfo',
@@ -37,7 +37,7 @@ export const runtimeInfo = sdk.Action.withoutInput(
 
     const blockchainInfoRes = await sdk.runCommand(
       effects,
-      { id: 'main' },
+      { id: 'bitcoind' },
       ['bitcoin-cli', '-conf=/root/.bitcoin/bitcoin.conf', 'getblockchaininfo'],
       {},
       'getblockchaininfo',

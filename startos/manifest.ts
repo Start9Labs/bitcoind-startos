@@ -16,10 +16,10 @@ export const manifest = setupManifest({
   assets: ['rpcauth'],
   volumes: ['main', 'proxy'],
   images: {
-    main: {
+    bitcoind: {
       source: {
-        dockerTag: 'bitcoin/bitcoin:27.1'
-      }
+        dockerTag: 'bitcoin/bitcoin:27.1',
+      },
     },
     proxy: {
       source: {

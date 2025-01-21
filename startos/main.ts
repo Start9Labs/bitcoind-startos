@@ -13,8 +13,9 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
 
   const rpcPort = getRpcPort(conf.testnet || 0)
   const containerIp = await effects.getContainerIp()
+  // @TODO take into account possibilioty of multiple/no .onions and also clearnet domains
   const peerAddr = (
-    await sdk.serviceInterface.getOwn(effects, peerInterfaceId).once()
+    await sdk.serviceInterface.getOwn(effects, peerInterfaceId).const()
   )?.addressInfo?.onionUrls[0]
 
   const bitcoinArgs: string[] = []
@@ -53,7 +54,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     fn: async () => {
       const res = await sdk.runCommand(
         effects,
-        { id: 'main' },
+        { id: 'bitcoind' },
         [
           'bitcoin-cli',
           '-conf=/root/.bitcoin/bitcoin.conf',
@@ -99,7 +100,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   const daemons = sdk.Daemons.of(effects, started, healthReceipts).addDaemon(
     'primary',
     {
-      subcontainer: { id: 'main' },
+      subcontainer: { id: 'bitcoind' },
       command: ['bitcoind', ...bitcoinArgs],
       mounts: sdk.Mounts.of().addVolume('main', null, '/data', false),
       ready: {
@@ -115,8 +116,8 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   )
 
   if (conf.prune == 1) {
-    return daemons.addDaemon('proxy', {
-      subcontainer: { id: 'proxy' }, // subcontainer:
+    daemons.addDaemon('proxy', {
+      subcontainer: { id: 'proxy' },
       command: ['btc-rpc-proxy'],
       mounts: sdk.Mounts.of().addVolume('proxy', null, '/data', false), // @TODO add mount for toml file
       ready: {

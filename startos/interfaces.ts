@@ -5,12 +5,8 @@ import { sdk } from './sdk'
 
 export const rpcInterfaceId = 'rpc'
 export const peerInterfaceId = 'peer'
-export const zmqPort = 28332
 export const zmqInterfaceId = 'zmq'
-
-const zmqProtocol = {
-  preferredExternalPort: 28332,
-} as BindOptions
+export const zmqPort = 28332
 
 export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
   let config = await bitcoinConfFile.read.const(effects)
@@ -22,6 +18,7 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
   const rpcMulti = sdk.host.multi(effects, 'rpc')
   const rpcMultiOrigin = await rpcMulti.bindPort(rpcPort, {
     protocol: 'grpc',
+    preferredExternalPort: rpcPort,
   })
   const rpc = sdk.createInterface(effects, {
     name: 'RPC Interface',
@@ -43,6 +40,7 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
   const peerMulti = sdk.host.multi(effects, 'peer')
   const peerMultiOrigin = await peerMulti.bindPort(peerPort, {
     protocol: 'bitcoin',
+    preferredExternalPort: peerPort,
   })
   const peer = sdk.createInterface(effects, {
     name: 'Peer Interface',
@@ -63,7 +61,9 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
   // ZMQ (conditional)
   if (config.zmqpubhashblock) {
     const zmqMulti = sdk.host.multi(effects, 'zmq')
-    const zmqMultiOrigin = await zmqMulti.bindPort(zmqPort, zmqProtocol)
+    const zmqMultiOrigin = await zmqMulti.bindPort(zmqPort, {
+      preferredExternalPort: zmqPort,
+    } as BindOptions)
     const zmq = sdk.createInterface(effects, {
       name: 'ZeroMQ Interface',
       id: zmqInterfaceId,
