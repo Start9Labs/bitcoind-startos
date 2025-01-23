@@ -3,7 +3,7 @@ import * as fs from 'fs/promises'
 
 export const deletePeers = sdk.Action.withoutInput(
   // id
-  'deletePeers',
+  'delete-peers',
 
   // metadata
   async ({ effects }) => ({

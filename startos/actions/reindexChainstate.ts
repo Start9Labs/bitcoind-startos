@@ -3,7 +3,7 @@ import { sdk } from '../sdk'
 
 export const reindexChainstate = sdk.Action.withoutInput(
   // id
-  'reindexChainstate',
+  'reindex-chainstate',
 
   // metadata
   async ({ effects }) => ({

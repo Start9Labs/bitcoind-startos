@@ -23,7 +23,7 @@ export const inputSpec = InputSpec.of({
 
 export const deleteRpcAuth = sdk.Action.withInput(
   // id
-  'deleteRpcAuth',
+  'delete-rpcauth',
 
   // metadata
   async ({ effects }) => ({

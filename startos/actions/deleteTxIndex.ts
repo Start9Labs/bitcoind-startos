@@ -3,7 +3,7 @@ import * as fs from 'fs/promises'
 
 export const deleteTxIndex = sdk.Action.withoutInput(
   // id
-  'deleteTxIndex',
+  'delete-txindex',
 
   // metadata
   async ({ effects }) => ({

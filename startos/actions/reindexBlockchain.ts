@@ -2,7 +2,7 @@ import { sdk } from '../sdk'
 
 export const reindexBlockchain = sdk.Action.withoutInput(
   // id
-  'reindexBlockchain',
+  'reindex-blockchain',
 
   // metadata
   async ({ effects }) => ({

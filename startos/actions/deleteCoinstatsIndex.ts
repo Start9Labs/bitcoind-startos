@@ -3,7 +3,7 @@ import * as fs from 'fs/promises'
 
 export const deleteCoinstatsIndex = sdk.Action.withoutInput(
   // id
-  'deleteCoinstatsIndex',
+  'delete-coinstats-index',
 
   // metadata
   async ({ effects }) => ({

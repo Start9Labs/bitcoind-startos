@@ -20,7 +20,7 @@ export const inputSpec = InputSpec.of({
 
 export const generateRpcUser = sdk.Action.withInput(
   // id
-  'generateRpcUser',
+  'generate-rpcuser',
 
   // metadata
   async ({ effects }) => ({
