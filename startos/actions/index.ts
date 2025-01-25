@@ -1,4 +1,5 @@
 import { sdk } from '../sdk'
+import { config } from './config/config'
 import { deleteCoinstatsIndex } from './deleteCoinstatsIndex'
 import { deletePeers } from './deletePeers'
 import { deleteTxIndex } from './deleteTxIndex'
@@ -13,3 +14,4 @@ export const actions = sdk.Actions.of()
   .addAction(deleteTxIndex)
   .addAction(reindexBlockchain)
   .addAction(reindexChainstate)
+  .addAction(config)
