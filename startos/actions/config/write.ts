@@ -83,5 +83,5 @@ export async function write(input: ConfigSpec) {
 
   if (blockfilters.peerblockfilters) shaped.peerblockfilters = 1
 
-  await bitcoinConfFile.merge(shaped)
+  await bitcoinConfFile.write(shaped)
 }
