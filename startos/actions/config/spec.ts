@@ -18,7 +18,7 @@ export const configSpec = sdk.InputSpec.of({
           {
             name: 'RPCAuth Usernames',
             description: 'Usernames for remote connections using RPCAuth',
-            minLength: 1,
+            minLength: 0,
           },
           {
             masked: true,
