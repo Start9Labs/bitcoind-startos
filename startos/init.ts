@@ -4,8 +4,12 @@ import { setDependencies } from './dependencies'
 import { setInterfaces } from './interfaces'
 import { versions } from './versions'
 import { actions } from './actions'
+import { bitcoinConfFile } from './file-models/bitcoin.conf'
 
-const install = sdk.setupInstall(async ({ effects }) => {})
+const install = sdk.setupInstall(async ({ effects }) => {
+  await bitcoinConfFile.write({})
+  // @TODO call initial setup action and set store flag
+})
 
 const uninstall = sdk.setupUninstall(async ({ effects }) => {})
 
