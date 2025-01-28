@@ -3,34 +3,34 @@ import { FileHelper, matches } from '@start9labs/start-sdk'
 const { anyOf, literal } = matches
 const object = matches.object
 const stringArray = matches.array(matches.string)
-const string = stringArray.map(([a]) => a)
-const number = stringArray.map(([a]) => Number(a))
+const string = stringArray.map(([a]) => a).orParser(matches.string)
+const number = stringArray.map(([a]) => Number(a)).orParser(matches.number)
 
 export const shape = object({
   // RPC
-  rpcbind: string,
-  rpcallowip: string,
+  rpcbind: matches.string.optional().onMismatch(undefined),
+  rpcallowip: matches.string.optional().onMismatch(undefined),
   rpcauth: stringArray.optional().onMismatch(undefined),
-  rpcservertimeout: number.optional().onMismatch(undefined),
+  rpcservertimeout: number.optional(),
   rpcthreads: number.optional().onMismatch(undefined),
   rpcworkqueue: number.optional().onMismatch(undefined),
 
   // Mempool
-  mempoolfullrbf: anyOf(literal(0), literal(1)),
-  persistmempool: anyOf(literal(0), literal(1)),
+  mempoolfullrbf: anyOf(literal(0), literal(1)).optional().onMismatch(undefined),
+  persistmempool: anyOf(literal(0), literal(1)).optional().onMismatch(undefined),
   maxmempool: number.optional().onMismatch(undefined),
   mempoolexpiry: number.optional().onMismatch(undefined),
-  datacarrier: anyOf(literal(0), literal(1)),
+  datacarrier: anyOf(literal(0), literal(1)).optional().onMismatch(undefined),
   datacarriersize: number.optional().onMismatch(undefined),
-  permitbaremultisig: anyOf(literal(0), literal(1)),
+  permitbaremultisig: anyOf(literal(0), literal(1)).optional().onMismatch(undefined),
 
   // Peers
-  listen: anyOf(literal(0), literal(1)),
+  listen: anyOf(literal(0), literal(1)).optional().onMismatch(undefined),
   bind: string.optional().onMismatch(undefined),
   connect: stringArray.optional().onMismatch(undefined),
   addnode: stringArray.optional().onMismatch(undefined),
   onlynet: literal('onion').optional().onMismatch(undefined),
-  v2transport: anyOf(literal(0), literal(1)),
+  v2transport: anyOf(literal(0), literal(1)).optional().onMismatch(undefined),
 
   // Whitelist
   whitelist: string.optional().onMismatch(undefined),
@@ -42,9 +42,9 @@ export const shape = object({
   dbcache: number.optional().onMismatch(undefined),
 
   // Wallet
-  disablewallet: anyOf(literal(0), literal(1)),
+  disablewallet: anyOf(literal(0), literal(1)).optional().onMismatch(undefined),
   deprecatedrpc: string.optional().onMismatch(undefined),
-  avoidpartialspends: anyOf(literal(0), literal(1)),
+  avoidpartialspends: anyOf(literal(0), literal(1)).optional().onMismatch(undefined),
   discardfee: number.optional().onMismatch(undefined),
 
   // Zero MQ
@@ -72,11 +72,12 @@ export const shape = object({
 })
 
 export function fromBitcoinConf(text: string): Record<string, string[]> {
-  const lines = text.split('/n')
+  const lines = text.split('\n')
   const dictionary = {} as Record<string, string[]>
 
   for (const line of lines) {
     const [key, value] = line.split('=', 2)
+    if (key === "") return dictionary
     const trimmedKey = key.trim()
     const trimmedValue = value.trim()
 
@@ -91,7 +92,7 @@ export function fromBitcoinConf(text: string): Record<string, string[]> {
 }
 
 function toBitcoinConf(
-  conf: Record<string, readonly string[] | string[] | string | number>,
+  conf: typeof shape._TYPE,
 ): string {
   let bitcoinConfStr = ''
 
@@ -100,7 +101,7 @@ function toBitcoinConf(
       for (const subValue of value) {
         bitcoinConfStr += `${key}=${subValue}\n`
       }
-    } else {
+    } else if (value !== undefined) {
       bitcoinConfStr += `${key}=${value}\n`
     }
   })
@@ -108,7 +109,7 @@ function toBitcoinConf(
 }
 
 export const bitcoinConfFile = FileHelper.raw(
-  './bitcoin/bitcoin.conf',
+  '/media/startos/volumes/main/bitcoin.conf',
   (obj: typeof shape._TYPE) => toBitcoinConf(obj), // BitcoinConf.typeof
   (str) => fromBitcoinConf(str),
   (obj) => shape.unsafeCast(obj),
