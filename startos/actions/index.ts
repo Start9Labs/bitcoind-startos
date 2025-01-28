@@ -5,7 +5,7 @@ import { deletePeers } from './deletePeers'
 import { deleteTxIndex } from './deleteTxIndex'
 import { reindexBlockchain } from './reindexBlockchain'
 import { reindexChainstate } from './reindexChainstate'
-import { runtimeInfo } from './runtime-info'
+import { runtimeInfo } from './runtimeInfo'
 
 export const actions = sdk.Actions.of()
   .addAction(runtimeInfo)

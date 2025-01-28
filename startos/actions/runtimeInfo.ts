@@ -12,7 +12,7 @@ export const runtimeInfo = sdk.Action.withoutInput(
     description:
       'Network and other runtime information about this Bitcoin node',
     warning: null,
-    allowedStatuses: 'any',
+    allowedStatuses: 'only-running',
     group: null,
     visibility: 'enabled',
   }),
