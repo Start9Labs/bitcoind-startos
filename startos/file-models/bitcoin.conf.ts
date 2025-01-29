@@ -1,10 +1,13 @@
 import { FileHelper, matches } from '@start9labs/start-sdk'
 
-const { anyOf, literal } = matches
+const { anyOf } = matches
 const object = matches.object
 const stringArray = matches.array(matches.string)
 const string = stringArray.map(([a]) => a).orParser(matches.string)
 const number = stringArray.map(([a]) => Number(a)).orParser(matches.number)
+const literal = (val: any) => {
+  return stringArray.map(([val]) => Number(val)).orParser(matches.literal(val))
+}
 
 export const shape = object({
   // RPC

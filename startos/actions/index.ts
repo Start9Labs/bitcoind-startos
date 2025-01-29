@@ -1,5 +1,6 @@
 import { sdk } from '../sdk'
 import { config } from './config/config'
+import { mempoolConfig } from './config/mempool'
 import { rpcConfig } from './config/rpc'
 import { deleteCoinstatsIndex } from './deleteCoinstatsIndex'
 import { deletePeers } from './deletePeers'
@@ -21,3 +22,4 @@ export const actions = sdk.Actions.of()
   .addAction(rpcConfig)
   .addAction(generateRpcUser)
   .addAction(deleteRpcAuth)
+  .addAction(mempoolConfig)
