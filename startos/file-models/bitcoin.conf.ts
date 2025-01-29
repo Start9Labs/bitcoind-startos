@@ -14,7 +14,7 @@ export const shape = object({
   rpcbind: matches.string.optional().onMismatch(undefined),
   rpcallowip: matches.string.optional().onMismatch(undefined),
   rpcauth: stringArray.optional().onMismatch(undefined),
-  rpcservertimeout: number.optional(),
+  rpcservertimeout: number.optional().onMismatch(undefined),
   rpcthreads: number.optional().onMismatch(undefined),
   rpcworkqueue: number.optional().onMismatch(undefined),
 
