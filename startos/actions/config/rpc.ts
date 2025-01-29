@@ -72,8 +72,6 @@ export const rpcConfig = sdk.Action.withInput(
 
 async function read(effects: any): Promise<PartialRpcSpec> {
   const bitcoinConf = await bitcoinConfFile.read.const(effects)
-  console.log('Read bitcoinConf:')
-  console.log(bitcoinConf)
   if (!bitcoinConf) return {}
 
   return {
@@ -90,10 +88,8 @@ async function write(input: RpcSpec) {
   if (servertimeout) rpcSettings.rpcservertimeout = servertimeout
   if (threads) rpcSettings.rpcthreads = threads
   if (workqueue) rpcSettings.rpcworkqueue = workqueue
-  console.log(`write to bitcoin.conf`, rpcSettings)
 
   await bitcoinConfFile.merge(rpcSettings)
-  console.log("RPC should be written to bitcoin.conf:", rpcSettings)
 }
 
 type RpcSpec = typeof rpcSpec._TYPE
