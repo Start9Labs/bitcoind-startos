@@ -19,13 +19,19 @@ export const shape = object({
   rpcworkqueue: number.optional().onMismatch(undefined),
 
   // Mempool
-  mempoolfullrbf: anyOf(literal(0), literal(1)).optional().onMismatch(undefined),
-  persistmempool: anyOf(literal(0), literal(1)).optional().onMismatch(undefined),
+  mempoolfullrbf: anyOf(literal(0), literal(1))
+    .optional()
+    .onMismatch(undefined),
+  persistmempool: anyOf(literal(0), literal(1))
+    .optional()
+    .onMismatch(undefined),
   maxmempool: number.optional().onMismatch(undefined),
   mempoolexpiry: number.optional().onMismatch(undefined),
   datacarrier: anyOf(literal(0), literal(1)).optional().onMismatch(undefined),
   datacarriersize: number.optional().onMismatch(undefined),
-  permitbaremultisig: anyOf(literal(0), literal(1)).optional().onMismatch(undefined),
+  permitbaremultisig: anyOf(literal(0), literal(1))
+    .optional()
+    .onMismatch(undefined),
 
   // Peers
   listen: anyOf(literal(0), literal(1)).optional().onMismatch(undefined),
@@ -47,7 +53,9 @@ export const shape = object({
   // Wallet
   disablewallet: anyOf(literal(0), literal(1)).optional().onMismatch(undefined),
   deprecatedrpc: string.optional().onMismatch(undefined),
-  avoidpartialspends: anyOf(literal(0), literal(1)).optional().onMismatch(undefined),
+  avoidpartialspends: anyOf(literal(0), literal(1))
+    .optional()
+    .onMismatch(undefined),
   discardfee: number.optional().onMismatch(undefined),
 
   // Zero MQ
@@ -80,7 +88,7 @@ export function fromBitcoinConf(text: string): Record<string, string[]> {
 
   for (const line of lines) {
     const [key, value] = line.split('=', 2)
-    if (key === "") return dictionary
+    if (key === '') return dictionary
     const trimmedKey = key.trim()
     const trimmedValue = value.trim()
 
@@ -94,9 +102,7 @@ export function fromBitcoinConf(text: string): Record<string, string[]> {
   return dictionary
 }
 
-function toBitcoinConf(
-  conf: typeof shape._TYPE,
-): string {
+function toBitcoinConf(conf: typeof shape._TYPE): string {
   let bitcoinConfStr = ''
 
   Object.entries(conf).forEach(([key, value]) => {
