@@ -39,13 +39,16 @@ export const shape = object({
   // Peers
   listen: anyOf(numLiteral(0), numLiteral(1)).optional().onMismatch(undefined),
   bind: string.optional().onMismatch(undefined),
-  connect: stringArray.optional(),//.onMismatch(undefined),
-  addnode: stringArray.optional(),//.onMismatch(undefined),
+  connect: string.optional(),//.onMismatch(undefined),
+  addnode: string.optional(),//.onMismatch(undefined),
+  peers: stringArray.optional(),
+  // connect: stringArray.optional(),//.onMismatch(undefined),
+  // addnode: stringArray.optional(),//.onMismatch(undefined),
   onlynet: string.optional().onMismatch(undefined),
   /*
   It seeems an existing value in bitcoin.conf cannot be overwrittern with 'undefined' - is there a different way to delete a key/values from bitcoin.conf?
 
-  2025-01-31T14:35:43-07:00  peerSettings passeed to merge:  { listen: 1, onlynet: undefined, connect: undefined }
+  2025-01-31T14:35:43-07:00  peerSettings passed to merge:  { listen: 1, onlynet: undefined, connect: undefined }
   2025-01-31T14:35:43-07:00  early exit fromBitcoinConf:  { listen: [ '1' ], onlynet: [ 'onion' ] }
   2025-01-31T14:35:43-07:00  Arg received by toBitcoinConf:  { listen: 1, onlynet: 'onion', connect: undefined }
   2025-01-31T14:35:43-07:00  toBitcoinConf:  listen=1
