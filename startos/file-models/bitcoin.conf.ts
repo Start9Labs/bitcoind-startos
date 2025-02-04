@@ -5,8 +5,11 @@ const object = matches.object
 const stringArray = matches.array(matches.string)
 const string = stringArray.map(([a]) => a).orParser(matches.string)
 const number = stringArray.map(([a]) => Number(a)).orParser(matches.number)
-const literal = (val: any) => {
+const numLiteral = (val: any) => {
   return stringArray.map(([val]) => Number(val)).orParser(matches.literal(val))
+}
+const literal = (val: string) => {
+  return stringArray.map(([val]) => matches.literal(val)).orParser(matches.literal(val))
 }
 
 export const shape = object({
@@ -19,27 +22,37 @@ export const shape = object({
   rpcworkqueue: number.optional().onMismatch(undefined),
 
   // Mempool
-  mempoolfullrbf: anyOf(literal(0), literal(1))
+  mempoolfullrbf: anyOf(numLiteral(0), numLiteral(1))
     .optional()
     .onMismatch(undefined),
-  persistmempool: anyOf(literal(0), literal(1))
+  persistmempool: anyOf(numLiteral(0), numLiteral(1))
     .optional()
     .onMismatch(undefined),
   maxmempool: number.optional().onMismatch(undefined),
   mempoolexpiry: number.optional().onMismatch(undefined),
-  datacarrier: anyOf(literal(0), literal(1)).optional().onMismatch(undefined),
+  datacarrier: anyOf(numLiteral(0), numLiteral(1)).optional().onMismatch(undefined),
   datacarriersize: number.optional().onMismatch(undefined),
-  permitbaremultisig: anyOf(literal(0), literal(1))
+  permitbaremultisig: anyOf(numLiteral(0), numLiteral(1))
     .optional()
     .onMismatch(undefined),
 
   // Peers
-  listen: anyOf(literal(0), literal(1)).optional().onMismatch(undefined),
+  listen: anyOf(numLiteral(0), numLiteral(1)).optional().onMismatch(undefined),
   bind: string.optional().onMismatch(undefined),
-  connect: stringArray.optional().onMismatch(undefined),
-  addnode: stringArray.optional().onMismatch(undefined),
-  onlynet: literal('onion').optional().onMismatch(undefined),
-  v2transport: anyOf(literal(0), literal(1)).optional().onMismatch(undefined),
+  connect: stringArray.optional(),//.onMismatch(undefined),
+  addnode: stringArray.optional(),//.onMismatch(undefined),
+  onlynet: string.optional().onMismatch(undefined),
+  /*
+  It seeems an existing value in bitcoin.conf cannot be overwrittern with 'undefined' - is there a different way to delete a key/values from bitcoin.conf?
+
+  2025-01-31T14:35:43-07:00  peerSettings passeed to merge:  { listen: 1, onlynet: undefined, connect: undefined }
+  2025-01-31T14:35:43-07:00  early exit fromBitcoinConf:  { listen: [ '1' ], onlynet: [ 'onion' ] }
+  2025-01-31T14:35:43-07:00  Arg received by toBitcoinConf:  { listen: 1, onlynet: 'onion', connect: undefined }
+  2025-01-31T14:35:43-07:00  toBitcoinConf:  listen=1
+  2025-01-31T14:35:43-07:00  onlynet=onion
+
+  */
+  v2transport: anyOf(numLiteral(0), numLiteral(1)).optional().onMismatch(undefined),
 
   // Whitelist
   whitelist: string.optional().onMismatch(undefined),
@@ -51,9 +64,9 @@ export const shape = object({
   dbcache: number.optional().onMismatch(undefined),
 
   // Wallet
-  disablewallet: anyOf(literal(0), literal(1)).optional().onMismatch(undefined),
+  disablewallet: anyOf(numLiteral(0), numLiteral(1)).optional().onMismatch(undefined),
   deprecatedrpc: string.optional().onMismatch(undefined),
-  avoidpartialspends: anyOf(literal(0), literal(1))
+  avoidpartialspends: anyOf(numLiteral(0), numLiteral(1))
     .optional()
     .onMismatch(undefined),
   discardfee: number.optional().onMismatch(undefined),
@@ -66,20 +79,20 @@ export const shape = object({
   zmqpubsequence: string.optional().onMismatch(undefined),
 
   // TxIndex
-  txindex: literal(1).optional().onMismatch(undefined),
+  txindex: numLiteral(1).optional().onMismatch(undefined),
 
   // CoinstatsIndex
-  coinstatsindex: literal(1).optional().onMismatch(undefined),
+  coinstatsindex: numLiteral(1).optional().onMismatch(undefined),
 
   // BIP37
-  peerbloomfilters: literal(1).optional().onMismatch(undefined),
+  peerbloomfilters: numLiteral(1).optional().onMismatch(undefined),
 
   // BIP157
   blockfilterindex: literal('basic').optional().onMismatch(undefined),
-  peerblockfilters: literal(1).optional().onMismatch(undefined),
+  peerblockfilters: numLiteral(1).optional().onMismatch(undefined),
 
   // Testnet
-  testnet: anyOf(literal(0), literal(1)).optional().onMismatch(undefined),
+  testnet: anyOf(numLiteral(0), numLiteral(1)).optional().onMismatch(undefined),
 })
 
 export function fromBitcoinConf(text: string): Record<string, string[]> {
@@ -88,7 +101,10 @@ export function fromBitcoinConf(text: string): Record<string, string[]> {
 
   for (const line of lines) {
     const [key, value] = line.split('=', 2)
-    if (key === '') return dictionary
+    if (key === '') {
+      console.log("early exit fromBitcoinConf: ", dictionary)
+      return dictionary
+    }
     const trimmedKey = key.trim()
     const trimmedValue = value.trim()
 
@@ -98,12 +114,14 @@ export function fromBitcoinConf(text: string): Record<string, string[]> {
 
     dictionary[trimmedKey].push(trimmedValue)
   }
+  console.log("Normal exit fromBitcoinConf: ", dictionary)
 
   return dictionary
 }
 
 function toBitcoinConf(conf: typeof shape._TYPE): string {
   let bitcoinConfStr = ''
+  console.log("Arg received by toBitcoinConf: ", conf)
 
   Object.entries(conf).forEach(([key, value]) => {
     if (Array.isArray(value)) {
@@ -114,12 +132,14 @@ function toBitcoinConf(conf: typeof shape._TYPE): string {
       bitcoinConfStr += `${key}=${value}\n`
     }
   })
+
+  console.log("toBitcoinConf: ", bitcoinConfStr)
   return bitcoinConfStr
 }
 
 export const bitcoinConfFile = FileHelper.raw(
   '/media/startos/volumes/main/bitcoin.conf',
-  (obj: typeof shape._TYPE) => toBitcoinConf(obj), // BitcoinConf.typeof
+  (obj: typeof shape._TYPE) => toBitcoinConf(obj),
   (str) => fromBitcoinConf(str),
   (obj) => shape.unsafeCast(obj),
 )

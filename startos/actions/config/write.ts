@@ -3,38 +3,20 @@ import { ConfigSpec } from './spec'
 
 export async function write(input: ConfigSpec) {
   const {
-    rpc,
     wallet,
     txindex,
     coinstatsindex,
     testnet,
-    mempool,
-    peers,
-    advanced: { prune, dbcache, bloomfilters, blockfilters },
+    prune,
+    dbcache,
+    bloomfilters,
+    blockfilters,
   } = input
 
   const shaped: typeof shape._TYPE = {
     // RPC
-    rpcauth: rpc.auth,
-    rpcservertimeout: rpc.servertimeout || undefined,
-    rpcthreads: rpc.threads || undefined,
-    rpcworkqueue: rpc.workqueue || undefined,
     rpcbind: prune ? '127.0.0.1:18332' : '0.0.0.0:8332',
     rpcallowip: prune ? '127.0.0.1/32' : '0.0.0.0/0',
-
-    // Mempool
-    mempoolfullrbf: mempool.mempoolfullrbf === true ? 1 : 0,
-    persistmempool: mempool.persistmempool === true ? 1 : 0,
-    maxmempool: mempool.maxmempool || undefined,
-    mempoolexpiry: mempool.mempoolexpiry || undefined,
-    datacarrier: mempool.datacarrier === true ? 1 : 0,
-    datacarriersize: mempool.datacarriersize || undefined,
-    permitbaremultisig: mempool.permitbaremultisig === true ? 1 : 0,
-
-    // Peers
-    listen: peers.listen ? 1 : 0,
-    v2transport: peers.v2transport ? 1 : 0,
-    whitelist: '172.18.0.0/16',
 
     // Wallet
     disablewallet: wallet.enable ? 0 : 1,
@@ -43,16 +25,6 @@ export async function write(input: ConfigSpec) {
 
     testnet: testnet ? 1 : 0,
   }
-
-  if (peers.listen) shaped.bind = '0.0.0.0:8333'
-
-  if (peers.connectpeer.selection === 'addnode') {
-    shaped.addnode = peers.connectpeer.value.peers
-  } else {
-    shaped.connect = peers.connectpeer.value.peers
-  }
-
-  if (peers.onlyonion) shaped.onlynet = 'onion'
 
   if (prune) shaped.prune = prune
 
@@ -83,5 +55,5 @@ export async function write(input: ConfigSpec) {
 
   if (blockfilters.peerblockfilters) shaped.peerblockfilters = 1
 
-  await bitcoinConfFile.write(shaped)
+  await bitcoinConfFile.merge(shaped)
 }
