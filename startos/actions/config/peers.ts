@@ -4,11 +4,6 @@ import { sdk } from '../../sdk'
 const { Value, Variants, List, InputSpec } = sdk
 
 const peerSpec = sdk.InputSpec.of({
-  /*
-  Spec defaults seem to be disregarded when reading a bitcoin.conf where the value in question is undefined. i.e. listen and v2transport default to false when the values are undefined in bitcoin.conf - presumably because undefined is falsy which then overrides spec defaults.
-
-  We could get around this behavior by seeding a bitcoin.conf with the desired defaults, but if that is the solution, do the InputSpec defaults serve a purpose?
-  */
   listen: Value.toggle({
     name: 'Make Public',
     default: true,
@@ -25,26 +20,6 @@ const peerSpec = sdk.InputSpec.of({
     description:
       'Enable or disable the use of BIP324 V2 P2P transport protocol.',
   }),
-  peers: Value.list(
-    List.text(
-      {
-        name: 'Connect Nodes List Test',
-        minLength: 1,
-        description:
-          'Add addresses of nodes for Bitcoin to EXCLUSIVELY connect to.',
-      },
-      {
-        patterns: [
-          {
-            regex:
-              '(^s*((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?:[0-9]{1,5}))s*$)|(^s*((?=.{1,255}$)[0-9A-Za-z](?:(?:[0-9A-Za-z]|\b-){0,61}[0-9A-Za-z])?(?:.[0-9A-Za-z](?:(?:[0-9A-Za-z]|\b-){0,61}[0-9A-Za-z])?)*.?:[0-9]{1,5})s*$)|(^s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:)))(%.+)?:[0-9]{1,5}s*$)',
-            description:
-              "Must be either a domain name, or an IPv4 or IPv6 address. Be sure to include the port number, but do not include protocol scheme (eg 'http://').",
-          },
-        ],
-      },
-    ),
-  ),
   connectpeer: Value.union(
     {
       name: 'Connect Peer',
@@ -54,83 +29,55 @@ const peerSpec = sdk.InputSpec.of({
       connect: {
         name: 'Connect',
         spec: InputSpec.of({
-          peer: Value.text({
-            name: 'Connect Union test',
-            default: null,
-            required: true,
-          })
+          peers: Value.list(
+            List.text(
+              {
+                name: 'Connect Nodes',
+                minLength: 1,
+                description:
+                  'Add addresses of nodes for Bitcoin to EXCLUSIVELY connect to.',
+              },
+              {
+                patterns: [
+                  {
+                    regex:
+                      '(^s*((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?:[0-9]{1,5}))s*$)|(^s*((?=.{1,255}$)[0-9A-Za-z](?:(?:[0-9A-Za-z]|\b-){0,61}[0-9A-Za-z])?(?:.[0-9A-Za-z](?:(?:[0-9A-Za-z]|\b-){0,61}[0-9A-Za-z])?)*.?:[0-9]{1,5})s*$)|(^s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:)))(%.+)?:[0-9]{1,5}s*$)',
+                    description:
+                      "Must be either a domain name, or an IPv4 or IPv6 address. Be sure to include the port number, but do not include protocol scheme (eg 'http://').",
+                  },
+                ],
+              },
+            ),
+          ),
         }),
       },
       addnode: {
         name: 'Add Node',
         spec: InputSpec.of({
-          peer: Value.text({
-            name: 'Add Node Union test',
-            default: null,
-            required: false,
-          }),
+          peers: Value.list(
+            List.text(
+              {
+                name: 'Add Nodes',
+                description:
+                  'Add addresses of nodes for Bitcoin to connect with in addition to default nodes.',
+              },
+              {
+                inputmode: 'text',
+                patterns: [
+                  {
+                    regex:
+                      '(^s*((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?:[0-9]{1,5}))s*$)|(^s*((?=.{1,255}$)[0-9A-Za-z](?:(?:[0-9A-Za-z]|\b-){0,61}[0-9A-Za-z])?(?:.[0-9A-Za-z](?:(?:[0-9A-Za-z]|\b-){0,61}[0-9A-Za-z])?)*.?:[0-9]{1,5})s*$)|(^s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:)))(%.+)?:[0-9]{1,5}s*$)',
+                    description:
+                      "Must be either a domain name, or an IPv4 or IPv6 address. Be sure to include the port number, but do not include protocol scheme (eg 'http://').",
+                  },
+                ],
+              },
+            ),
+          ),
         }),
       },
     }),
   ),
-  // connectpeer: Value.union(
-  //   {
-  //     name: 'Connect Peer',
-  //     default: 'addnode',
-  //   },
-  //   Variants.of({
-  //     connect: {
-  //       name: 'Connect',
-  //       spec: InputSpec.of({
-  //         peers: Value.list(
-  //           List.text(
-  //             {
-  //               name: 'Connect Nodes',
-  //               minLength: 1,
-  //               description:
-  //                 'Add addresses of nodes for Bitcoin to EXCLUSIVELY connect to.',
-  //             },
-  //             {
-  //               patterns: [
-  //                 {
-  //                   regex:
-  //                     '(^s*((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?:[0-9]{1,5}))s*$)|(^s*((?=.{1,255}$)[0-9A-Za-z](?:(?:[0-9A-Za-z]|\b-){0,61}[0-9A-Za-z])?(?:.[0-9A-Za-z](?:(?:[0-9A-Za-z]|\b-){0,61}[0-9A-Za-z])?)*.?:[0-9]{1,5})s*$)|(^s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:)))(%.+)?:[0-9]{1,5}s*$)',
-  //                   description:
-  //                     "Must be either a domain name, or an IPv4 or IPv6 address. Be sure to include the port number, but do not include protocol scheme (eg 'http://').",
-  //                 },
-  //               ],
-  //             },
-  //           ),
-  //         ),
-  //       }),
-  //     },
-  //     addnode: {
-  //       name: 'Add Node',
-  //       spec: InputSpec.of({
-  //         peers: Value.list(
-  //           List.text(
-  //             {
-  //               name: 'Add Nodes',
-  //               description:
-  //                 'Add addresses of nodes for Bitcoin to connect with in addition to default nodes.',
-  //             },
-  //             {
-  //               inputmode: 'text',
-  //               patterns: [
-  //                 {
-  //                   regex:
-  //                     '(^s*((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?:[0-9]{1,5}))s*$)|(^s*((?=.{1,255}$)[0-9A-Za-z](?:(?:[0-9A-Za-z]|\b-){0,61}[0-9A-Za-z])?(?:.[0-9A-Za-z](?:(?:[0-9A-Za-z]|\b-){0,61}[0-9A-Za-z])?)*.?:[0-9]{1,5})s*$)|(^s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:)))(%.+)?:[0-9]{1,5}s*$)',
-  //                   description:
-  //                     "Must be either a domain name, or an IPv4 or IPv6 address. Be sure to include the port number, but do not include protocol scheme (eg 'http://').",
-  //                 },
-  //               ],
-  //             },
-  //           ),
-  //         ),
-  //       }),
-  //     },
-  //   }),
-  // ),
 })
 
 export const peerConfig = sdk.Action.withInput(
@@ -160,52 +107,28 @@ export const peerConfig = sdk.Action.withInput(
 async function read(effects: any): Promise<PartialPeerSpec> {
   const bitcoinConf = await bitcoinConfFile.read.const(effects)
   if (!bitcoinConf) return {}
-  const { listen, connect, addnode, onlynet, v2transport, peers } = bitcoinConf
-  console.log('Connect: ', connect)
-  console.log('Addnode: ', addnode)
+  const { listen, connect, addnode, onlynet, v2transport } = bitcoinConf
 
   const peerSettings: PartialPeerSpec = {
-    listen: listen == undefined ? undefined : listen == 1 ? true : false,
+    listen: listen === undefined ? undefined : listen === 1 ? true : false,
     connectpeer: {
       selection: connect !== undefined ? 'connect' : 'addnode',
       value: {
-        peer: connect !== undefined ? connect : addnode !== undefined ? addnode : 'not specified'
-        // peers:
-        //   connect !== undefined
-        //     ? [connect].flat().filter((x): x is string => x !== undefined)
-        //     : [addnode].flat().filter((x): x is string => x !== undefined),
+        peers:
+          connect !== undefined
+            ? [connect].flat().filter((x): x is string => x !== undefined)
+            : [addnode].flat().filter((x): x is string => x !== undefined),
       },
     },
-    peers: peers !== undefined ? peers : [],
     onlyonion: onlynet == ('onion' as const),
-    v2transport: v2transport == 1,
+    v2transport: v2transport === 1,
   }
-  console.log('peerSettings: ', peerSettings)
-  /*
-  connect array seems properly persisted and read from bitcoin.conf but the peers do not appear as pre-filled in the action list. Instead the list appears to be empty.
-
-  2025-02-03T13:35:13-07:00  Connect:  [
-  2025-02-03T13:35:13-07:00    'abcxyz.onion:8334',
-  2025-02-03T13:35:13-07:00    'abcxyz.onion:8333'
-  2025-02-03T13:35:13-07:00  ]
-  2025-02-03T13:35:13-07:00  Addnode:  undefined
-  2025-02-03T13:35:13-07:00  peerSettings:  {
-  2025-02-03T13:35:13-07:00    listen: false,
-  2025-02-03T13:35:13-07:00    connectpeer: { selection: 'connect', value: { peers: [Array] } },
-  2025-02-03T13:35:13-07:00    onlyonion: false,
-  2025-02-03T13:35:13-07:00    v2transport: false
-  2025-02-03T13:35:13-07:00  }
-  */
 
   return peerSettings
 }
 
 async function write(input: peerSpec) {
-  const { connectpeer, listen, onlyonion, v2transport, peers } = input
-  console.log('Write input: ', input)
-  console.log('ConnectPeer Input: ', connectpeer.selection)
-  // console.log('Peers Input: ', connectpeer.value.peers)
-  console.log('Peers Input: ', connectpeer.value)
+  const { connectpeer, listen, onlyonion, v2transport } = input
 
   const peerSettings: typeof shape._TYPE = {}
   peerSettings.whitelist = '172.18.0.0/16'
@@ -219,24 +142,18 @@ async function write(input: peerSpec) {
   if (onlyonion) {
     peerSettings.onlynet = 'onion'
   } else {
+    // @TODO onlynet, addnode, and connect cannot currently be overwritteen by `undefineed`.
+    // Update for sdk solution once implemented
     peerSettings.onlynet = undefined
   }
   if (v2transport) peerSettings.v2transport = 1
-  if (connectpeer.selection == ('connect')) {
-    console.log('In connect block')
-    // peerSettings.connect = connectpeer.value.peers as string[]
-    peerSettings.connect = connectpeer.value.peer
+  if (connectpeer.selection === 'connect') {
+    peerSettings.connect = connectpeer.value.peers
     peerSettings.addnode = undefined
-  } else if (connectpeer.selection == 'addnode') {
-    console.log('In addnode block')
-    // peerSettings.addnode = (connectpeer.value.peers as string[])
-    peerSettings.addnode = connectpeer.value.peer!
-    // peerSettings.connect = undefined
-    peerSettings.peers = peers
+  } else if (connectpeer.selection === 'addnode') {
+    peerSettings.addnode = connectpeer.value.peers
+    peerSettings.connect = undefined
   }
-  console.log('Connect: ', peerSettings.connect)
-  console.log('Addnode: ', peerSettings.addnode)
-  console.log('peerSettings passeed to merge: ', peerSettings)
 
   await bitcoinConfFile.merge(peerSettings)
 }

@@ -39,22 +39,9 @@ export const shape = object({
   // Peers
   listen: anyOf(numLiteral(0), numLiteral(1)).optional().onMismatch(undefined),
   bind: string.optional().onMismatch(undefined),
-  connect: string.optional(),//.onMismatch(undefined),
-  addnode: string.optional(),//.onMismatch(undefined),
-  peers: stringArray.optional(),
-  // connect: stringArray.optional(),//.onMismatch(undefined),
-  // addnode: stringArray.optional(),//.onMismatch(undefined),
+  connect: stringArray.optional().onMismatch(undefined),
+  addnode: stringArray.optional().onMismatch(undefined),
   onlynet: string.optional().onMismatch(undefined),
-  /*
-  It seeems an existing value in bitcoin.conf cannot be overwrittern with 'undefined' - is there a different way to delete a key/values from bitcoin.conf?
-
-  2025-01-31T14:35:43-07:00  peerSettings passed to merge:  { listen: 1, onlynet: undefined, connect: undefined }
-  2025-01-31T14:35:43-07:00  early exit fromBitcoinConf:  { listen: [ '1' ], onlynet: [ 'onion' ] }
-  2025-01-31T14:35:43-07:00  Arg received by toBitcoinConf:  { listen: 1, onlynet: 'onion', connect: undefined }
-  2025-01-31T14:35:43-07:00  toBitcoinConf:  listen=1
-  2025-01-31T14:35:43-07:00  onlynet=onion
-
-  */
   v2transport: anyOf(numLiteral(0), numLiteral(1)).optional().onMismatch(undefined),
 
   // Whitelist
@@ -105,7 +92,6 @@ export function fromBitcoinConf(text: string): Record<string, string[]> {
   for (const line of lines) {
     const [key, value] = line.split('=', 2)
     if (key === '') {
-      console.log("early exit fromBitcoinConf: ", dictionary)
       return dictionary
     }
     const trimmedKey = key.trim()
@@ -117,14 +103,12 @@ export function fromBitcoinConf(text: string): Record<string, string[]> {
 
     dictionary[trimmedKey].push(trimmedValue)
   }
-  console.log("Normal exit fromBitcoinConf: ", dictionary)
 
   return dictionary
 }
 
 function toBitcoinConf(conf: typeof shape._TYPE): string {
   let bitcoinConfStr = ''
-  console.log("Arg received by toBitcoinConf: ", conf)
 
   Object.entries(conf).forEach(([key, value]) => {
     if (Array.isArray(value)) {
@@ -136,7 +120,6 @@ function toBitcoinConf(conf: typeof shape._TYPE): string {
     }
   })
 
-  console.log("toBitcoinConf: ", bitcoinConfStr)
   return bitcoinConfStr
 }
 
