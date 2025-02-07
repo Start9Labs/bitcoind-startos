@@ -64,7 +64,7 @@ export async function getRpcAuth(effects: Effects) {
   return (await bitcoinConfFile.read.const(effects))?.rpcauth
 }
 
-export const bitcoinConfDefaults: typeof shape._TYPE = {
+export const bitcoinConfDefaults = {
   // RPC
   rpcservertimeout: 30,
   rpcthreads: 4,
