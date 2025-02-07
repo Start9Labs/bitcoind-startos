@@ -1,5 +1,5 @@
 import { Effects } from '@start9labs/start-sdk/base/lib/Effects'
-import { bitcoinConfFile } from './file-models/bitcoin.conf'
+import { bitcoinConfFile, shape } from './file-models/bitcoin.conf'
 
 export type GetNetworkInfo = {
   connections: number
@@ -62,4 +62,44 @@ export async function getRpcUsers(effects: Effects) {
 
 export async function getRpcAuth(effects: Effects) {
   return (await bitcoinConfFile.read.const(effects))?.rpcauth
+}
+
+export const bitcoinConfDefaults: typeof shape._TYPE = {
+  // RPC
+  rpcservertimeout: 30,
+  rpcthreads: 4,
+  rpcworkqueue: 16,
+
+  // Mempool
+  persistmempool: 1,
+  maxmempool: 300,
+  mempoolexpiry: 336,
+  mempoolfullrbf: 1,
+  permitbaremultisig: 1,
+  datacarrier: 1,
+  datacarriersize: 83,
+
+  // Peers
+  listen: 1,
+  v2transport: 1,
+
+  // Wallet
+  disablewallet: 0,
+  avoidpartialspends: 0,
+  discardfee: 0.0001,
+
+  // Other
+  zmqpubrawblock: 'tcp://0.0.0.0:28332',
+  zmqpubhashblock: 'tcp://0.0.0.0:28332',
+  zmqpubrawtx: 'tcp://0.0.0.0:28333',
+  zmqpubhashtx: 'tcp://0.0.0.0:28333',
+  zmqpubsequence: 'tcp://0.0.0.0:28333',
+
+  coinstatsindex: 0,
+  txindex: 0,
+  dbcache: 450,
+
+  peerbloomfilters: 0,
+  blockfilterindex: 0,
+  peerblockfilters: 0,
 }

@@ -9,7 +9,9 @@ const numLiteral = (val: any) => {
   return stringArray.map(([val]) => Number(val)).orParser(matches.literal(val))
 }
 const literal = (val: string) => {
-  return stringArray.map(([val]) => matches.literal(val)).orParser(matches.literal(val))
+  return stringArray
+    .map(([val]) => matches.literal(val))
+    .orParser(matches.literal(val))
 }
 
 export const shape = object({
@@ -30,7 +32,9 @@ export const shape = object({
     .onMismatch(undefined),
   maxmempool: number.optional().onMismatch(undefined),
   mempoolexpiry: number.optional().onMismatch(undefined),
-  datacarrier: anyOf(numLiteral(0), numLiteral(1)).optional().onMismatch(undefined),
+  datacarrier: anyOf(numLiteral(0), numLiteral(1))
+    .optional()
+    .onMismatch(undefined),
   datacarriersize: number.optional().onMismatch(undefined),
   permitbaremultisig: anyOf(numLiteral(0), numLiteral(1))
     .optional()
@@ -42,7 +46,9 @@ export const shape = object({
   connect: stringArray.optional().onMismatch(undefined),
   addnode: stringArray.optional().onMismatch(undefined),
   onlynet: string.optional().onMismatch(undefined),
-  v2transport: anyOf(numLiteral(0), numLiteral(1)).optional().onMismatch(undefined),
+  v2transport: anyOf(numLiteral(0), numLiteral(1))
+    .optional()
+    .onMismatch(undefined),
 
   // Whitelist
   whitelist: string.optional().onMismatch(undefined),
@@ -54,7 +60,9 @@ export const shape = object({
   dbcache: number.optional().onMismatch(undefined),
 
   // Wallet
-  disablewallet: anyOf(numLiteral(0), numLiteral(1)).optional().onMismatch(undefined),
+  disablewallet: anyOf(numLiteral(0), numLiteral(1))
+    .optional()
+    .onMismatch(undefined),
   deprecatedrpc: string.optional().onMismatch(undefined),
   avoidpartialspends: anyOf(numLiteral(0), numLiteral(1))
     .optional()
@@ -78,7 +86,9 @@ export const shape = object({
   peerbloomfilters: numLiteral(1).optional().onMismatch(undefined),
 
   // BIP157
-  blockfilterindex: literal('basic').optional().onMismatch(undefined),
+  blockfilterindex: anyOf(literal('basic'), numLiteral(0))
+    .optional()
+    .onMismatch(undefined),
   peerblockfilters: numLiteral(1).optional().onMismatch(undefined),
 
   // Testnet
