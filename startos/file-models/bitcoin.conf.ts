@@ -91,9 +91,6 @@ export const shape = object({
     .optional()
     .onMismatch(undefined),
   peerblockfilters: numLiteral(1).optional().onMismatch(undefined),
-
-  // Testnet
-  testnet: anyOf(numLiteral(0), numLiteral(1)).optional().onMismatch(undefined),
 })
 
 export function fromBitcoinConf(text: string): Record<string, string[]> {

@@ -1,7 +1,8 @@
 import { sdk } from './sdk'
 import { T } from '@start9labs/start-sdk'
-import { GetBlockchainInfo, getRpcPort } from './utils'
+import { GetBlockchainInfo } from './utils'
 import { bitcoinConfFile } from './file-models/bitcoin.conf'
+import { rpcPort } from './interfaces'
 
 export const main = sdk.setupMain(async ({ effects, started }) => {
   /**
@@ -10,7 +11,6 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
 
   const conf = (await bitcoinConfFile.read.const(effects))!
 
-  const rpcPort = getRpcPort(conf.testnet || 0)
   const containerIp = await effects.getContainerIp()
 
   const bitcoinArgs: string[] = []

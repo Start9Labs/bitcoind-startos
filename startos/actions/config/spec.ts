@@ -29,12 +29,6 @@ export const configSpec = sdk.InputSpec.of({
     description:
       'Enabling Coinstats Index reduces the time for the gettxoutsetinfo RPC to complete at the cost of using additional disk space',
   }),
-  testnet: Value.toggle({
-    name: 'Testnet',
-    default: false,
-    description:
-      'Testnet is an alternative Bitcoin block chain to be used for testing. Testnet coins are separate and distinct from actual bitcoins, and are never supposed to have any value. This allows application developers or bitcoin testers to experiment, without having to use real bitcoins or worrying about breaking the main bitcoin chain.',
-  }),
   wallet: Value.object(
     {
       name: 'Wallet',

@@ -25,12 +25,6 @@ const initialConfigSpec = sdk.InputSpec.of({
       min: 550,
     }
   }),
-  testnet: Value.toggle({
-    name: 'Testnet',
-    default: false,
-    description:
-      'Testnet is an alternative Bitcoin block chain to be used for testing. Testnet coins are separate and distinct from actual bitcoins, and are never supposed to have any value. This allows application developers or bitcoin testers to experiment, without having to use real bitcoins or worrying about breaking the main bitcoin chain.',
-  }),
   externalip: getExteralAddresses(),
 })
 
@@ -65,7 +59,7 @@ export const initialConfig = sdk.Action.withInput(
 )
 
 async function write(effects: any, input: InitialConfigSpec) {
-  const { prune, testnet, externalip } = input
+  const { prune, externalip } = input
   const initialConfig = {
     rpcbind: prune ? '127.0.0.1:18332' : '0.0.0.0:8332',
     rpcallowip: prune ? '127.0.0.1/32' : '0.0.0.0/0',
@@ -73,7 +67,6 @@ async function write(effects: any, input: InitialConfigSpec) {
       externalip === 'unspecified'
         ? bitcoinConfDefaults.externalip
         : externalip,
-    testnet: testnet ? 1 : 0,
   }
 
   await bitcoinConfFile.merge(initialConfig)

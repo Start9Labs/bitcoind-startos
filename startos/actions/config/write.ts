@@ -6,7 +6,6 @@ export async function write(input: ConfigSpec) {
     wallet,
     txindex,
     coinstatsindex,
-    testnet,
     prune,
     dbcache,
     bloomfilters,
@@ -23,7 +22,6 @@ export async function write(input: ConfigSpec) {
     avoidpartialspends: wallet.avoidpartialspends ? 1 : 0,
     discardfee: wallet.discardfee || undefined,
 
-    testnet: testnet ? 1 : 0,
   }
 
   if (prune) shaped.prune = prune
