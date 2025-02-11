@@ -49,6 +49,7 @@ export const shape = object({
   v2transport: anyOf(numLiteral(0), numLiteral(1))
     .optional()
     .onMismatch(undefined),
+  externalip: string.optional().onMismatch(undefined),
 
   // Whitelist
   whitelist: string.optional().onMismatch(undefined),

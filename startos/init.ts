@@ -5,11 +5,14 @@ import { setInterfaces } from './interfaces'
 import { versions } from './versions'
 import { actions } from './actions'
 import { initialConfig } from './actions/config/initialConfig'
+import { bitcoinConfFile } from './file-models/bitcoin.conf'
+import { bitcoinConfDefaults } from './utils'
 
 const install = sdk.setupInstall(async ({ effects }) => {
   await sdk.store.setOwn(effects, sdk.StorePath.reindexBlockchain, false)
   await sdk.store.setOwn(effects, sdk.StorePath.reindexChainstate, false)
   await sdk.store.setOwn(effects, sdk.StorePath.initialized, false)
+  await bitcoinConfFile.write(bitcoinConfDefaults)
   sdk.action.requestOwn(effects, initialConfig, 'critical', {
     reason:
       'Important bitcoin.conf values must be set before starting Bitcoin for the first time.',

@@ -1,6 +1,5 @@
 import { sdk } from './sdk'
 import { T } from '@start9labs/start-sdk'
-import { peerInterfaceId } from './interfaces'
 import { GetBlockchainInfo, getRpcPort } from './utils'
 import { bitcoinConfFile } from './file-models/bitcoin.conf'
 
@@ -13,17 +12,12 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
 
   const rpcPort = getRpcPort(conf.testnet || 0)
   const containerIp = await effects.getContainerIp()
-  // @TODO take into account possibilioty of multiple/no .onions and also clearnet domains
-  const peerAddr = (
-    await sdk.serviceInterface.getOwn(effects, peerInterfaceId).const()
-  )?.addressInfo?.onionUrls[0]
 
   const bitcoinArgs: string[] = []
 
   bitcoinArgs.push(`-onion=${containerIp}:9050`)
-  bitcoinArgs.push(`-externalip=${peerAddr}`)
-  bitcoinArgs.push('-datadir=/root/.bitcoin"')
-  bitcoinArgs.push('-conf=/root/.bitcoin/bitcoin.conf')
+  bitcoinArgs.push('-datadir=/media/startos/volumes/main/')
+  bitcoinArgs.push('-conf=/media/startos/volumes/main/bitcoin.conf')
 
   for await (const reindexBlockchain of sdk.store
     .getOwn(effects, sdk.StorePath.reindexBlockchain)

@@ -1,25 +1,28 @@
 import { bitcoinConfFile, shape } from '../../file-models/bitcoin.conf'
 import { sdk } from '../../sdk'
+import { bitcoinConfDefaults, getExteralAddresses } from '../../utils'
 
+const { listen, onlynet, v2transport, externalip } = bitcoinConfDefaults
 const { Value, Variants, List, InputSpec } = sdk
 
 const peerSpec = sdk.InputSpec.of({
   listen: Value.toggle({
     name: 'Make Public',
-    default: true,
+    default: !!listen,
     description: 'Allow other nodes to find your server on the network.',
   }),
   onlyonion: Value.toggle({
     name: 'Disable Clearnet',
-    default: false,
+    default: !!onlynet,
     description: 'Only connect to peers over Tor.',
   }),
   v2transport: Value.toggle({
     name: 'Use V2 P2P Transport Protocol',
-    default: true,
+    default: !!v2transport,
     description:
       'Enable or disable the use of BIP324 V2 P2P transport protocol.',
   }),
+  externalip: getExteralAddresses(),
   connectpeer: Value.union(
     {
       name: 'Connect Peer',
@@ -107,51 +110,59 @@ export const peerConfig = sdk.Action.withInput(
 async function read(effects: any): Promise<PartialPeerSpec> {
   const bitcoinConf = await bitcoinConfFile.read.const(effects)
   if (!bitcoinConf) return {}
-  const { listen, connect, addnode, onlynet, v2transport } = bitcoinConf
 
   const peerSettings: PartialPeerSpec = {
-    listen: listen === undefined ? undefined : listen === 1 ? true : false,
+    listen: bitcoinConf.listen === undefined ? !!listen : bitcoinConf.listen,
+    onlyonion:
+      bitcoinConf.onlynet === undefined
+        ? !!onlynet
+        : bitcoinConf.onlynet === ('onion' as const),
+    v2transport:
+      bitcoinConf.v2transport === undefined
+        ? !!v2transport
+        : bitcoinConf.v2transport,
+    externalip:
+      bitcoinConf.externalip === undefined
+        ? 'unspecified'
+        : bitcoinConf.externalip,
     connectpeer: {
-      selection: connect !== undefined ? 'connect' : 'addnode',
+      selection: bitcoinConf.connect !== undefined ? 'connect' : 'addnode',
       value: {
         peers:
-          connect !== undefined
-            ? [connect].flat().filter((x): x is string => x !== undefined)
-            : [addnode].flat().filter((x): x is string => x !== undefined),
+          bitcoinConf.connect !== undefined
+            ? [bitcoinConf.connect]
+                .flat()
+                .filter((x): x is string => x !== undefined)
+            : [bitcoinConf.addnode]
+                .flat()
+                .filter((x): x is string => x !== undefined),
       },
     },
-    onlyonion: onlynet == ('onion' as const),
-    v2transport: v2transport === 1,
   }
 
   return peerSettings
 }
 
 async function write(input: peerSpec) {
-  const { connectpeer, listen, onlyonion, v2transport } = input
-
   const peerSettings: typeof shape._TYPE = {}
-  peerSettings.whitelist = '172.18.0.0/16'
-  if (listen) peerSettings.bind = '0.0.0.0:8333'
 
-  if (listen) {
-    peerSettings.listen = 1
+  if (input.listen) peerSettings.bind = '0.0.0.0:8333'
+  peerSettings.listen = input.listen ? 1 : 0
+  peerSettings.onlynet = input.onlyonion ? 'onion' : onlynet
+  peerSettings.v2transport = input.v2transport ? 1 : 0
+
+  // @TODO bind, onlynet, externalip, addnode, and connect cannot currently be overwritten by `undefineed`.
+  // Update for sdk solution once implemented
+  if (input.externalip !== 'unspecified') {
+    peerSettings.externalip = input.externalip
   } else {
-    peerSettings.listen = undefined
+    peerSettings.externalip = externalip
   }
-  if (onlyonion) {
-    peerSettings.onlynet = 'onion'
-  } else {
-    // @TODO onlynet, addnode, and connect cannot currently be overwritteen by `undefineed`.
-    // Update for sdk solution once implemented
-    peerSettings.onlynet = undefined
-  }
-  if (v2transport) peerSettings.v2transport = 1
-  if (connectpeer.selection === 'connect') {
-    peerSettings.connect = connectpeer.value.peers
+  if (input.connectpeer.selection === 'connect') {
+    peerSettings.connect = input.connectpeer.value.peers
     peerSettings.addnode = undefined
-  } else if (connectpeer.selection === 'addnode') {
-    peerSettings.addnode = connectpeer.value.peers
+  } else if (input.connectpeer.selection === 'addnode') {
+    peerSettings.addnode = input.connectpeer.value.peers
     peerSettings.connect = undefined
   }
 

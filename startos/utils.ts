@@ -1,5 +1,7 @@
 import { Effects } from '@start9labs/start-sdk/base/lib/Effects'
 import { bitcoinConfFile, shape } from './file-models/bitcoin.conf'
+import { sdk } from './sdk'
+import { peerInterfaceId } from './interfaces'
 
 export type GetNetworkInfo = {
   connections: number
@@ -69,6 +71,8 @@ export const bitcoinConfDefaults = {
   rpcservertimeout: 30,
   rpcthreads: 4,
   rpcworkqueue: 16,
+  whitelist: '172.18.0.0/16',
+  bind: '0.0.0.0:8333',
 
   // Mempool
   persistmempool: 1,
@@ -81,6 +85,8 @@ export const bitcoinConfDefaults = {
 
   // Peers
   listen: 1,
+  onlynet: undefined,
+  externalip: undefined,
   v2transport: 1,
 
   // Wallet
@@ -102,4 +108,49 @@ export const bitcoinConfDefaults = {
   peerbloomfilters: 0,
   blockfilterindex: 0,
   peerblockfilters: 0,
+}
+
+export function getExteralAddresses() {
+  return sdk.Value.dynamicSelect(async ({ effects }) => {
+    const peerInterface = await sdk.serviceInterface
+      .getOwn(effects, peerInterfaceId)
+      .const()
+
+    console.log("Addresses: ", peerInterface?.addressInfo?.urls)
+    const urls =
+      peerInterface?.addressInfo?.urls.filter(
+        (x) =>
+          !x.includes('.local') &&
+          !x.startsWith('bitcoin://192.168') &&
+          !x.startsWith('bitcoin://[fe80::') &&
+          !x.startsWith('bitcoin://[fc') &&
+          !x.startsWith('bitcoin://[fd'),
+      ) || []
+
+    if (urls.length === 0) {
+      return {
+        name: 'External Address',
+        description: 'Address at which your node can be reached by peers',
+        values: { 'unspecified': 'unspecified' },
+        default: 'unspecified',
+      }
+    }
+
+    const urlsWithUnspecified = urls.reduce(
+      (obj, url) => ({
+        ...obj,
+        [url]: url,
+      }),
+      {} as Record<string, string>)
+
+    urlsWithUnspecified['unspecified'] = 'unspecified'
+
+    return {
+      name: 'External Address',
+      description: 'Address at which your node can be reached by peers',
+      values: urlsWithUnspecified,
+      default:
+        urls.find((u) => u.endsWith('.onion')) || '',
+    }
+  })
 }

@@ -1,12 +1,12 @@
 import { sdk } from '../../sdk'
 import { utils } from '@start9labs/start-sdk'
 import * as diskusage from 'diskusage'
-import { bitcoinConfFile, shape } from '../../file-models/bitcoin.conf'
+import { bitcoinConfFile } from '../../file-models/bitcoin.conf'
 
 const { Value } = sdk
 const diskUsage = utils.once(() => diskusage.check('/'))
 const archivalMin = 900_000_000_000
-import { bitcoinConfDefaults } from '../../utils'
+import { bitcoinConfDefaults, getExteralAddresses } from '../../utils'
 
 const initialConfigSpec = sdk.InputSpec.of({
   prune: Value.dynamicNumber(async ({ effects }) => {
@@ -31,6 +31,7 @@ const initialConfigSpec = sdk.InputSpec.of({
     description:
       'Testnet is an alternative Bitcoin block chain to be used for testing. Testnet coins are separate and distinct from actual bitcoins, and are never supposed to have any value. This allows application developers or bitcoin testers to experiment, without having to use real bitcoins or worrying about breaking the main bitcoin chain.',
   }),
+  externalip: getExteralAddresses(),
 })
 
 export const initialConfig = sdk.Action.withInput(
@@ -64,15 +65,18 @@ export const initialConfig = sdk.Action.withInput(
 )
 
 async function write(effects: any, input: InitialConfigSpec) {
-  const { prune, testnet } = input
-  const initialConfig: typeof shape._TYPE = {
-    ...bitcoinConfDefaults,
+  const { prune, testnet, externalip } = input
+  const initialConfig = {
     rpcbind: prune ? '127.0.0.1:18332' : '0.0.0.0:8332',
     rpcallowip: prune ? '127.0.0.1/32' : '0.0.0.0/0',
+    externalip:
+      externalip === 'unspecified'
+        ? bitcoinConfDefaults.externalip
+        : externalip,
     testnet: testnet ? 1 : 0,
   }
 
-  await bitcoinConfFile.write(initialConfig)
+  await bitcoinConfFile.merge(initialConfig)
   await sdk.store.setOwn(effects, sdk.StorePath.initialized, true)
 }
 
