@@ -6,7 +6,7 @@ ARG PLATFORM
 FROM lncm/berkeleydb:db-4.8.30.NC-${PLATFORM} AS berkeleydb
 
 # Build stage for Bitcoin Core
-FROM alpine:3.18 AS bitcoin-core
+FROM alpine:3.21 AS bitcoin-core
 
 COPY --from=berkeleydb /opt /opt
 
@@ -54,7 +54,7 @@ RUN make install
 RUN strip ${BITCOIN_PREFIX}/bin/*
 
 # Build stage for compiled artifacts
-FROM alpine:3.18
+FROM alpine:3.21
 
 LABEL maintainer.0="João Fonseca (@joaopaulofonseca)" \
   maintainer.1="Pedro Branco (@pedrobranco)" \
@@ -69,7 +69,7 @@ RUN apk --no-cache add \
   libzmq \
   sqlite-dev \
   tini \
-  yq \
+  yq
 RUN rm -rf /var/cache/apk/*
 
 ARG ARCH
