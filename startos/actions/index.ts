@@ -1,6 +1,5 @@
 import { sdk } from '../sdk'
 import { config } from './config/config'
-import { initialConfig } from './config/initialConfig'
 import { mempoolConfig } from './config/mempool'
 import { peerConfig } from './config/peers'
 import { rpcConfig } from './config/rpc'
@@ -26,7 +25,5 @@ export const actions = sdk.Actions.of()
   .addAction(deleteRpcAuth)
   .addAction(mempoolConfig)
   .addAction(peerConfig)
-  .addAction(initialConfig)
-
 
 // @TODO add generateRpcUser for Dependents - disable username and password.

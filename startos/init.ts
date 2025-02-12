@@ -4,7 +4,6 @@ import { setDependencies } from './dependencies'
 import { setInterfaces } from './interfaces'
 import { versions } from './versions'
 import { actions } from './actions'
-import { initialConfig } from './actions/config/initialConfig'
 import { bitcoinConfFile } from './file-models/bitcoin.conf'
 import { bitcoinConfDefaults } from './utils'
 import * as diskusage from 'diskusage'
@@ -16,7 +15,6 @@ const archivalMin = 900_000_000_000
 const install = sdk.setupInstall(async ({ effects }) => {
   await sdk.store.setOwn(effects, sdk.StorePath.reindexBlockchain, false)
   await sdk.store.setOwn(effects, sdk.StorePath.reindexChainstate, false)
-  await sdk.store.setOwn(effects, sdk.StorePath.initialized, false)
 
   const disk = await diskUsage()
   const prune = disk.total < archivalMin ? 550 : 0
@@ -29,10 +27,6 @@ const install = sdk.setupInstall(async ({ effects }) => {
     rpcbind,
     rpcallowip,
   })
-  // sdk.action.requestOwn(effects, initialConfig, 'critical', {
-  //   reason:
-  //     'Important bitcoin.conf values must be set before starting Bitcoin for the first time.',
-  // })
 })
 
 const uninstall = sdk.setupUninstall(async ({ effects }) => {})

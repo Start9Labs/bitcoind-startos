@@ -10,7 +10,6 @@ export const v28_1_1 = VersionInfo.of({
       await sdk.store.setOwn(effects, sdk.StorePath, {
         reindexBlockchain: false,
         reindexChainstate: false,
-        initialized: true,
       })
     },
     down: IMPOSSIBLE,
