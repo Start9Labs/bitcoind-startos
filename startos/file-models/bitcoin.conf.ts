@@ -1,4 +1,5 @@
 import { FileHelper, matches } from '@start9labs/start-sdk'
+import { bitcoinConfDefaults } from '../utils'
 
 const { anyOf } = matches
 const object = matches.object
@@ -8,89 +9,115 @@ const number = stringArray.map(([a]) => Number(a)).orParser(matches.number)
 const numLiteral = (val: any) => {
   return stringArray.map(([val]) => Number(val)).orParser(matches.literal(val))
 }
+const boolean = anyOf(numLiteral(0), numLiteral(1))
+  .map((a) => !!a)
+  .orParser(matches.boolean)
 const literal = (val: string) => {
   return stringArray
     .map(([val]) => matches.literal(val))
     .orParser(matches.literal(val))
 }
+const {
+  rpcbind,
+  rpcallowip,
+  rpcauth,
+  rpcservertimeout,
+  rpcthreads,
+  rpcworkqueue,
+  whitelist,
+  bind,
+  persistmempool,
+  maxmempool,
+  mempoolexpiry,
+  mempoolfullrbf,
+  permitbaremultisig,
+  datacarrier,
+  datacarriersize,
+  listen,
+  onlynet,
+  externalip,
+  v2transport,
+  connect,
+  addnode,
+  disablewallet,
+  avoidpartialspends,
+  discardfee,
+  prune,
+  zmqpubrawblock,
+  zmqpubhashblock,
+  zmqpubhashtx,
+  zmqpubrawtx,
+  zmqpubsequence,
+  coinstatsindex,
+  txindex,
+  dbcache,
+  peerbloomfilters,
+  blockfilterindex,
+  peerblockfilters,
+} = bitcoinConfDefaults
 
 export const shape = object({
   // RPC
-  rpcbind: matches.string.optional().onMismatch(undefined),
-  rpcallowip: matches.string.optional().onMismatch(undefined),
-  rpcauth: stringArray.optional().onMismatch(undefined),
-  rpcservertimeout: number.optional().onMismatch(undefined),
-  rpcthreads: number.optional().onMismatch(undefined),
-  rpcworkqueue: number.optional().onMismatch(undefined),
+  rpcbind: matches.string.onMismatch(rpcbind),
+  rpcallowip: matches.string.onMismatch(rpcallowip),
+  rpcauth: stringArray.optional().onMismatch(rpcauth),
+  rpcservertimeout: number.onMismatch(rpcservertimeout),
+  rpcthreads: number.onMismatch(rpcthreads),
+  rpcworkqueue: number.onMismatch(rpcworkqueue),
 
   // Mempool
-  mempoolfullrbf: anyOf(numLiteral(0), numLiteral(1))
-    .optional()
-    .onMismatch(undefined),
-  persistmempool: anyOf(numLiteral(0), numLiteral(1))
-    .optional()
-    .onMismatch(undefined),
-  maxmempool: number.optional().onMismatch(undefined),
-  mempoolexpiry: number.optional().onMismatch(undefined),
-  datacarrier: anyOf(numLiteral(0), numLiteral(1))
-    .optional()
-    .onMismatch(undefined),
-  datacarriersize: number.optional().onMismatch(undefined),
-  permitbaremultisig: anyOf(numLiteral(0), numLiteral(1))
-    .optional()
-    .onMismatch(undefined),
+  mempoolfullrbf: boolean.onMismatch(mempoolfullrbf),
+  persistmempool: boolean.onMismatch(persistmempool),
+  maxmempool: number.onMismatch(maxmempool),
+  mempoolexpiry: number.onMismatch(mempoolexpiry),
+  datacarrier: boolean.onMismatch(datacarrier),
+  datacarriersize: number.onMismatch(datacarriersize),
+  permitbaremultisig: boolean.onMismatch(permitbaremultisig),
 
   // Peers
-  listen: anyOf(numLiteral(0), numLiteral(1)).optional().onMismatch(undefined),
-  bind: string.optional().onMismatch(undefined),
-  connect: stringArray.optional().onMismatch(undefined),
-  addnode: stringArray.optional().onMismatch(undefined),
-  onlynet: string.optional().onMismatch(undefined),
-  v2transport: anyOf(numLiteral(0), numLiteral(1))
-    .optional()
-    .onMismatch(undefined),
-  externalip: string.optional().onMismatch(undefined),
+  listen: boolean.onMismatch(listen),
+  bind: string.onMismatch(bind),
+  connect: anyOf(stringArray, numLiteral(0)).onMismatch(connect),
+  addnode: anyOf(stringArray).optional().onMismatch(addnode),
+  onlynet: string.optional().onMismatch(onlynet),
+  v2transport: boolean.onMismatch(v2transport),
+  externalip: string.optional().onMismatch(externalip),
 
   // Whitelist
-  whitelist: string.optional().onMismatch(undefined),
+  whitelist: string.onMismatch(whitelist),
 
   // Pruning
-  prune: number.optional().onMismatch(undefined),
+  prune: number.onMismatch(prune),
 
   // Performance Tuning
-  dbcache: number.optional().onMismatch(undefined),
+  dbcache: number.onMismatch(dbcache),
 
   // Wallet
-  disablewallet: anyOf(numLiteral(0), numLiteral(1))
-    .optional()
-    .onMismatch(undefined),
-  deprecatedrpc: string.optional().onMismatch(undefined),
-  avoidpartialspends: anyOf(numLiteral(0), numLiteral(1))
-    .optional()
-    .onMismatch(undefined),
-  discardfee: number.optional().onMismatch(undefined),
+  disablewallet: boolean.onMismatch(disablewallet),
+  avoidpartialspends: boolean.onMismatch(avoidpartialspends),
+  discardfee: number.onMismatch(discardfee),
 
   // Zero MQ
-  zmqpubrawblock: string.optional().onMismatch(undefined),
-  zmqpubhashblock: string.optional().onMismatch(undefined),
-  zmqpubrawtx: string.optional().onMismatch(undefined),
-  zmqpubhashtx: string.optional().onMismatch(undefined),
-  zmqpubsequence: string.optional().onMismatch(undefined),
+  zmqpubrawblock: string.optional().onMismatch(zmqpubrawblock),
+  zmqpubhashblock: string.optional().onMismatch(zmqpubhashblock),
+  zmqpubrawtx: string.optional().onMismatch(zmqpubrawtx),
+  zmqpubhashtx: string.optional().onMismatch(zmqpubhashtx),
+  zmqpubsequence: string.optional().onMismatch(zmqpubsequence),
 
   // TxIndex
-  txindex: numLiteral(1).optional().onMismatch(undefined),
+  txindex: boolean.onMismatch(txindex),
 
   // CoinstatsIndex
-  coinstatsindex: numLiteral(1).optional().onMismatch(undefined),
+  coinstatsindex: boolean.onMismatch(coinstatsindex),
 
   // BIP37
-  peerbloomfilters: numLiteral(1).optional().onMismatch(undefined),
+  peerbloomfilters: boolean.onMismatch(peerbloomfilters),
 
   // BIP157
-  blockfilterindex: anyOf(literal('basic'), numLiteral(0))
-    .optional()
-    .onMismatch(undefined),
-  peerblockfilters: numLiteral(1).optional().onMismatch(undefined),
+  blockfilterindex: anyOf(literal('basic'), boolean).onMismatch(
+    blockfilterindex,
+  ),
+  peerblockfilters: boolean.onMismatch(peerblockfilters),
 })
 
 export function fromBitcoinConf(text: string): Record<string, string[]> {
@@ -117,14 +144,23 @@ export function fromBitcoinConf(text: string): Record<string, string[]> {
 
 function toBitcoinConf(conf: typeof shape._TYPE): string {
   let bitcoinConfStr = ''
+  const toString = (a: any) => {
+    if (a === true) {
+      return '1'
+    } else if (a === false) {
+      return '0'
+    } else {
+      return a.toString()
+    }
+  }
 
   Object.entries(conf).forEach(([key, value]) => {
     if (Array.isArray(value)) {
       for (const subValue of value) {
-        bitcoinConfStr += `${key}=${subValue}\n`
+        bitcoinConfStr += `${key}=${toString(subValue)}\n`
       }
     } else if (value !== undefined) {
-      bitcoinConfStr += `${key}=${value}\n`
+      bitcoinConfStr += `${key}=${toString(value)}\n`
     }
   })
 

@@ -1,7 +1,9 @@
 import { bitcoinConfFile, shape } from '../../file-models/bitcoin.conf'
 import { sdk } from '../../sdk'
+import { bitcoinConfDefaults } from '../../utils'
 
 const { Value } = sdk
+const { rpcservertimeout, rpcthreads, rpcworkqueue } = bitcoinConfDefaults
 
 const rpcSpec = sdk.InputSpec.of({
   servertimeout: Value.number({
@@ -9,12 +11,12 @@ const rpcSpec = sdk.InputSpec.of({
     description:
       'Number of seconds after which an uncompleted RPC call will time out.',
     required: false,
-    default: null,
+    default: rpcservertimeout,
     min: 5,
     max: 300,
     integer: true,
     units: 'seconds',
-    placeholder: '30',
+    placeholder: rpcservertimeout.toString(),
   }),
   threads: Value.number({
     name: 'Threads',
@@ -22,13 +24,13 @@ const rpcSpec = sdk.InputSpec.of({
       'Set the number of threads for handling RPC calls. You may wish to increase this if you are making lots of calls via an integration.',
 
     required: false,
-    default: null,
+    default: rpcthreads,
     min: 4,
     max: 64,
     step: null,
     integer: true,
     units: null,
-    placeholder: '16',
+    placeholder: rpcthreads.toString(),
   }),
   workqueue: Value.number({
     name: 'Work Queue',
@@ -36,13 +38,13 @@ const rpcSpec = sdk.InputSpec.of({
       'Set the depth of the work queue to service RPC calls. Determines how long the backlog of RPC requests can get before it just rejects new ones.',
 
     required: false,
-    default: null,
+    default: rpcworkqueue,
     min: 8,
     max: 256,
     step: null,
     integer: true,
     units: 'requests',
-    placeholder: '128',
+    placeholder: rpcworkqueue.toString(),
   }),
 })
 
@@ -84,10 +86,11 @@ async function read(effects: any): Promise<PartialRpcSpec> {
 async function write(input: RpcSpec) {
   const { servertimeout, threads, workqueue } = input
 
-  const rpcSettings: typeof shape._TYPE = {}
-  if (servertimeout) rpcSettings.rpcservertimeout = servertimeout
-  if (threads) rpcSettings.rpcthreads = threads
-  if (workqueue) rpcSettings.rpcworkqueue = workqueue
+  const rpcSettings = {
+    rpcservertimeout: servertimeout || rpcservertimeout,
+    rpcthreads: threads || rpcthreads,
+    rpcworkqueue: workqueue || rpcworkqueue,
+  }
 
   await bitcoinConfFile.merge(rpcSettings)
 }

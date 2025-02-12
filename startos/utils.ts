@@ -1,5 +1,5 @@
 import { Effects } from '@start9labs/start-sdk/base/lib/Effects'
-import { bitcoinConfFile, shape } from './file-models/bitcoin.conf'
+import { bitcoinConfFile } from './file-models/bitcoin.conf'
 import { sdk } from './sdk'
 import { peerInterfaceId } from './interfaces'
 
@@ -60,6 +60,9 @@ export async function getRpcAuth(effects: Effects) {
 
 export const bitcoinConfDefaults = {
   // RPC
+  rpcbind: '0.0.0.0:8332',
+  rpcallowip: '0.0.0.0/0',
+  rpcauth: undefined,
   rpcservertimeout: 30,
   rpcthreads: 4,
   rpcworkqueue: 16,
@@ -67,39 +70,42 @@ export const bitcoinConfDefaults = {
   bind: '0.0.0.0:8333',
 
   // Mempool
-  persistmempool: 1,
+  persistmempool: true,
   maxmempool: 300,
   mempoolexpiry: 336,
-  mempoolfullrbf: 1,
-  permitbaremultisig: 1,
-  datacarrier: 1,
+  mempoolfullrbf: true,
+  permitbaremultisig: true,
+  datacarrier: true,
   datacarriersize: 83,
 
   // Peers
-  listen: 1,
+  listen: true,
   onlynet: undefined,
   externalip: undefined,
-  v2transport: 1,
+  v2transport: true,
+  connect: 0,
+  addnode: undefined,
 
   // Wallet
-  disablewallet: 0,
-  avoidpartialspends: 0,
+  disablewallet: false,
+  avoidpartialspends: false,
   discardfee: 0.0001,
 
   // Other
-  zmqpubrawblock: 'tcp://0.0.0.0:28332',
-  zmqpubhashblock: 'tcp://0.0.0.0:28332',
-  zmqpubrawtx: 'tcp://0.0.0.0:28333',
-  zmqpubhashtx: 'tcp://0.0.0.0:28333',
-  zmqpubsequence: 'tcp://0.0.0.0:28333',
+  prune: 0,
+  zmqpubrawblock: undefined,
+  zmqpubhashblock: undefined,
+  zmqpubrawtx: undefined,
+  zmqpubhashtx: undefined,
+  zmqpubsequence: undefined,
 
-  coinstatsindex: 0,
-  txindex: 0,
+  coinstatsindex: false,
+  txindex: false,
   dbcache: 450,
 
-  peerbloomfilters: 0,
-  blockfilterindex: 0,
-  peerblockfilters: 0,
+  peerbloomfilters: false,
+  blockfilterindex: true,
+  peerblockfilters: false,
 }
 
 export function getExteralAddresses() {
@@ -108,7 +114,6 @@ export function getExteralAddresses() {
       .getOwn(effects, peerInterfaceId)
       .const()
 
-    console.log("Addresses: ", peerInterface?.addressInfo?.urls)
     const urls =
       peerInterface?.addressInfo?.urls.filter(
         (x) =>
@@ -122,27 +127,28 @@ export function getExteralAddresses() {
     if (urls.length === 0) {
       return {
         name: 'External Address',
-        description: 'Address at which your node can be reached by peers',
-        values: { 'unspecified': 'unspecified' },
-        default: 'unspecified',
+        description:
+          "Address at which your node can be reached by peers. Select 'none' if you do not want your node to be reached by peers ",
+        values: { none: 'none' },
+        default: 'none',
       }
     }
 
-    const urlsWithUnspecified = urls.reduce(
+    const urlsWithNone = urls.reduce(
       (obj, url) => ({
         ...obj,
         [url]: url,
       }),
-      {} as Record<string, string>)
+      {} as Record<string, string>,
+    )
 
-    urlsWithUnspecified['unspecified'] = 'unspecified'
+    urlsWithNone['none'] = 'none'
 
     return {
       name: 'External Address',
       description: 'Address at which your node can be reached by peers',
-      values: urlsWithUnspecified,
-      default:
-        urls.find((u) => u.endsWith('.onion')) || '',
+      values: urlsWithNone,
+      default: urls.find((u) => u.endsWith('.onion')) || '',
     }
   })
 }

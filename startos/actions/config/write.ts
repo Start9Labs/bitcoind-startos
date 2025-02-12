@@ -1,57 +1,65 @@
 import { bitcoinConfFile, shape } from '../../file-models/bitcoin.conf'
 import { ConfigSpec } from './spec'
+import { bitcoinConfDefaults } from '../../utils'
+
+const {
+  discardfee,
+  prune,
+  dbcache,
+  zmqpubhashblock,
+  zmqpubhashtx,
+  zmqpubrawtx,
+  zmqpubrawblock,
+  zmqpubsequence,
+} = bitcoinConfDefaults
 
 export async function write(input: ConfigSpec) {
-  const {
-    wallet,
-    txindex,
-    coinstatsindex,
-    prune,
-    dbcache,
-    bloomfilters,
-    blockfilters,
-  } = input
-
-  const shaped: typeof shape._TYPE = {
+  const otherConfig = {
     // RPC
-    rpcbind: prune ? '127.0.0.1:18332' : '0.0.0.0:8332',
-    rpcallowip: prune ? '127.0.0.1/32' : '0.0.0.0/0',
+    rpcbind: input.prune ? '127.0.0.1:18332' : '0.0.0.0:8332',
+    rpcallowip: input.prune ? '127.0.0.1/32' : '0.0.0.0/0',
 
     // Wallet
-    disablewallet: wallet.enable ? 0 : 1,
-    avoidpartialspends: wallet.avoidpartialspends ? 1 : 0,
-    discardfee: wallet.discardfee || undefined,
+    disablewallet: !input.wallet.enable,
+    avoidpartialspends: input.wallet.avoidpartialspends,
+    discardfee: input.wallet.discardfee || discardfee,
 
+    // Other
+    txindex: input.txindex,
+    coinstatsindex: input.coinstatsindex,
+    peerbloomfilters: input.peerbloomfilters,
+    peerblockfilters: input.blockfilters.peerblockfilters,
+    blockfilterindex: input.blockfilters.blockfilterindex,
   }
 
-  if (prune) shaped.prune = prune
+  if (input.prune) {
+    Object.assign(otherConfig, { prune: input.prune })
+  }
 
-  if (dbcache) shaped.dbcache = dbcache
-
-  if (wallet.enable) shaped.deprecatedrpc = 'create_bdb'
+  if (input.dbcache) {
+    Object.assign({ otherConfig, dbcache: input.dbcache })
+  }
 
   // Zero MQ
   if (input.zmqEnabled) {
-    shaped.zmqpubrawblock = 'tcp://0.0.0.0:28332'
-    shaped.zmqpubhashblock = 'tcp://0.0.0.0:28332'
-    shaped.zmqpubrawtx = 'tcp://0.0.0.0:28333'
-    shaped.zmqpubhashtx = 'tcp://0.0.0.0:28333'
-    shaped.zmqpubsequence = 'tcp://0.0.0.0:28333'
+    Object.assign({
+      otherConfig,
+      zmqpubrawblock: 'tcp://0.0.0.0:28332',
+      zmqpubhashblock: 'tcp://0.0.0.0:28332',
+      zmqpubrawtx: 'tcp://0.0.0.0:28333',
+      zmqpubhashtx: 'tcp://0.0.0.0:28333',
+      zmqpubsequence: 'tcp://0.0.0.0:28333',
+    })
+  } else {
+    Object.assign({
+      otherConfig,
+      zmqpubrawblock: zmqpubrawblock,
+      zmqpubhashblock: zmqpubhashblock,
+      zmqpubrawtx: zmqpubrawtx,
+      zmqpubhashtx: zmqpubhashtx,
+      zmqpubsequence: zmqpubsequence,
+    })
   }
 
-  // TxIndex
-  if (txindex) shaped.txindex = 1
-
-  // CoinStatsIndex
-  if (coinstatsindex) shaped.coinstatsindex = 1
-
-  // BIP37
-  if (bloomfilters) shaped.peerbloomfilters = 1
-
-  // BIP157
-  if (blockfilters.blockfilterindex) shaped.blockfilterindex = 'basic'
-
-  if (blockfilters.peerblockfilters) shaped.peerblockfilters = 1
-
-  await bitcoinConfFile.merge(shaped)
+  await bitcoinConfFile.merge(otherConfig)
 }

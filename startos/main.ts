@@ -3,6 +3,12 @@ import { T } from '@start9labs/start-sdk'
 import { GetBlockchainInfo } from './utils'
 import { bitcoinConfFile } from './file-models/bitcoin.conf'
 import { rpcPort } from './interfaces'
+import { GetBlockchainInfo } from './utils'
+import * as diskusage from 'diskusage'
+import { T, utils } from '@start9labs/start-sdk'
+
+const diskUsage = utils.once(() => diskusage.check('/'))
+const archivalMin = 900_000_000_000
 
 export const main = sdk.setupMain(async ({ effects, started }) => {
   /**
@@ -11,8 +17,15 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
 
   const conf = (await bitcoinConfFile.read.const(effects))!
 
-  const containerIp = await effects.getContainerIp()
+  const disk = await diskUsage()
+  if (disk.total < archivalMin && conf.prune === 0) {
+    conf.prune = 550
+    conf.rpcbind = '127.0.0.1:18332'
+    conf.rpcallowip = '127.0.0.1/32'
+    await bitcoinConfFile.merge(conf)
+  }
 
+  const containerIp = await effects.getContainerIp()
   const bitcoinArgs: string[] = []
 
   bitcoinArgs.push(`-onion=${containerIp}:9050`)
