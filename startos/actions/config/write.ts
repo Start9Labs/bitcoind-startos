@@ -34,10 +34,14 @@ export async function write(input: ConfigSpec) {
 
   if (input.prune) {
     Object.assign(otherConfig, { prune: input.prune })
+  } else {
+    Object.assign(otherConfig, { prune: prune })
   }
 
   if (input.dbcache) {
     Object.assign({ otherConfig, dbcache: input.dbcache })
+  } else {
+    Object.assign({ otherConfig, dbcache: dbcache })
   }
 
   // Zero MQ
