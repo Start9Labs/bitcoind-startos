@@ -54,7 +54,7 @@ export const generateRpcUser = sdk.Action.withInput(
 
     const res = await sdk.runCommand(
       effects,
-      { id: 'bitcoind' },
+      { imageId: 'bitcoind' },
       ['python3', '/root/.bitcoin/rpcauth.py', `${input.username}`],
       {},
       'genRpcAuth',

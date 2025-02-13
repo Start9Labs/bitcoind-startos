@@ -1,6 +1,4 @@
 import { sdk } from './sdk'
-import { T } from '@start9labs/start-sdk'
-import { GetBlockchainInfo } from './utils'
 import { bitcoinConfFile } from './file-models/bitcoin.conf'
 import { rpcPort } from './interfaces'
 import { GetBlockchainInfo } from './utils'
@@ -29,18 +27,21 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   const bitcoinArgs: string[] = []
 
   bitcoinArgs.push(`-onion=${containerIp}:9050`)
-  bitcoinArgs.push('-datadir=/media/startos/volumes/main/')
-  bitcoinArgs.push('-conf=/media/startos/volumes/main/bitcoin.conf')
+  bitcoinArgs.push('-datadir=/data/')
+  bitcoinArgs.push('-conf=/data/bitcoin.conf')
 
-  for await (const reindexBlockchain of sdk.store
-    .getOwn(effects, sdk.StorePath.reindexBlockchain)
-    .watch()) {
-    if (reindexBlockchain) {
-      bitcoinArgs.push('-reindex')
-      await sdk.store.setOwn(effects, sdk.StorePath.reindexBlockchain, false)
-      await sdk.restart(effects)
+  // @TODO loops indefinitely
+  ;(async () => {
+    for await (const reindexBlockchain of sdk.store
+      .getOwn(effects, sdk.StorePath.reindexBlockchain)
+      .watch()) {
+      if (reindexBlockchain) {
+        bitcoinArgs.push('-reindex')
+        await sdk.store.setOwn(effects, sdk.StorePath.reindexBlockchain, false)
+        await sdk.restart(effects)
+      }
     }
-  }
+  })()
 
   for await (const reindexChainstate of sdk.store
     .getOwn(effects, sdk.StorePath.reindexChainstate)
@@ -57,11 +58,12 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
    */
 
   const syncCheck = sdk.HealthCheck.of(effects, {
+    id: 'sync-progress',
     name: 'Blockchain Sync Progress',
     fn: async () => {
       const res = await sdk.runCommand(
         effects,
-        { id: 'bitcoind' },
+        { imageId: 'bitcoind' },
         [
           'bitcoin-cli',
           '-conf=/root/.bitcoin/bitcoin.conf',
@@ -107,7 +109,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   const daemons = sdk.Daemons.of(effects, started, healthReceipts).addDaemon(
     'primary',
     {
-      subcontainer: { id: 'bitcoind' },
+      subcontainer: { imageId: 'bitcoind' },
       command: ['bitcoind', ...bitcoinArgs],
       mounts: sdk.Mounts.of().addVolume('main', null, '/data', false),
       ready: {
@@ -124,7 +126,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
 
   if (conf.prune == 1) {
     daemons.addDaemon('proxy', {
-      subcontainer: { id: 'proxy' },
+      subcontainer: { imageId: 'proxy' },
       command: ['btc-rpc-proxy'],
       mounts: sdk.Mounts.of().addVolume('proxy', null, '/data', false), // @TODO add mount for toml file
       ready: {
