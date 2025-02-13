@@ -8,6 +8,7 @@ import { deletePeers } from './deletePeers'
 import { deleteRpcAuth } from './deleteRpcAuth'
 import { deleteTxIndex } from './deleteTxIndex'
 import { generateRpcUser } from './generateRpcAuth'
+import { generateRpcUserDependent } from './generateRpcUserDependent'
 import { reindexBlockchain } from './reindexBlockchain'
 import { reindexChainstate } from './reindexChainstate'
 import { runtimeInfo } from './runtimeInfo'
@@ -25,5 +26,6 @@ export const actions = sdk.Actions.of()
   .addAction(deleteRpcAuth)
   .addAction(mempoolConfig)
   .addAction(peerConfig)
+  .addAction(generateRpcUserDependent)
 
 // @TODO add generateRpcUser for Dependents - disable username and password.
