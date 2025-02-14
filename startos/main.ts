@@ -30,28 +30,27 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   bitcoinArgs.push('-datadir=/data/')
   bitcoinArgs.push('-conf=/data/bitcoin.conf')
 
-  // @TODO loops indefinitely
-  ;(async () => {
-    for await (const reindexBlockchain of sdk.store
-      .getOwn(effects, sdk.StorePath.reindexBlockchain)
-      .watch()) {
-      if (reindexBlockchain) {
-        bitcoinArgs.push('-reindex')
-        await sdk.store.setOwn(effects, sdk.StorePath.reindexBlockchain, false)
-        await sdk.restart(effects)
-      }
-    }
-  })()
+  const reindexBlockchain = await sdk.store
+    .getOwn(effects, sdk.StorePath.reindexBlockchain)
+    .once()
 
-  for await (const reindexChainstate of sdk.store
-    .getOwn(effects, sdk.StorePath.reindexChainstate)
-    .watch()) {
-    if (reindexChainstate) {
-      bitcoinArgs.push('-reindex-chainstate')
-      await sdk.store.setOwn(effects, sdk.StorePath.reindexChainstate, false)
-      await sdk.restart(effects)
-    }
+  if (reindexBlockchain) {
+    bitcoinArgs.push('-reindex')
+    await sdk.store.setOwn(effects, sdk.StorePath.reindexBlockchain, false)
   }
+
+  sdk.store.getOwn(effects, sdk.StorePath.reindexBlockchain).const()
+
+  const reindexChainstate = await sdk.store
+    .getOwn(effects, sdk.StorePath.reindexChainstate)
+    .once()
+
+  if (reindexChainstate) {
+    bitcoinArgs.push('-reindex')
+    await sdk.store.setOwn(effects, sdk.StorePath.reindexChainstate, false)
+  }
+
+  sdk.store.getOwn(effects, sdk.StorePath.reindexChainstate).const()
 
   /**
    * ======================== Additional Health Checks (optional) ========================
