@@ -26,6 +26,11 @@ export const manifest = setupManifest({
         dockerTag: 'ghcr.io/start9labs/btc-rpc-proxy',
       },
     },
+    python: {
+      source: {
+        dockerTag: 'python:3.13.2'
+      }
+    }
   },
   hardwareRequirements: {},
   alerts: {
