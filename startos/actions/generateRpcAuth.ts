@@ -1,6 +1,7 @@
+import { MountOptions } from '@start9labs/start-sdk/package/lib/util/SubContainer'
 import { bitcoinConfFile } from '../file-models/bitcoin.conf'
 import { sdk } from '../sdk'
-import { getRpcAuth, getRpcUsers } from '../utils'
+import { getRpcUsers } from '../utils'
 const { InputSpec, Value } = sdk
 
 export const inputSpec = InputSpec.of({
@@ -52,12 +53,28 @@ export const generateRpcUser = sdk.Action.withInput(
       }
     }
 
-    const res = await sdk.runCommand(
+    const res = await sdk.SubContainer.with(
       effects,
-      { imageId: 'bitcoind' },
-      ['python3', '/root/.bitcoin/rpcauth.py', `${input.username}`],
-      {},
-      'genRpcAuth',
+      {
+        imageId: 'python',
+      },
+      [
+        {
+          options: {
+            type: 'assets',
+            subpath: null,
+            id: 'rpcauth',
+          },
+          path: '/assets',
+        },
+      ],
+      'RPC Auth Generator',
+      (subc) =>
+        subc.exec([
+          'python3',
+          '/assets/rpcauth.py',
+          `"${input.username}"`,
+        ]),
     )
 
     if (typeof res.stdout === 'string') {

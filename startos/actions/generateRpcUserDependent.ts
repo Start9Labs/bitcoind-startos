@@ -4,29 +4,35 @@ import { getRpcUsers } from '../utils'
 const { InputSpec, Value } = sdk
 
 export const inputSpec = InputSpec.of({
-  username: Value.text({
-    name: 'Username',
-    description: 'RPC Auth Username',
-    required: true,
-    default: null,
-    patterns: [
-      {
-        regex: '^[a-zA-Z0-9_]+$',
-        description: 'Must be alphanumeric (can contain underscore).',
-      },
-    ],
+  username: Value.dynamicText(async ({ effects }) => {
+    return {
+      name: 'Username',
+      description: 'RPC Auth Username',
+      disabled: 'Cannot edit dependent specified username',
+      required: true,
+      default: null,
+      patterns: [
+        {
+          regex: '^[a-zA-Z0-9_]+$',
+          description: 'Must be alphanumeric (can contain underscore).',
+        },
+      ],
+    }
   }),
-  password: Value.text({
-    name: 'Password',
-    description: 'RPC Auth Password',
-    required: true,
-    default: null,
-    patterns: [
-      {
-        regex: '.*',
-        description: 'Must be alphanumeric (can contain underscore).',
-      },
-    ],
+  password: Value.dynamicText(async ({ effects }) => {
+    return {
+      name: 'Password',
+      description: 'RPC Auth Password',
+      disabled: 'Cannot edit dependent specified password',
+      required: true,
+      default: null,
+      patterns: [
+        {
+          regex: '.*',
+          description: 'Must be alphanumeric (can contain underscore).',
+        },
+      ],
+    }
   }),
 })
 
@@ -42,7 +48,7 @@ export const generateRpcUserDependent = sdk.Action.withInput(
     warning: null,
     allowedStatuses: 'any',
     group: null,
-    visibility: 'enabled',
+    visibility: 'hidden',
   }),
 
   // input spec
@@ -56,7 +62,7 @@ export const generateRpcUserDependent = sdk.Action.withInput(
     const existingUsernames = await getRpcUsers(effects)
     const { username, password } = input
 
-    if (existingUsernames?.includes(username)) {
+    if (existingUsernames?.includes(username!)) {
       return {
         version: '1',
         title: 'Error creating RPC Auth User',
@@ -65,16 +71,32 @@ export const generateRpcUserDependent = sdk.Action.withInput(
       }
     }
 
-    const res = await sdk.runCommand(
+    const res = await sdk.SubContainer.with(
       effects,
-      { id: 'bitcoind' },
-      ['./bitcoin/share/rpcauth/rpcauthwithpass', `${username}`, `${password}`],
-      {},
-      'genDependentRpcAuth',
+      {
+        imageId: 'python',
+      },
+      [
+        {
+          options: {
+            type: 'assets',
+            subpath: null,
+            id: 'rpcauth',
+          },
+          path: '/assets',
+        },
+      ],
+      'RPC Auth Generator',
+      (subc) =>
+        subc.exec([
+          'python3',
+          '/assets/rpcauth.py',
+          `"${username}"`,
+          `"${password}"`,
+        ]),
     )
 
     if (typeof res.stdout === 'string') {
-      const password = res.stdout.split('\n')[3].trim()
       const newRpcAuth = res.stdout.split('\n')[1].trim().split('=')[1].trim()
 
       bitcoinConfFile.merge({
@@ -83,17 +105,9 @@ export const generateRpcUserDependent = sdk.Action.withInput(
 
       return {
         version: '1',
-        title: 'RPC user successfully created',
-        message: `RPC password created for ${username}. Store this password in a secure place. If lost, a new RPC user will need to be created as Bitcoin.conf only stores a hash of the password`,
-        result: {
-          name: 'RPC Password',
-          type: 'single',
-          value: password,
-          description: `${username} RPC Password`,
-          copyable: true,
-          masked: true,
-          qr: false,
-        },
+        title: 'Success',
+        message: `RPC password created for ${username}`,
+        result: null,
       }
     }
   },
