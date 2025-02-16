@@ -1,7 +1,6 @@
 import { sdk } from './sdk'
 import { bitcoinConfFile } from './file-models/bitcoin.conf'
-import { rpcPort } from './interfaces'
-import { GetBlockchainInfo } from './utils'
+import { GetBlockchainInfo, getRpcPort } from './utils'
 import * as diskusage from 'diskusage'
 import { T, utils } from '@start9labs/start-sdk'
 
@@ -23,6 +22,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     await bitcoinConfFile.merge(conf)
   }
 
+  const rpcPort = await getRpcPort(conf.prune)
   const containerIp = await effects.getContainerIp()
   const bitcoinArgs: string[] = []
 
@@ -131,7 +131,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
       ready: {
         display: 'RPC Proxy',
         fn: () =>
-          sdk.healthCheck.checkPortListening(effects, 28332, {
+          sdk.healthCheck.checkPortListening(effects, 18332, {
             successMessage: 'The Bitcoin RPC Proxy is ready',
             errorMessage: 'The Bitcoin RPC Proxy is not ready',
           }),

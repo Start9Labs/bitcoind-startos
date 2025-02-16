@@ -1,11 +1,11 @@
 import { bitcoinConfFile } from './file-models/bitcoin.conf'
 import { sdk } from './sdk'
+import { getRpcPort } from './utils'
 
 export const rpcInterfaceId = 'rpc'
 export const peerInterfaceId = 'peer'
 export const zmqInterfaceId = 'zmq'
 export const zmqPort = 28332
-export const rpcPort = 8332
 export const peerPort = 8333
 
 export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
@@ -14,6 +14,7 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
   if (!config) return []
 
   // RPC
+  const rpcPort = await getRpcPort(config.prune)
   const rpcMulti = sdk.MultiHost.of(effects, 'rpc')
   const rpcMultiOrigin = await rpcMulti.bindPort(rpcPort, {
     protocol: 'http',

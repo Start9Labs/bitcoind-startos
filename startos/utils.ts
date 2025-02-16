@@ -58,6 +58,10 @@ export async function getRpcAuth(effects: Effects) {
   return (await bitcoinConfFile.read.const(effects))?.rpcauth
 }
 
+export async function getRpcPort(prune: number | null) {
+  return prune ? 18332 : 8332
+}
+
 export const bitcoinConfDefaults = {
   // RPC
   rpcbind: '0.0.0.0:8332',
