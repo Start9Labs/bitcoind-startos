@@ -29,7 +29,7 @@ export async function write(input: ConfigSpec) {
     coinstatsindex: input.coinstatsindex,
     peerbloomfilters: input.peerbloomfilters,
     peerblockfilters: input.blockfilters.peerblockfilters,
-    blockfilterindex: input.blockfilters.blockfilterindex,
+    blockfilterindex: input.blockfilters.blockfilterindex ? 'basic' : undefined,
   }
 
   if (input.prune) {

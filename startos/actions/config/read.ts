@@ -17,7 +17,7 @@ export async function read(effects: any): Promise<PartialConfigSpec> {
     prune: bitcoinConf.prune,
     dbcache: bitcoinConf.dbcache,
     blockfilters: {
-      blockfilterindex: bitcoinConf.blockfilterindex === 'basic',
+      blockfilterindex: bitcoinConf.blockfilterindex === ('basic' as const),
       peerblockfilters: bitcoinConf.peerblockfilters,
     },
     peerbloomfilters: bitcoinConf.peerbloomfilters,

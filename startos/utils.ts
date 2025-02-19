@@ -108,7 +108,7 @@ export const bitcoinConfDefaults = {
   dbcache: 450,
 
   peerbloomfilters: false,
-  blockfilterindex: true,
+  blockfilterindex: 'basic',
   peerblockfilters: false,
 }
 

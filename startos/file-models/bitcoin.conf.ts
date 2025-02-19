@@ -114,9 +114,7 @@ export const shape = object({
   peerbloomfilters: boolean.onMismatch(peerbloomfilters),
 
   // BIP157
-  blockfilterindex: anyOf(literal('basic'), boolean).onMismatch(
-    blockfilterindex,
-  ),
+  blockfilterindex: string.optional().onMismatch(blockfilterindex),
   peerblockfilters: boolean.onMismatch(peerblockfilters),
 })
 
