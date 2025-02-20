@@ -63,12 +63,8 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
       const res = await sdk.runCommand(
         effects,
         { imageId: 'bitcoind' },
-        [
-          'bitcoin-cli',
-          '-conf=/root/.bitcoin/bitcoin.conf',
-          'getblockchaininfo',
-        ],
-        {},
+        ['bitcoin-cli', '-conf=/data/bitcoin.conf', '-rpccookiefile=/data/.cookie', 'getblockchaininfo'],
+        { mounts: mainMounts.build() },
         'getblockchaininfo',
       )
 
