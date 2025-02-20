@@ -27,5 +27,3 @@ export const actions = sdk.Actions.of()
   .addAction(mempoolConfig)
   .addAction(peerConfig)
   .addAction(generateRpcUserDependent)
-
-// @TODO add generateRpcUser for Dependents - disable username and password.
