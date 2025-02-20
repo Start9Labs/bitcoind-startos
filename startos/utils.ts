@@ -87,7 +87,7 @@ export const bitcoinConfDefaults = {
   onlynet: undefined,
   externalip: undefined,
   v2transport: true,
-  connect: 0,
+  connect: undefined,
   addnode: undefined,
 
   // Wallet
