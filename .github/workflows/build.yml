@@ -1,0 +1,39 @@
+name: Build Service
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths-ignore: ["*.md"]
+    branches: ["master", "update/036","036/feature/ci"]
+  push:
+    paths-ignore: ["*.md"]
+    branches: ["master", "update/036","036/feature/ci"]
+
+jobs:
+  BuildPackage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare StartOS SDK
+        uses: Start9Labs/sdk@v1
+
+      - name: Checkout services repository
+        uses: actions/checkout@v4
+        with:
+          submodules: "true"
+
+      - name: Build the service package
+        id: build
+        run: |
+          # git submodule update --init --recursive
+          start-sdk init
+          npm i
+          make
+          PACKAGE_ID=$(sed -n -r -e 's/PACKAGE_ID := (.+)/\1/ p' Makefile)
+          echo "package_id=$PACKAGE_ID" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Upload .s9pk
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.package_id }}.s9pk
+          path: ./${{ env.package_id }}.s9pk
