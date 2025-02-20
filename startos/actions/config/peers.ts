@@ -154,7 +154,6 @@ async function write(input: peerSpec) {
     Object.assign(peerSettings, { onlynet: onlynet })
   }
 
-  // @TODO test overwritting value with undefined once sdk solution once implemented
   if (input.externalip !== 'none') {
     Object.assign(peerSettings, { externalip: input.externalip })
   } else {
