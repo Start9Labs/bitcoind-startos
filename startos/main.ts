@@ -6,6 +6,12 @@ import { T, utils } from '@start9labs/start-sdk'
 
 const diskUsage = utils.once(() => diskusage.check('/'))
 const archivalMin = 900_000_000_000
+export const mainMounts = sdk.Mounts.of().addVolume(
+  'main',
+  null,
+  '/data',
+  false,
+)
 
 export const main = sdk.setupMain(async ({ effects, started }) => {
   /**
