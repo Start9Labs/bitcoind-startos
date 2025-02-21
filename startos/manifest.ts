@@ -28,7 +28,7 @@ export const manifest = setupManifest({
     },
     python: {
       source: {
-        dockerTag: 'python:3.13.2'
+        dockerTag: 'python:3.13.2-alpine'
       }
     }
   },
