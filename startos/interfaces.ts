@@ -48,7 +48,7 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
       'Listens for incoming connections from peers on the bitcoin network',
     type: 'p2p',
     masked: false,
-    schemeOverride: null,
+    schemeOverride: { ssl: null, noSsl: null },
     username: null,
     path: '',
     search: {},
