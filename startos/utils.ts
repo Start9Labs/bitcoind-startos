@@ -118,21 +118,13 @@ export function getExteralAddresses() {
       .getOwn(effects, peerInterfaceId)
       .const()
 
-    const urls =
-      peerInterface?.addressInfo?.urls.filter(
-        (x) =>
-          !x.includes('.local') &&
-          !x.startsWith('bitcoin://192.168') &&
-          !x.startsWith('bitcoin://[fe80::') &&
-          !x.startsWith('bitcoin://[fc') &&
-          !x.startsWith('bitcoin://[fd'),
-      ) || []
+    const urls = peerInterface?.addressInfo?.publicUrls || []
 
     if (urls.length === 0) {
       return {
         name: 'External Address',
         description:
-          "Address at which your node can be reached by peers. Select 'none' if you do not want your node to be reached by peers ",
+          "Address at which your node can be reached by peers. Select 'none' if you do not want your node to be reached by peers.",
         values: { none: 'none' },
         default: 'none',
       }
@@ -150,7 +142,8 @@ export function getExteralAddresses() {
 
     return {
       name: 'External Address',
-      description: 'Address at which your node can be reached by peers',
+      description:
+        "Address at which your node can be reached by peers. Select 'none' if you do not want your node to be reached by peers.",
       values: urlsWithNone,
       default: urls.find((u) => u.endsWith('.onion')) || '',
     }
