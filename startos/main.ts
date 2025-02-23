@@ -118,14 +118,35 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     {
       subcontainer: { imageId: 'bitcoind' },
       command: ['bitcoind', ...bitcoinArgs],
-      mounts: sdk.Mounts.of().addVolume('main', null, '/data', false),
+      mounts: mainMounts,
       ready: {
-        display: 'RPC Interface',
-        fn: () =>
-          sdk.healthCheck.checkPortListening(effects, rpcPort, {
-            successMessage: 'The Bitcoin RPC interface is ready',
-            errorMessage: 'The Bitcoin RPC interface is not ready',
-          }),
+        display: 'RPC',
+        fn: async () => {
+          const res = await sdk.runCommand(
+            effects,
+            { imageId: 'bitcoind' },
+            [
+              'bitcoin-cli',
+              '-conf=/data/bitcoin.conf',
+              '-rpccookiefile=/data/.cookie',
+              `-rpcport=${conf.prune ? 18332 : rpcPort}`,
+              'getrpcinfo',
+            ],
+            { mounts: mainMounts.build() },
+            'getrpcinfo',
+          )
+          if (res.stderr !== '') {
+            return {
+              message: 'The Bitcoin RPC interface is not ready',
+              result: 'starting',
+            }
+          } else {
+            return {
+              message: 'The Bitcoin RPC interface is ready',
+              result: 'success',
+            }
+          }
+        },
       },
       requires: [],
     },
