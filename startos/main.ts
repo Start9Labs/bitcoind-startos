@@ -69,18 +69,24 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
       const res = await sdk.runCommand(
         effects,
         { imageId: 'bitcoind' },
-        ['bitcoin-cli', '-conf=/data/bitcoin.conf', '-rpccookiefile=/data/.cookie', 'getblockchaininfo'],
+        [
+          'bitcoin-cli',
+          '-conf=/data/bitcoin.conf',
+          '-rpccookiefile=/data/.cookie',
+          `-rpcport=${conf.prune ? 18332 : rpcPort}`,
+          'getblockchaininfo',
+        ],
         { mounts: mainMounts.build() },
         'getblockchaininfo',
       )
 
-      if (res.stdout && typeof res.stdout === 'string') {
+      if (res.stdout !== '' && typeof res.stdout === 'string') {
         const info: GetBlockchainInfo = JSON.parse(res.stdout)
 
         if (info.initialblockdownload) {
           const percentage = (info.blocks / info.headers).toFixed(2)
           return {
-            message: `Syncing blocks...${percentage}%`,
+            message: `Syncing blocks...${info.headers === 0 ? Number(0).toFixed(2) : percentage}%`,
             result: 'loading',
           }
         }
@@ -94,7 +100,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
       return {
         message: null,
         result:
-          typeof res.stderr === 'string' && JSON.parse(res.stderr).code === 28
+          typeof res.stderr === 'string' && res.stderr !== ''
             ? 'starting'
             : 'failure',
       }
