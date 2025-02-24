@@ -1,8 +1,11 @@
 import { sdk } from './sdk'
 import { bitcoinConfFile } from './file-models/bitcoin.conf'
-import { GetBlockchainInfo, getRpcPort } from './utils'
+import { GetBlockchainInfo } from './utils'
 import * as diskusage from 'diskusage'
 import { T, utils } from '@start9labs/start-sdk'
+import { configToml } from './file-models/rpc-proxy.toml'
+import { rpcPort } from './interfaces'
+import { promises } from 'fs'
 
 const diskUsage = utils.once(() => diskusage.check('/'))
 const archivalMin = 900_000_000_000
@@ -28,7 +31,6 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     await bitcoinConfFile.merge(conf)
   }
 
-  const rpcPort = await getRpcPort(conf.prune)
   const containerIp = await effects.getContainerIp()
   const bitcoinArgs: string[] = []
 
@@ -152,15 +154,33 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     },
   )
 
-  if (conf.prune == 1) {
+  if (conf.prune) {
+    const ip = await sdk.getOsIp(effects)
+
+    await configToml.write({
+      bitcoind_address: '127.0.0.1',
+      bitcoind_port: conf.prune ? 18332 : 8332,
+      bind_address: '0.0.0.0',
+      bind_port: rpcPort,
+      cookie_file: '/main/.cookie',
+      tor_proxy: `${ip}:9050`,
+      tor_only: !!conf.onlynet,
+    })
+
+    await promises.chmod(configToml.path, 0o600)
+    
     daemons.addDaemon('proxy', {
       subcontainer: { imageId: 'proxy' },
-      command: ['btc-rpc-proxy'],
-      mounts: sdk.Mounts.of().addVolume('proxy', null, '/data', false), // @TODO add mount for toml file
+      command: [
+        '/usr/bin/btc_rpc_proxy',
+        '--conf',
+        '/data/config.toml',
+      ],
+      mounts: mainMounts,
       ready: {
         display: 'RPC Proxy',
         fn: () =>
-          sdk.healthCheck.checkPortListening(effects, 18332, {
+          sdk.healthCheck.checkPortListening(effects, rpcPort, {
             successMessage: 'The Bitcoin RPC Proxy is ready',
             errorMessage: 'The Bitcoin RPC Proxy is not ready',
           }),
