@@ -18,7 +18,10 @@ export const manifest = setupManifest({
   images: {
     bitcoind: {
       source: {
-        dockerTag: 'bitcoin/bitcoin:27.1',
+        dockerBuild: {
+          workdir: './',
+          dockerfile: 'Dockerfile'
+        },
       },
     },
     proxy: {

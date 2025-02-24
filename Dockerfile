@@ -50,8 +50,6 @@ RUN ./configure LDFLAGS=-L`ls -d /opt/db*`/lib/ CPPFLAGS=-I`ls -d /opt/db*`/incl
 RUN make -j$(nproc)
 RUN make install
 RUN strip ${BITCOIN_PREFIX}/bin/*
-RUN strip ${BITCOIN_PREFIX}/lib/libbitcoinconsensus.a
-RUN strip ${BITCOIN_PREFIX}/lib/libbitcoinconsensus.so.0.0.0
 
 # Build stage for compiled artifacts
 FROM alpine:3.18
@@ -79,17 +77,5 @@ ENV BITCOIN_PREFIX=/opt/bitcoin
 ENV PATH=${BITCOIN_PREFIX}/bin:$PATH
 
 COPY --from=bitcoin-core /opt /opt
-COPY ./manager/target/${ARCH}-unknown-linux-musl/release/bitcoind-manager \
-     ./docker_entrypoint.sh \
-     ./actions/reindex.sh \
-     ./actions/reindex_chainstate.sh \
-     ./check-rpc.sh \
-     ./check-synced.sh \
-     /usr/local/bin/
-
-RUN chmod a+x /usr/local/bin/bitcoind-manager \
-    /usr/local/bin/*.sh
 
 EXPOSE 8332 8333
-
-ENTRYPOINT ["/usr/local/bin/docker_entrypoint.sh"]
