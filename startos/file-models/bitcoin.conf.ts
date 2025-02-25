@@ -126,6 +126,8 @@ export function fromBitcoinConf(text: string): Record<string, string[]> {
     const [key, value] = line.split('=', 2)
     if (key === '') {
       return dictionary
+    } else if (key.startsWith('#')) {
+      continue
     }
     const trimmedKey = key.trim()
     const trimmedValue = value.trim()
