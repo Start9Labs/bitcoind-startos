@@ -67,7 +67,7 @@ export const bitcoinConfDefaults = {
   rpcthreads: 4,
   rpcworkqueue: 16,
   whitelist: '172.18.0.0/16',
-  bind: '0.0.0.0:8333',
+  bind: undefined,
 
   // Mempool
   persistmempool: true,

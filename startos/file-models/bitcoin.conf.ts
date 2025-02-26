@@ -76,7 +76,7 @@ export const shape = object({
 
   // Peers
   listen: boolean.onMismatch(listen),
-  bind: string.onMismatch(bind),
+  bind: string.optional().onMismatch(bind),
   connect: anyOf(stringArray, numLiteral(0)).onMismatch(connect),
   addnode: anyOf(stringArray).optional().onMismatch(addnode),
   onlynet: string.optional().onMismatch(onlynet),

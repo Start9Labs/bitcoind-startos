@@ -2,7 +2,7 @@ import { bitcoinConfFile, shape } from '../../file-models/bitcoin.conf'
 import { sdk } from '../../sdk'
 import { bitcoinConfDefaults, getExteralAddresses } from '../../utils'
 
-const { listen, onlynet, v2transport, externalip, addnode, connect } =
+const { listen, onlynet, v2transport, externalip, addnode, connect, bind } =
   bitcoinConfDefaults
 const { Value, Variants, List, InputSpec } = sdk
 
@@ -142,23 +142,12 @@ async function read(effects: any): Promise<PartialPeerSpec> {
 async function write(input: peerSpec) {
   const peerSettings = {
     listen: input.listen,
+    bind: input.listen ? '0.0.0.0:8333' : bind,
     v2transport: input.v2transport,
+    onlynet: input.onlyonion ? 'onion' : onlynet,
+    externalip: input.externalip !== 'none' ? input.externalip : externalip,
   }
 
-  if (input.listen) {
-    Object.assign(peerSettings, { bind: '0.0.0.0:8333' })
-  }
-  if (input.onlyonion) {
-    Object.assign(peerSettings, { onlynet: 'onion' })
-  } else {
-    Object.assign(peerSettings, { onlynet: onlynet })
-  }
-
-  if (input.externalip !== 'none') {
-    Object.assign(peerSettings, { externalip: input.externalip })
-  } else {
-    Object.assign(peerSettings, { externalip: externalip })
-  }
   if (input.connectpeer.selection === 'connect') {
     Object.assign(peerSettings, { connect: input.connectpeer.value.peers })
     Object.assign(peerSettings, { addnode: addnode })

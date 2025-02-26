@@ -128,7 +128,7 @@ export const v28_1_0_0 = VersionInfo.of({
         blockfilterindex: blockfilterindex ? 'basic' : undefined,
         peerblockfilters,
         prune: pruned ? pruning.size : bitcoinConfDefaults.prune,
-        bind: bitcoinConfDefaults.bind,
+        bind: listen ? '0.0.0.0:8333' : bitcoinConfDefaults.bind,
       }
 
       if (zmq) {
