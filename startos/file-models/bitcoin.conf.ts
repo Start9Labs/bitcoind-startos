@@ -58,8 +58,8 @@ const {
 
 export const shape = object({
   // RPC
-  rpcbind: matches.string.onMismatch(rpcbind),
-  rpcallowip: matches.string.onMismatch(rpcallowip),
+  rpcbind: string.onMismatch(rpcbind),
+  rpcallowip: string.onMismatch(rpcallowip),
   rpcauth: stringArray.optional().onMismatch(rpcauth),
   rpcservertimeout: number.onMismatch(rpcservertimeout),
   rpcthreads: number.onMismatch(rpcthreads),
