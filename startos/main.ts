@@ -86,7 +86,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
         const info: GetBlockchainInfo = JSON.parse(res.stdout)
 
         if (info.initialblockdownload) {
-          const percentage = (info.blocks / info.headers).toFixed(2)
+          const percentage = (info.verificationprogress * 100).toFixed(2)
           return {
             message: `Syncing blocks...${info.headers === 0 ? Number(0).toFixed(2) : percentage}%`,
             result: 'loading',
@@ -139,12 +139,12 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
           )
           if (res.stderr !== '') {
             return {
-              message: 'The Bitcoin RPC interface is not ready',
+              message: 'The Bitcoin RPC Interface is not ready',
               result: 'starting',
             }
           } else {
             return {
-              message: 'The Bitcoin RPC interface is ready',
+              message: 'The Bitcoin RPC Interface is ready',
               result: 'success',
             }
           }

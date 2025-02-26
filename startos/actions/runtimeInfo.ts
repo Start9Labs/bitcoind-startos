@@ -126,7 +126,7 @@ function getBlockchainInfo(
         type: 'single',
         name: 'Sync Progress',
         value:
-          blockchainInfoRaw.blocks < blockchainInfoRaw.headers
+          blockchainInfoRaw.blocks < blockchainInfoRaw.headers || blockchainInfoRaw.blocks === 0
             ? `${(blockchainInfoRaw.verificationprogress * 100).toFixed(2)}%`
             : '100%',
         description: 'The percentage of the blockchain that has been verified',
