@@ -1,6 +1,9 @@
 import { T } from '@start9labs/start-sdk'
 import { sdk } from '../sdk'
 import { GetBlockchainInfo, GetNetworkInfo } from '../utils'
+import { mainMounts } from '../main'
+import { bitcoinConfFile } from '../file-models/bitcoin.conf'
+import { rpcPort } from '../interfaces'
 
 export const runtimeInfo = sdk.Action.withoutInput(
   // id
@@ -19,13 +22,20 @@ export const runtimeInfo = sdk.Action.withoutInput(
 
   // execution function
   async ({ effects }) => {
+    const conf = (await bitcoinConfFile.read.const(effects))!
     // getnetowrkinfo
 
     const networkInfoRes = await sdk.runCommand(
       effects,
       { imageId: 'bitcoind' },
-      ['bitcoin-cli', '-conf=/root/.bitcoin/bitcoin.conf', 'getnetworkinfo'],
-      {},
+      [
+        'bitcoin-cli',
+        '-conf=/data/bitcoin.conf',
+        '-rpccookiefile=/data/.cookie',
+        `-rpcport=${conf.prune ? 18332 : rpcPort}`,
+        'getnetworkinfo',
+      ],
+      { mounts: mainMounts.build() },
       'getnetworkinfo',
     )
 
@@ -38,8 +48,14 @@ export const runtimeInfo = sdk.Action.withoutInput(
     const blockchainInfoRes = await sdk.runCommand(
       effects,
       { imageId: 'bitcoind' },
-      ['bitcoin-cli', '-conf=/root/.bitcoin/bitcoin.conf', 'getblockchaininfo'],
-      {},
+      [
+        'bitcoin-cli',
+        '-conf=/data/bitcoin.conf',
+        '-rpccookiefile=/data/.cookie',
+        `-rpcport=${conf.prune ? 18332 : rpcPort}`,
+        'getblockchaininfo',
+      ],
+      { mounts: mainMounts.build() },
       'getblockchaininfo',
     )
 
@@ -48,6 +64,13 @@ export const runtimeInfo = sdk.Action.withoutInput(
     )
 
     // return
+    const value = [
+      getConnections(networkInfoRaw),
+      getBlockchainInfo(blockchainInfoRaw),
+    ]
+    if (blockchainInfoRaw.softforks) {
+      value.push(getSoftforkInfo(blockchainInfoRaw))
+    }
 
     return {
       version: '1',
@@ -55,11 +78,7 @@ export const runtimeInfo = sdk.Action.withoutInput(
       message: null,
       result: {
         type: 'group',
-        value: [
-          getConnections(networkInfoRaw),
-          getBlockchainInfo(blockchainInfoRaw),
-          getSoftforkInfo(blockchainInfoRaw),
-        ],
+        value,
       },
     }
   },
@@ -70,7 +89,7 @@ function getConnections(networkInfoRaw: GetNetworkInfo): T.ActionResultMember {
     type: 'single',
     name: 'Connections',
     description: 'The number of peers connected (inbound and outbound)',
-    value: `${networkInfoRaw.connections} (${networkInfoRaw.connectionsIn} in / ${networkInfoRaw.connectionsOut} out)`,
+    value: `${networkInfoRaw.connections} (${networkInfoRaw.connections_in} in / ${networkInfoRaw.connections_out} out)`,
     copyable: false,
     masked: false,
     qr: false,

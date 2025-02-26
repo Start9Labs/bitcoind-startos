@@ -5,8 +5,8 @@ import { peerInterfaceId } from './interfaces'
 
 export type GetNetworkInfo = {
   connections: number
-  connectionsIn: number
-  connectionsOut: number
+  connections_in: number
+  connections_out: number
 }
 
 export type GetBlockchainInfo = {
