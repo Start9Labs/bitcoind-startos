@@ -15,6 +15,7 @@ export const v28_1_0_0 = VersionInfo.of({
         reindexChainstate: false,
       })
       const {
+        ['peer-tor-address']: peerTorAddress,
         rpc: {
           advanced: { auth, servertimeout, threads, workqueue },
         },
@@ -44,6 +45,7 @@ export const v28_1_0_0 = VersionInfo.of({
           'utf8',
         ),
       ) as {
+        ['peer-tor-address']: string
         rpc: {
           advanced: {
             auth: string[]
@@ -121,6 +123,7 @@ export const v28_1_0_0 = VersionInfo.of({
         discardfee,
 
         // Other
+        externalip: peerTorAddress,
         coinstatsindex,
         txindex,
         dbcache: dbcache || bitcoinConfDefaults.dbcache,
