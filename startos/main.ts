@@ -157,9 +157,18 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   if (conf.prune) {
     const ip = await sdk.getOsIp(effects)
 
+    /*
+      @TODO setting listen=0 seems to break btc_rpc_proxy (temporarily?) with the below error. Strangely the health check for port 8332 remains green indicating proxy is listening. 
+
+      2025-02-26T14:15:02-07:00  Error: /usr/bin/btc_rpc_proxy exited with code 1
+      2025-02-26T14:15:02-07:00      at ChildProcess.<anonymous> (/usr/lib/startos/package/index.js:13380:43)
+      2025-02-26T14:15:02-07:00      at ChildProcess.emit (node:events:518:28)
+      2025-02-26T14:15:02-07:00      at ChildProcess._handle.onexit (node:internal/child_process:293:12)
+      2025-02-26T14:15:02-07:00  Error: failed to create the listening socket: failed to bind 0.0.0.0:8332
+    */
     await configToml.write({
       bitcoind_address: '127.0.0.1',
-      bitcoind_port: conf.prune ? 18332 : 8332,
+      bitcoind_port: 18332,
       bind_address: '0.0.0.0',
       bind_port: rpcPort,
       cookie_file: '/main/.cookie',
