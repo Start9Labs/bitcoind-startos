@@ -88,7 +88,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
         if (info.initialblockdownload) {
           const percentage = (info.verificationprogress * 100).toFixed(2)
           return {
-            message: `Syncing blocks...${info.headers === 0 ? Number(0).toFixed(2) : percentage}%`,
+            message: `Syncing blocks...${percentage}%`,
             result: 'loading',
           }
         }
