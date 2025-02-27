@@ -1,10 +1,10 @@
 import { sdk } from './sdk'
 import { bitcoinConfFile } from './file-models/bitcoin.conf'
-import { GetBlockchainInfo } from './utils'
+import { bitcoinConfDefaults, GetBlockchainInfo } from './utils'
 import * as diskusage from 'diskusage'
 import { T, utils } from '@start9labs/start-sdk'
 import { configToml } from './file-models/rpc-proxy.toml'
-import { rpcPort } from './interfaces'
+import { peerInterfaceId, rpcPort } from './interfaces'
 import { promises } from 'fs'
 
 const diskUsage = utils.once(() => diskusage.check('/'))
@@ -37,6 +37,21 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   bitcoinArgs.push(`-onion=${containerIp}:9050`)
   bitcoinArgs.push('-datadir=/data/')
   bitcoinArgs.push('-conf=/data/bitcoin.conf')
+
+  if (conf.externalip === 'initial-setup') {
+    const peerInterface = await sdk.serviceInterface
+      .getOwn(effects, peerInterfaceId)
+      .once()
+    const onionUrls = peerInterface?.addressInfo?.publicUrls.filter((x) =>
+      x.includes('.onion'),
+    )
+
+    if (onionUrls) {
+      bitcoinConfFile.merge({ externalip: onionUrls[0] })
+    } else {
+      bitcoinConfFile.merge({ externalip: bitcoinConfDefaults.externalip })
+    }
+  }
 
   const reindexBlockchain = await sdk.store
     .getOwn(effects, sdk.StorePath.reindexBlockchain)
@@ -177,14 +192,10 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     })
 
     await promises.chmod(configToml.path, 0o600)
-    
+
     daemons.addDaemon('proxy', {
       subcontainer: { imageId: 'proxy' },
-      command: [
-        '/usr/bin/btc_rpc_proxy',
-        '--conf',
-        '/data/config.toml',
-      ],
+      command: ['/usr/bin/btc_rpc_proxy', '--conf', '/data/config.toml'],
       mounts: mainMounts,
       ready: {
         display: 'RPC Proxy',

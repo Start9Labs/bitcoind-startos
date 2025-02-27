@@ -26,6 +26,7 @@ const install = sdk.setupInstall(async ({ effects }) => {
     prune,
     rpcbind,
     rpcallowip,
+    externalip: 'initial-setup'
   })
 })
 
