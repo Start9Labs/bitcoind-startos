@@ -91,8 +91,8 @@ export const generateRpcUserDependent = sdk.Action.withInput(
         subc.exec([
           'python3',
           '/assets/rpcauth.py',
-          `"${username}"`,
-          `"${password}"`,
+          `${username}`,
+          `${password}`,
         ]),
     )
 
