@@ -106,7 +106,7 @@ export const generateRpcUserDependent = sdk.Action.withInput(
       return {
         version: '1',
         title: 'Success',
-        message: `RPC password created for ${username}`,
+        message: `RPC password created for ${username} \nBitcoin Core is restarting and resyncing.`,
         result: null,
       }
     }
