@@ -73,7 +73,7 @@ export const generateRpcUser = sdk.Action.withInput(
         subc.exec([
           'python3',
           '/assets/rpcauth.py',
-          `"${input.username}"`,
+          `${input.username}`,
         ]),
     )
 

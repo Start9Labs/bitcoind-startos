@@ -28,7 +28,7 @@ export const inputSpec = InputSpec.of({
       default: null,
       patterns: [
         {
-          regex: '.*',
+          regex: '^[A-Za-z0-9_-]+$',
           description: 'Must be alphanumeric (can contain underscore).',
         },
       ],
@@ -91,8 +91,8 @@ export const generateRpcUserDependent = sdk.Action.withInput(
         subc.exec([
           'python3',
           '/assets/rpcauth.py',
-          `"${username}"`,
-          `"${password}"`,
+          `${username}`,
+          `${password}`,
         ]),
     )
 
