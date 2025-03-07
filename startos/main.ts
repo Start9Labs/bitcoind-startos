@@ -31,10 +31,11 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     await bitcoinConfFile.merge(conf)
   }
 
-  const containerIp = await effects.getContainerIp()
+  const osIp = await sdk.getOsIp(effects)
+
   const bitcoinArgs: string[] = []
 
-  bitcoinArgs.push(`-onion=${containerIp}:9050`)
+  bitcoinArgs.push(`-onion=${osIp}:9050`)
   bitcoinArgs.push('-datadir=/data/')
   bitcoinArgs.push('-conf=/data/bitcoin.conf')
 
@@ -170,8 +171,6 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   )
 
   if (conf.prune) {
-    const ip = await sdk.getOsIp(effects)
-
     /*
       @TODO setting listen=0 seems to break btc_rpc_proxy (temporarily?) with the below error. Strangely the health check for port 8332 remains green indicating proxy is listening. 
 
@@ -187,7 +186,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
       bind_address: '0.0.0.0',
       bind_port: rpcPort,
       cookie_file: '/main/.cookie',
-      tor_proxy: `${ip}:9050`,
+      tor_proxy: `${osIp}:9050`,
       tor_only: !!conf.onlynet,
     })
 
