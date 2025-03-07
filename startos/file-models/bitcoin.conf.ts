@@ -84,7 +84,7 @@ export const shape = object({
   externalip: string.optional().onMismatch(externalip),
 
   // Whitelist
-  whitelist: string.onMismatch(whitelist),
+  whitelist: stringArray.onMismatch(whitelist),
 
   // Pruning
   prune: number.onMismatch(prune),

@@ -101,7 +101,7 @@ export const v28_1_0_0 = VersionInfo.of({
         rpcservertimeout: servertimeout,
         rpcthreads: threads,
         rpcworkqueue: workqueue,
-        whitelist: '172.18.0.0/16',
+        whitelist: ['172.18.0.0/16'],
 
         // Mempool
         persistmempool,
