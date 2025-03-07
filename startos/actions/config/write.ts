@@ -30,18 +30,8 @@ export async function write(input: ConfigSpec) {
     peerbloomfilters: input.peerbloomfilters,
     peerblockfilters: input.blockfilters.peerblockfilters,
     blockfilterindex: input.blockfilters.blockfilterindex ? 'basic' : undefined,
-  }
-
-  if (input.prune) {
-    Object.assign(otherConfig, { prune: input.prune })
-  } else {
-    Object.assign(otherConfig, { prune: prune })
-  }
-
-  if (input.dbcache) {
-    Object.assign({ otherConfig, dbcache: input.dbcache })
-  } else {
-    Object.assign({ otherConfig, dbcache: dbcache })
+    prune: input.prune ? input.prune : prune,
+    dbcache: input.dbcache ? input.dbcache : dbcache,
   }
 
   // Zero MQ
