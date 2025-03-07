@@ -66,7 +66,7 @@ export const configSpec = sdk.InputSpec.of({
     return {
       name: 'Pruning',
       description:
-        'Set the maximum size of the blockchain you wish to store on disk.',
+        'Set the maximum size of the blockchain you wish to store on disk. If your disk is larger than .9TB this value can be left undefined to maintain a full archival node (prune=0).',
       warning: 'Increasing this value will require re-syncing your node.',
       placeholder: 'Enter max blockchain size',
       required: disk.total < archivalMin,
