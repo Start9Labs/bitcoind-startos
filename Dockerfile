@@ -1,7 +1,9 @@
 # From https://github.com/ruimarinho/docker-bitcoin-core
 
 # Build stage for BerkeleyDB
-ARG PLATFORM
+ARG ARCH
+ARG PLATFORM=${ARCH/aarch64/arm64}
+ARG PLATFORM=${PLATFORM/x86_64/amd64}
 
 FROM lncm/berkeleydb:db-4.8.30.NC-${PLATFORM} AS berkeleydb
 
@@ -12,20 +14,20 @@ COPY --from=berkeleydb /opt /opt
 
 RUN sed -i 's/http\:\/\/dl-cdn.alpinelinux.org/https\:\/\/alpine.global.ssl.fastly.net/g' /etc/apk/repositories
 RUN apk --no-cache add \
-        autoconf \
-        automake \
-        boost-dev \
-        build-base \
-        clang \
-        chrpath \
-        file \
-        gnupg \
-        libevent-dev \
-        libressl \
-        libtool \
-        linux-headers \
-        sqlite-dev \
-        zeromq-dev
+  autoconf \
+  automake \
+  boost-dev \
+  build-base \
+  clang \
+  chrpath \
+  file \
+  gnupg \
+  libevent-dev \
+  libressl \
+  libtool \
+  linux-headers \
+  sqlite-dev \
+  zeromq-dev
 
 ADD ./bitcoin /bitcoin
 
@@ -69,8 +71,8 @@ RUN apk --no-cache add \
   libzmq \
   sqlite-dev \
   tini \
-  yq
-RUN rm -rf /var/cache/apk/*
+  yq \
+  RUN rm -rf /var/cache/apk/*
 
 ARG ARCH
 
@@ -79,17 +81,5 @@ ENV BITCOIN_PREFIX=/opt/bitcoin
 ENV PATH=${BITCOIN_PREFIX}/bin:$PATH
 
 COPY --from=bitcoin-core /opt /opt
-COPY ./manager/target/${ARCH}-unknown-linux-musl/release/bitcoind-manager \
-     ./docker_entrypoint.sh \
-     ./actions/reindex.sh \
-     ./actions/reindex_chainstate.sh \
-     ./check-rpc.sh \
-     ./check-synced.sh \
-     /usr/local/bin/
-
-RUN chmod a+x /usr/local/bin/bitcoind-manager \
-    /usr/local/bin/*.sh
 
 EXPOSE 8332 8333
-
-ENTRYPOINT ["/usr/local/bin/docker_entrypoint.sh"]
