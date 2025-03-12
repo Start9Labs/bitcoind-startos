@@ -101,6 +101,7 @@ export const v28_1_0_0 = VersionInfo.of({
         rpcservertimeout: servertimeout,
         rpcthreads: threads,
         rpcworkqueue: workqueue,
+        rpccookiefile: bitcoinConfDefaults.rpccookiefile,
         whitelist: ['172.18.0.0/16'],
 
         // Mempool
@@ -160,7 +161,7 @@ export const v28_1_0_0 = VersionInfo.of({
         Object.assign({ structuredConf, addnode: addnode })
       }
 
-      await bitcoinConfFile.merge(structuredConf)
+      await bitcoinConfFile.merge(effects, structuredConf)
     },
     down: IMPOSSIBLE,
   },

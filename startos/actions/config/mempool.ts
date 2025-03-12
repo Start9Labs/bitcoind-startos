@@ -1,3 +1,4 @@
+import { T } from '@start9labs/start-sdk'
 import { bitcoinConfFile, shape } from '../../file-models/bitcoin.conf'
 import { sdk } from '../../sdk'
 import { bitcoinConfDefaults } from '../../utils'
@@ -91,7 +92,7 @@ export const mempoolConfig = sdk.Action.withInput(
   ({ effects }) => read(effects),
 
   // the execution function
-  ({ effects, input }) => write(input),
+  ({ effects, input }) => write(effects, input),
 )
 
 async function read(effects: any): Promise<PartialMempoolSpec> {
@@ -105,12 +106,12 @@ async function read(effects: any): Promise<PartialMempoolSpec> {
     mempoolfullrbf: bitcoinConf.mempoolfullrbf,
     persistmempool: bitcoinConf.persistmempool,
     datacarrier: bitcoinConf.datacarrier,
-    permitbaremultisig: bitcoinConf.permitbaremultisig
+    permitbaremultisig: bitcoinConf.permitbaremultisig,
   }
   return mempoolSettings
 }
 
-async function write(input: MempoolSpec) {
+async function write(effects: T.Effects, input: MempoolSpec) {
   const mempoolSettings = {
     mempoolfullrbf: input.mempoolfullrbf,
     persistmempool: input.persistmempool,
@@ -121,7 +122,7 @@ async function write(input: MempoolSpec) {
     datacarriersize: input.datacarriersize || datacarriersize,
   }
 
-  await bitcoinConfFile.merge(mempoolSettings)
+  await bitcoinConfFile.merge(effects, mempoolSettings)
 }
 
 type MempoolSpec = typeof mempoolSpec._TYPE

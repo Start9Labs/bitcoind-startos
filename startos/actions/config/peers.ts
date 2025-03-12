@@ -1,3 +1,4 @@
+import { T } from '@start9labs/start-sdk'
 import { bitcoinConfFile, shape } from '../../file-models/bitcoin.conf'
 import { sdk } from '../../sdk'
 import { bitcoinConfDefaults, getExteralAddresses } from '../../utils'
@@ -105,7 +106,7 @@ export const peerConfig = sdk.Action.withInput(
   ({ effects }) => read(effects),
 
   // the execution function
-  ({ effects, input }) => write(input),
+  ({ effects, input }) => write(effects, input),
 )
 
 async function read(effects: any): Promise<PartialPeerSpec> {
@@ -139,7 +140,7 @@ async function read(effects: any): Promise<PartialPeerSpec> {
   return peerSettings
 }
 
-async function write(input: peerSpec) {
+async function write(effects: T.Effects, input: peerSpec) {
   const peerSettings = {
     listen: input.listen,
     bind: input.listen ? '0.0.0.0:8333' : bind,
@@ -156,7 +157,7 @@ async function write(input: peerSpec) {
     Object.assign(peerSettings, { connect: connect })
   }
 
-  await bitcoinConfFile.merge(peerSettings)
+  await bitcoinConfFile.merge(effects, peerSettings)
 }
 
 type peerSpec = typeof peerSpec._TYPE

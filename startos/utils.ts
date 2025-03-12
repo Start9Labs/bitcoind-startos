@@ -66,6 +66,7 @@ export const bitcoinConfDefaults = {
   rpcservertimeout: 30,
   rpcthreads: 4,
   rpcworkqueue: 16,
+  rpccookiefile: '.cookie',
   whitelist: ['172.18.0.0/16'],
   bind: undefined,
 

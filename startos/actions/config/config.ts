@@ -24,5 +24,5 @@ export const config = sdk.Action.withInput(
   ({ effects }) => read(effects),
 
   // the execution function
-  ({ effects, input }) => write(input),
+  ({ effects, input }) => write(effects, input),
 )

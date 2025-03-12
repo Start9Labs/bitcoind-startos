@@ -1,6 +1,7 @@
 import { bitcoinConfFile, shape } from '../../file-models/bitcoin.conf'
 import { ConfigSpec } from './spec'
 import { bitcoinConfDefaults } from '../../utils'
+import { T } from '@start9labs/start-sdk'
 
 const {
   discardfee,
@@ -13,7 +14,7 @@ const {
   zmqpubsequence,
 } = bitcoinConfDefaults
 
-export async function write(input: ConfigSpec) {
+export async function write(effects: T.Effects, input: ConfigSpec) {
   const otherConfig = {
     // RPC
     rpcbind: input.prune ? '127.0.0.1:18332' : '0.0.0.0:8332',
@@ -55,5 +56,5 @@ export async function write(input: ConfigSpec) {
     })
   }
 
-  await bitcoinConfFile.merge(otherConfig)
+  await bitcoinConfFile.merge(effects, otherConfig)
 }

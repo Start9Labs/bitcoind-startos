@@ -21,12 +21,12 @@ const install = sdk.setupInstall(async ({ effects }) => {
   const rpcbind = prune ? '127.0.0.1:18332' : '0.0.0.0:8332'
   const rpcallowip = prune ? '127.0.0.1/32' : '0.0.0.0/0'
 
-  await bitcoinConfFile.write({
+  await bitcoinConfFile.write(effects, {
     ...bitcoinConfDefaults,
     prune,
     rpcbind,
     rpcallowip,
-    externalip: 'initial-setup'
+    externalip: 'initial-setup',
   })
 })
 

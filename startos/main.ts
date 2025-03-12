@@ -2,7 +2,7 @@ import { sdk } from './sdk'
 import { bitcoinConfFile } from './file-models/bitcoin.conf'
 import { bitcoinConfDefaults, GetBlockchainInfo } from './utils'
 import * as diskusage from 'diskusage'
-import { T, utils } from '@start9labs/start-sdk'
+import { health, T, utils } from '@start9labs/start-sdk'
 import { configToml } from './file-models/rpc-proxy.toml'
 import { peerInterfaceId, rpcPort } from './interfaces'
 import { promises } from 'fs'
@@ -24,11 +24,15 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   const conf = (await bitcoinConfFile.read.const(effects))!
 
   const disk = await diskUsage()
-  if (disk.total < archivalMin && conf.prune === 0) {
-    conf.prune = 550
+  if (disk.total < archivalMin || conf.prune) {
+    if (!conf.prune) conf.prune = 550
     conf.rpcbind = '127.0.0.1:18332'
     conf.rpcallowip = '127.0.0.1/32'
-    await bitcoinConfFile.merge(conf)
+    await bitcoinConfFile.merge(effects, conf)
+  } else {
+    conf.rpcbind = '0.0.0.0:8332'
+    conf.rpcallowip = '0.0.0.0/0'
+    await bitcoinConfFile.merge(effects, conf)
   }
 
   const osIp = await sdk.getOsIp(effects)
@@ -48,9 +52,11 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     )
 
     if (onionUrls) {
-      bitcoinConfFile.merge({ externalip: onionUrls[0] })
+      bitcoinConfFile.merge(effects, { externalip: onionUrls[0] })
     } else {
-      bitcoinConfFile.merge({ externalip: bitcoinConfDefaults.externalip })
+      bitcoinConfFile.merge(effects, {
+        externalip: bitcoinConfDefaults.externalip,
+      })
     }
   }
 
@@ -90,8 +96,8 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
         [
           'bitcoin-cli',
           '-conf=/data/bitcoin.conf',
-          '-rpccookiefile=/data/.cookie',
-          `-rpcport=${conf.prune ? 18332 : rpcPort}`,
+          `-rpccookiefile=/data/${bitcoinConfDefaults.rpccookiefile}`,
+          `-rpcconnect=${conf.rpcbind}`,
           'getblockchaininfo',
         ],
         { mounts: mainMounts.build() },
@@ -115,6 +121,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
         }
       }
 
+      // TODO: @FullMetal: WTF?
       return {
         message: null,
         result:
@@ -125,7 +132,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     },
   })
 
-  const healthReceipts: T.HealthReceipt[] = [syncCheck]
+  const healthReceipts: health.HealthCheck[] = [syncCheck]
 
   /**
    * ======================== Daemons ========================
@@ -146,8 +153,8 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
             [
               'bitcoin-cli',
               '-conf=/data/bitcoin.conf',
-              '-rpccookiefile=/data/.cookie',
-              `-rpcport=${conf.prune ? 18332 : rpcPort}`,
+              `-rpccookiefile=/data/${bitcoinConfDefaults.rpccookiefile}`,
+              `-rpcconnect=${conf.rpcbind}`,
               'getrpcinfo',
             ],
             { mounts: mainMounts.build() },
@@ -171,28 +178,20 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   )
 
   if (conf.prune) {
-    /*
-      @TODO setting listen=0 seems to break btc_rpc_proxy (temporarily?) with the below error. Strangely the health check for port 8332 remains green indicating proxy is listening. 
-
-      2025-02-26T14:15:02-07:00  Error: /usr/bin/btc_rpc_proxy exited with code 1
-      2025-02-26T14:15:02-07:00      at ChildProcess.<anonymous> (/usr/lib/startos/package/index.js:13380:43)
-      2025-02-26T14:15:02-07:00      at ChildProcess.emit (node:events:518:28)
-      2025-02-26T14:15:02-07:00      at ChildProcess._handle.onexit (node:internal/child_process:293:12)
-      2025-02-26T14:15:02-07:00  Error: failed to create the listening socket: failed to bind 0.0.0.0:8332
-    */
-    await configToml.write({
+    await configToml.write(effects, {
       bitcoind_address: '127.0.0.1',
       bitcoind_port: 18332,
       bind_address: '0.0.0.0',
       bind_port: rpcPort,
-      cookie_file: '/main/.cookie',
+      cookie_file: `/data/${bitcoinConfDefaults.rpccookiefile}`,
       tor_proxy: `${osIp}:9050`,
       tor_only: !!conf.onlynet,
+      passthrough_rpcauth: '/data/bitcoin.conf',
     })
 
     await promises.chmod(configToml.path, 0o600)
 
-    daemons.addDaemon('proxy', {
+    return daemons.addDaemon('proxy', {
       subcontainer: { imageId: 'proxy' },
       command: ['/usr/bin/btc_rpc_proxy', '--conf', '/data/config.toml'],
       mounts: mainMounts,

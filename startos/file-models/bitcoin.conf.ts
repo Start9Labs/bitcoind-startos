@@ -24,6 +24,7 @@ const {
   rpcservertimeout,
   rpcthreads,
   rpcworkqueue,
+  rpccookiefile,
   whitelist,
   bind,
   persistmempool,
@@ -64,6 +65,7 @@ export const shape = object({
   rpcservertimeout: number.onMismatch(rpcservertimeout),
   rpcthreads: number.onMismatch(rpcthreads),
   rpcworkqueue: number.onMismatch(rpcworkqueue),
+  rpccookiefile: literal(rpccookiefile).onMismatch(rpccookiefile),
 
   // Mempool
   mempoolfullrbf: boolean.onMismatch(mempoolfullrbf),
@@ -171,5 +173,5 @@ export const bitcoinConfFile = FileHelper.raw(
   '/media/startos/volumes/main/bitcoin.conf',
   (obj: typeof shape._TYPE) => toBitcoinConf(obj),
   (str) => fromBitcoinConf(str),
-  (obj) => shape.unsafeCast(obj),
+  (obj) => shape.withMismatch((_) => shape.unsafeCast({})).unsafeCast(obj),
 )

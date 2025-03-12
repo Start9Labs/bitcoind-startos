@@ -1,11 +1,6 @@
 import { FileHelper, matches } from '@start9labs/start-sdk'
 
-const {
-  object,
-  string,
-  boolean,
-  number
-} = matches
+const { object, string, boolean, number } = matches
 
 const shape = object({
   bitcoind_address: string,
@@ -14,7 +9,11 @@ const shape = object({
   bind_port: number,
   cookie_file: string,
   tor_proxy: string,
-  tor_only: boolean
+  tor_only: boolean,
+  passthrough_rpcauth: string.optional(),
 })
 
-export const configToml = FileHelper.toml('/media/startos/volumes/main/config.toml', shape)
+export const configToml = FileHelper.toml(
+  '/media/startos/volumes/main/config.toml',
+  shape,
+)

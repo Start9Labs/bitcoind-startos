@@ -1,3 +1,4 @@
+import { T } from '@start9labs/start-sdk'
 import { bitcoinConfFile, shape } from '../../file-models/bitcoin.conf'
 import { sdk } from '../../sdk'
 import { bitcoinConfDefaults } from '../../utils'
@@ -69,7 +70,7 @@ export const rpcConfig = sdk.Action.withInput(
   ({ effects }) => read(effects),
 
   // the execution function
-  ({ effects, input }) => write(input),
+  ({ effects, input }) => write(effects, input),
 )
 
 async function read(effects: any): Promise<PartialRpcSpec> {
@@ -83,7 +84,7 @@ async function read(effects: any): Promise<PartialRpcSpec> {
   }
 }
 
-async function write(input: RpcSpec) {
+async function write(effects: T.Effects, input: RpcSpec) {
   const { servertimeout, threads, workqueue } = input
 
   const rpcSettings = {
@@ -92,7 +93,7 @@ async function write(input: RpcSpec) {
     rpcworkqueue: workqueue || rpcworkqueue,
   }
 
-  await bitcoinConfFile.merge(rpcSettings)
+  await bitcoinConfFile.merge(effects, rpcSettings)
 }
 
 type RpcSpec = typeof rpcSpec._TYPE
