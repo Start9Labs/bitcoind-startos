@@ -121,24 +121,28 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
         }
       }
 
-      // TODO: @FullMetal: WTF?
-      return {
-        message: null,
-        result:
-          typeof res.stderr === 'string' && res.stderr !== ''
-            ? 'starting'
-            : 'failure',
+      if (typeof res.stderr === 'string' && res.stderr !== '') {
+        return {
+          message: res.stderr,
+          result: 'failure',
+        }
+      } else {
+        // TODO: @FullMetal: WTF?
+        return {
+          message: null,
+          result: 'starting',
+        }
       }
     },
   })
 
-  const healthReceipts: health.HealthCheck[] = [syncCheck]
+  const healthChecks: health.HealthCheck[] = [syncCheck]
 
   /**
    * ======================== Daemons ========================
    */
 
-  const daemons = sdk.Daemons.of(effects, started, healthReceipts).addDaemon(
+  const daemons = sdk.Daemons.of(effects, started, healthChecks).addDaemon(
     'primary',
     {
       subcontainer: { imageId: 'bitcoind' },
