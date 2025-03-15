@@ -81,7 +81,6 @@ export const generateRpcUserDependent = sdk.Action.withInput(
           options: {
             type: 'assets',
             subpath: null,
-            id: 'rpcauth',
           },
           mountpoint: '/assets',
         },

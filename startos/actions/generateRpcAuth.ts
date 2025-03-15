@@ -64,7 +64,6 @@ export const generateRpcUser = sdk.Action.withInput(
           options: {
             type: 'assets',
             subpath: null,
-            id: 'rpcauth',
           },
           mountpoint,
         },

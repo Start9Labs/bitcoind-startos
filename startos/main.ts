@@ -2,7 +2,7 @@ import { sdk } from './sdk'
 import { bitcoinConfFile } from './file-models/bitcoin.conf'
 import { bitcoinConfDefaults, GetBlockchainInfo } from './utils'
 import * as diskusage from 'diskusage'
-import { health, T, utils } from '@start9labs/start-sdk'
+import { T, utils } from '@start9labs/start-sdk'
 import { configToml } from './file-models/rpc-proxy.toml'
 import { peerInterfaceId, rpcPort } from './interfaces'
 import { promises } from 'fs'
@@ -136,7 +136,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     },
   })
 
-  const healthChecks: health.HealthCheck[] = [syncCheck]
+  const healthChecks: T.HealthCheck[] = [syncCheck]
 
   /**
    * ======================== Daemons ========================
