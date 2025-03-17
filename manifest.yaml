@@ -1,6 +1,6 @@
 id: bitcoind
 title: "Bitcoin Core"
-version: 28.1.0
+version: 28.1.0.2
 eos-version: 0.3.4.4
 release-notes: |
   * Update Bitcoin to [v28.1](https://github.com/bitcoin/bitcoin/releases/tag/v28.1)
