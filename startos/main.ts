@@ -25,15 +25,14 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
 
   const disk = await diskUsage()
   if (disk.total < archivalMin || conf.prune) {
-    if (!conf.prune) conf.prune = 550
+    conf.prune = conf.prune || 550
     conf.rpcbind = '127.0.0.1:18332'
     conf.rpcallowip = '127.0.0.1/32'
-    await bitcoinConfFile.merge(effects, conf)
   } else {
     conf.rpcbind = '0.0.0.0:8332'
     conf.rpcallowip = '0.0.0.0/0'
-    await bitcoinConfFile.merge(effects, conf)
   }
+  await bitcoinConfFile.merge(effects, conf)
 
   const osIp = await sdk.getOsIp(effects)
 
@@ -52,9 +51,9 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     )
 
     if (onionUrls) {
-      bitcoinConfFile.merge(effects, { externalip: onionUrls[0] })
+      await bitcoinConfFile.merge(effects, { externalip: onionUrls[0] })
     } else {
-      bitcoinConfFile.merge(effects, {
+      await bitcoinConfFile.merge(effects, {
         externalip: bitcoinConfDefaults.externalip,
       })
     }
