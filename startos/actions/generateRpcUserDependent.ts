@@ -71,6 +71,8 @@ export const generateRpcUserDependent = sdk.Action.withInput(
       }
     }
 
+    const mountpoint = '/scripts'
+
     const res = await sdk.SubContainer.with(
       effects,
       {
@@ -82,14 +84,14 @@ export const generateRpcUserDependent = sdk.Action.withInput(
             type: 'assets',
             subpath: null,
           },
-          mountpoint: '/assets',
+          mountpoint,
         },
       ],
       'RPC Auth Generator',
       (subc) =>
         subc.exec([
           'python3',
-          '/assets/rpcauth.py',
+          `${mountpoint}/rpcauth.py`,
           `${username}`,
           `${password}`,
         ]),
