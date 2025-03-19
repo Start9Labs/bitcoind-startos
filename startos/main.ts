@@ -119,17 +119,16 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
           result: 'success',
         }
       }
-
-      if (typeof res.stderr === 'string' && res.stderr !== '') {
+      
+      if (res.stderr.includes('error code: -28')) {
         return {
-          message: res.stderr,
-          result: 'failure',
+          message: 'Bitcoin is starting…',
+          result: 'starting'
         }
       } else {
-        // TODO: @FullMetal: WTF?
         return {
-          message: null,
-          result: 'starting',
+          message: res.stderr as string,
+          result: 'failure',
         }
       }
     },
