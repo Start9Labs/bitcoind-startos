@@ -119,11 +119,11 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
           result: 'success',
         }
       }
-      
+
       if (res.stderr.includes('error code: -28')) {
         return {
           message: 'Bitcoin is starting…',
-          result: 'starting'
+          result: 'starting',
         }
       } else {
         return {
