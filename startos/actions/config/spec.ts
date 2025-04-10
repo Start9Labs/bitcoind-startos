@@ -2,7 +2,7 @@ import { utils } from '@start9labs/start-sdk'
 import { sdk } from '../../sdk'
 import * as diskusage from 'diskusage'
 
-const { InputSpec, Value, List, Variants } = sdk
+const { InputSpec, Value } = sdk
 const diskUsage = utils.once(() => diskusage.check('/'))
 const archivalMin = 900_000_000_000
 
