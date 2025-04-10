@@ -36,9 +36,12 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
 
   // PEER
   const peerMulti = sdk.MultiHost.of(effects, 'peer')
+  // @TODO Aiden confirm below is correct
   const peerMultiOrigin = await peerMulti.bindPort(peerPort, {
-    protocol: 'bitcoin',
+    protocol: null,
     preferredExternalPort: peerPort,
+    addSsl: null,
+    secure: { ssl: false },
   })
   const peer = sdk.createInterface(effects, {
     name: 'Peer Interface',
