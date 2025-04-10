@@ -1,5 +1,5 @@
 import { sdk } from './sdk'
-import { exposedStore } from './store'
+import { exposedStore, initStore } from './store'
 import { setDependencies } from './dependencies'
 import { setInterfaces } from './interfaces'
 import { versions } from './versions'
@@ -7,17 +7,22 @@ import { actions } from './actions'
 import { bitcoinConfFile } from './file-models/bitcoin.conf'
 import { bitcoinConfDefaults } from './utils'
 
-const install = sdk.setupInstall(async ({ effects }) => {
-  await sdk.store.setOwn(effects, sdk.StorePath, {
-    reindexBlockchain: false,
-    reindexChainstate: false,
-  })
+const install = sdk.setupInstall(
+  // postinstall
+  async ({ effects }) => {
+    await sdk.store.setOwn(effects, sdk.StorePath, {
+      reindexBlockchain: false,
+      reindexChainstate: false,
+    })
 
-  await bitcoinConfFile.write(effects, {
-    ...bitcoinConfDefaults,
-    externalip: 'initial-setup',
-  })
-})
+    await bitcoinConfFile.write(effects, {
+      ...bitcoinConfDefaults,
+      externalip: 'initial-setup',
+    })
+  },
+  // preinstall
+  async ({ effects }) => {},
+)
 
 const uninstall = sdk.setupUninstall(async ({ effects }) => {})
 
@@ -31,5 +36,6 @@ export const { packageInit, packageUninit, containerInit } = sdk.setupInit(
   setInterfaces,
   setDependencies,
   actions,
+  initStore,
   exposedStore,
 )

@@ -5,4 +5,9 @@ export type Store = {
   reindexChainstate: boolean
 }
 
+export const initStore: Store = {
+  reindexBlockchain: false,
+  reindexChainstate: false,
+}
+
 export const exposedStore = setupExposeStore<Store>((_pathBuilder) => [])
