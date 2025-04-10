@@ -99,7 +99,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
           `-rpcconnect=${conf.rpcbind}`,
           'getblockchaininfo',
         ],
-        { mounts: mainMounts.build() },
+        { mounts: mainMounts },
         'getblockchaininfo',
       )
 
@@ -159,7 +159,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
               `-rpcconnect=${conf.rpcbind}`,
               'getrpcinfo',
             ],
-            { mounts: mainMounts.build() },
+            { mounts: mainMounts },
             'getrpcinfo',
           )
           if (res.stderr !== '') {
