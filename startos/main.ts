@@ -79,7 +79,14 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     await sdk.store.setOwn(effects, sdk.StorePath.reindexChainstate, false)
   }
 
-  sdk.store.getOwn(effects, sdk.StorePath.reindexChainstate).const()
+  await sdk.store.getOwn(effects, sdk.StorePath.reindexChainstate).const()
+
+  const bitcoindSub = await sdk.SubContainer.of(
+    effects,
+    { imageId: 'bitcoind' },
+    mainMounts,
+    'bitcoind-sub',
+  )
 
   /**
    * ======================== Additional Health Checks (optional) ========================
@@ -89,19 +96,13 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     id: 'sync-progress',
     name: 'Blockchain Sync Progress',
     fn: async () => {
-      const res = await sdk.runCommand(
-        effects,
-        { imageId: 'bitcoind' },
-        [
-          'bitcoin-cli',
-          '-conf=/data/bitcoin.conf',
-          `-rpccookiefile=/data/${bitcoinConfDefaults.rpccookiefile}`,
-          `-rpcconnect=${conf.rpcbind}`,
-          'getblockchaininfo',
-        ],
-        { mounts: mainMounts },
+      const res = await bitcoindSub.exec([
+        'bitcoin-cli',
+        '-conf=/data/bitcoin.conf',
+        `-rpccookiefile=/data/${bitcoinConfDefaults.rpccookiefile}`,
+        `-rpcconnect=${conf.rpcbind}`,
         'getblockchaininfo',
-      )
+      ])
 
       if (res.stdout !== '' && typeof res.stdout === 'string') {
         const info: GetBlockchainInfo = JSON.parse(res.stdout)
@@ -143,25 +144,19 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   const daemons = sdk.Daemons.of(effects, started, healthChecks).addDaemon(
     'primary',
     {
-      subcontainer: { imageId: 'bitcoind' },
+      subcontainer: bitcoindSub,
       command: ['bitcoind', ...bitcoinArgs],
-      mounts: mainMounts,
       ready: {
         display: 'RPC',
         fn: async () => {
-          const res = await sdk.runCommand(
-            effects,
-            { imageId: 'bitcoind' },
-            [
-              'bitcoin-cli',
-              '-conf=/data/bitcoin.conf',
-              `-rpccookiefile=/data/${bitcoinConfDefaults.rpccookiefile}`,
-              `-rpcconnect=${conf.rpcbind}`,
-              'getrpcinfo',
-            ],
-            { mounts: mainMounts },
+          const res = await bitcoindSub.exec([
+            'bitcoin-cli',
+            '-conf=/data/bitcoin.conf',
+            `-rpccookiefile=/data/${bitcoinConfDefaults.rpccookiefile}`,
+            `-rpcconnect=${conf.rpcbind}`,
             'getrpcinfo',
-          )
+          ])
+
           if (res.stderr !== '') {
             return {
               message: 'The Bitcoin RPC Interface is not ready',
@@ -194,9 +189,13 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     await promises.chmod(configToml.path, 0o600)
 
     return daemons.addDaemon('proxy', {
-      subcontainer: { imageId: 'proxy' },
+      subcontainer: await sdk.SubContainer.of(
+        effects,
+        { imageId: 'proxy' },
+        mainMounts,
+        'proxy-sub',
+      ),
       command: ['/usr/bin/btc_rpc_proxy', '--conf', '/data/config.toml'],
-      mounts: mainMounts,
       ready: {
         display: 'RPC Proxy',
         fn: () =>

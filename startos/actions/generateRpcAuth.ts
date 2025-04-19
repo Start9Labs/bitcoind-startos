@@ -54,21 +54,14 @@ export const generateRpcUser = sdk.Action.withInput(
 
     const mountpoint = '/scripts'
 
+    // @TODO Aiden is the below correct?
     const res = await sdk.SubContainer.with(
       effects,
       {
         imageId: 'python',
       },
-      [
-        {
-          options: {
-            type: 'assets',
-            subpath: null,
-          },
-          mountpoint,
-        },
-      ],
-      'RPC Auth Generator',
+      sdk.Mounts.of().addAssets(null, mountpoint),
+      'rpc-auth-generator',
       (subc) =>
         subc.exec(['python3', `${mountpoint}/rpcauth.py`, `${input.username}`]),
     )
