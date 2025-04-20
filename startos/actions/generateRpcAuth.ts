@@ -54,7 +54,6 @@ export const generateRpcUser = sdk.Action.withInput(
 
     const mountpoint = '/scripts'
 
-    // @TODO Aiden is the below correct?
     const res = await sdk.SubContainer.with(
       effects,
       {

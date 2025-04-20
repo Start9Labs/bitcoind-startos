@@ -73,7 +73,6 @@ export const generateRpcUserDependent = sdk.Action.withInput(
 
     const mountpoint = '/scripts'
 
-    // @TODO Aiden same here
     const res = await sdk.SubContainer.with(
       effects,
       {
