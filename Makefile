@@ -1,7 +1,7 @@
 PACKAGE_ID := $(shell grep -o "id: '[^']*'" startos/manifest.ts | sed "s/id: '\([^']*\)'/\1/")
-INGREDIENTS := $(shell start-cli s9pk list-ingredients)
+INGREDIENTS := $(shell start-cli s9pk list-ingredients 2> /dev/null)
 
-.PHONY: all clean install check-deps check-init
+.PHONY: all clean install check-deps check-init ingredients
 
 all: ${PACKAGE_ID}.s9pk
 	@echo " Done!"
@@ -18,12 +18,15 @@ check-init:
 		start-cli init; \
 	fi
 
+ingredients: $(INGREDIENTS)
+	@echo "Re-evaluating ingredients..."
+
 ${PACKAGE_ID}.s9pk: $(INGREDIENTS) | check-deps check-init
+	@$(MAKE) --no-print-directory ingredients
 	start-cli s9pk pack
 
 javascript/index.js: $(shell git ls-files startos) tsconfig.json node_modules package.json
 	npm run build
-	$(eval INGREDIENTS := $(shell start-cli s9pk list-ingredients))
 
 assets:
 	mkdir -p assets
