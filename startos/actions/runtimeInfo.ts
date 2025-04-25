@@ -25,18 +25,20 @@ export const runtimeInfo = sdk.Action.withoutInput(
     const conf = (await bitcoinConfFile.read.const(effects))!
     // getnetowrkinfo
 
-    const networkInfoRes = await sdk.runCommand(
+    const networkInfoRes = await sdk.SubContainer.withTemp(
       effects,
       { imageId: 'bitcoind' },
-      [
-        'bitcoin-cli',
-        '-conf=/data/bitcoin.conf',
-        '-rpccookiefile=/data/.cookie',
-        `-rpcport=${conf.prune ? 18332 : rpcPort}`,
-        'getnetworkinfo',
-      ],
-      { mounts: mainMounts },
+      mainMounts,
       'getnetworkinfo',
+      async (subc) => {
+        return (await subc.execFail([
+          'bitcoin-cli',
+          '-conf=/data/bitcoin.conf',
+          '-rpccookiefile=/data/.cookie',
+          `-rpcport=${conf.prune ? 18332 : rpcPort}`,
+          'getnetworkinfo',
+        ]))
+      }
     )
 
     const networkInfoRaw: GetNetworkInfo = JSON.parse(
@@ -45,18 +47,22 @@ export const runtimeInfo = sdk.Action.withoutInput(
 
     // getblockchaininfo
 
-    const blockchainInfoRes = await sdk.runCommand(
+    const blockchainInfoRes = await sdk.SubContainer.withTemp(
       effects,
       { imageId: 'bitcoind' },
-      [
-        'bitcoin-cli',
-        '-conf=/data/bitcoin.conf',
-        '-rpccookiefile=/data/.cookie',
-        `-rpcport=${conf.prune ? 18332 : rpcPort}`,
-        'getblockchaininfo',
-      ],
-      { mounts: mainMounts },
+      mainMounts,
       'getblockchaininfo',
+      async (subc) => {
+        return (await subc.execFail(
+          [
+            'bitcoin-cli',
+            '-conf=/data/bitcoin.conf',
+            '-rpccookiefile=/data/.cookie',
+            `-rpcport=${conf.prune ? 18332 : rpcPort}`,
+            'getblockchaininfo',
+          ],
+        ))
+      }
     )
 
     const blockchainInfoRaw: GetBlockchainInfo = JSON.parse(

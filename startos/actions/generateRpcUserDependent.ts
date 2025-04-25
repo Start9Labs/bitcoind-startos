@@ -73,7 +73,7 @@ export const generateRpcUserDependent = sdk.Action.withInput(
 
     const mountpoint = '/scripts'
 
-    const res = await sdk.SubContainer.with(
+    const res = await sdk.SubContainer.withTemp(
       effects,
       {
         imageId: 'python',
