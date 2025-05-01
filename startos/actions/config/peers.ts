@@ -10,7 +10,7 @@ const { Value, Variants, List, InputSpec } = sdk
 const peerSpec = sdk.InputSpec.of({
   listen: Value.toggle({
     name: 'Make Public',
-    default: listen,
+    default: !!listen,
     description: 'Allow other nodes to find your server on the network.',
   }),
   onlyonion: Value.toggle({
@@ -20,7 +20,7 @@ const peerSpec = sdk.InputSpec.of({
   }),
   v2transport: Value.toggle({
     name: 'Use V2 P2P Transport Protocol',
-    default: v2transport,
+    default: !!v2transport,
     description:
       'Enable or disable the use of BIP324 V2 P2P transport protocol.',
   }),
@@ -114,12 +114,12 @@ async function read(effects: any): Promise<PartialPeerSpec> {
   if (!bitcoinConf) return {}
 
   const peerSettings: PartialPeerSpec = {
-    listen: bitcoinConf.listen,
+    listen: !!bitcoinConf.listen,
     onlyonion:
       bitcoinConf.onlynet === undefined
         ? !!onlynet
         : bitcoinConf.onlynet === ('onion' as const),
-    v2transport: bitcoinConf.v2transport,
+    v2transport: !!bitcoinConf.v2transport,
     externalip:
       bitcoinConf.externalip === undefined ? 'none' : bitcoinConf.externalip,
     connectpeer: {
@@ -142,9 +142,9 @@ async function read(effects: any): Promise<PartialPeerSpec> {
 
 async function write(effects: T.Effects, input: peerSpec) {
   const peerSettings = {
-    listen: input.listen,
+    listen: input.listen ? 1 : 0,
     bind: input.listen ? '0.0.0.0:8333' : bind,
-    v2transport: input.v2transport,
+    v2transport: input.v2transport ? 1 : 0,
     onlynet: input.onlyonion ? 'onion' : onlynet,
     externalip: input.externalip !== 'none' ? input.externalip : externalip,
   }

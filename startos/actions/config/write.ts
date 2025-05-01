@@ -21,15 +21,15 @@ export async function write(effects: T.Effects, input: ConfigSpec) {
     rpcallowip: input.prune ? '127.0.0.1/32' : '0.0.0.0/0',
 
     // Wallet
-    disablewallet: !input.wallet.enable,
-    avoidpartialspends: input.wallet.avoidpartialspends,
+    disablewallet: !input.wallet.enable ? 1 : 0,
+    avoidpartialspends: input.wallet.avoidpartialspends ? 1 : 0,
     discardfee: input.wallet.discardfee || discardfee,
 
     // Other
-    txindex: input.txindex,
-    coinstatsindex: input.coinstatsindex,
-    peerbloomfilters: input.peerbloomfilters,
-    peerblockfilters: input.blockfilters.peerblockfilters,
+    txindex: input.txindex ? 1 : 0,
+    coinstatsindex: input.coinstatsindex ? 1 : 0,
+    peerbloomfilters: input.peerbloomfilters ? 1 : 0,
+    peerblockfilters: input.blockfilters.peerblockfilters ? 1 : 0,
     blockfilterindex: input.blockfilters.blockfilterindex ? 'basic' : undefined,
     prune: input.prune ? input.prune : prune,
     dbcache: input.dbcache ? input.dbcache : dbcache,

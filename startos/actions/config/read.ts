@@ -7,19 +7,19 @@ export async function read(effects: any): Promise<PartialConfigSpec> {
 
   return {
     zmqEnabled: Object.keys(bitcoinConf).includes('zmqpubrawblock'),
-    txindex: bitcoinConf.txindex,
-    coinstatsindex: bitcoinConf.coinstatsindex,
+    txindex: !!bitcoinConf.txindex,
+    coinstatsindex: !!bitcoinConf.coinstatsindex,
     wallet: {
       enable: !bitcoinConf.disablewallet,
-      avoidpartialspends: bitcoinConf.avoidpartialspends,
+      avoidpartialspends: !!bitcoinConf.avoidpartialspends,
       discardfee: bitcoinConf.discardfee,
     },
     prune: bitcoinConf.prune,
     dbcache: bitcoinConf.dbcache,
     blockfilters: {
       blockfilterindex: bitcoinConf.blockfilterindex === ('basic' as const),
-      peerblockfilters: bitcoinConf.peerblockfilters,
+      peerblockfilters: !!bitcoinConf.peerblockfilters,
     },
-    peerbloomfilters: bitcoinConf.peerbloomfilters,
+    peerbloomfilters: !!bitcoinConf.peerbloomfilters,
   }
 }

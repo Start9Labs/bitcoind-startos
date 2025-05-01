@@ -71,25 +71,25 @@ export const bitcoinConfDefaults = {
   bind: undefined,
 
   // Mempool
-  persistmempool: true,
+  persistmempool: 1,
   maxmempool: 300,
   mempoolexpiry: 336,
-  mempoolfullrbf: true,
-  permitbaremultisig: true,
-  datacarrier: true,
+  mempoolfullrbf: 1,
+  permitbaremultisig: 1,
+  datacarrier: 1,
   datacarriersize: 83,
 
   // Peers
-  listen: true,
+  listen: 1,
   onlynet: undefined,
   externalip: undefined,
-  v2transport: true,
+  v2transport: 1,
   connect: undefined,
   addnode: undefined,
 
   // Wallet
-  disablewallet: false,
-  avoidpartialspends: false,
+  disablewallet: 0,
+  avoidpartialspends: 0,
   discardfee: 0.0001,
 
   // Other
@@ -100,14 +100,14 @@ export const bitcoinConfDefaults = {
   zmqpubhashtx: undefined,
   zmqpubsequence: undefined,
 
-  coinstatsindex: false,
-  txindex: false,
+  coinstatsindex: 0,
+  txindex: 0,
   dbcache: 450,
 
-  peerbloomfilters: false,
+  peerbloomfilters: 0,
   blockfilterindex: 'basic',
-  peerblockfilters: false,
-}
+  peerblockfilters: 0,
+} as const
 
 export function getExteralAddresses() {
   return sdk.Value.dynamicSelect(async ({ effects }) => {

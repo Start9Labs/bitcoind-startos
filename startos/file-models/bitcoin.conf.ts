@@ -12,7 +12,7 @@ const numLiteral = (val: any) => {
 const boolean = anyOf(numLiteral(0), numLiteral(1))
   .map((a) => !!a)
   .orParser(matches.boolean)
-const literal = (val: string) => {
+const literal = (val: string | number) => {
   return stringArray
     .map(([val]) => matches.literal(val))
     .orParser(matches.literal(val))
@@ -69,21 +69,21 @@ export const shape = object({
   rpccookiefile: literal(rpccookiefile).onMismatch(rpccookiefile),
 
   // Mempool
-  mempoolfullrbf: boolean.onMismatch(mempoolfullrbf),
-  persistmempool: boolean.onMismatch(persistmempool),
+  mempoolfullrbf: anyOf(literal(0), literal(1)).onMismatch(mempoolfullrbf),
+  persistmempool: anyOf(literal(0), literal(1)).onMismatch(persistmempool),
   maxmempool: number.onMismatch(maxmempool),
   mempoolexpiry: number.onMismatch(mempoolexpiry),
-  datacarrier: boolean.onMismatch(datacarrier),
+  datacarrier: anyOf(literal(0), literal(1)).onMismatch(datacarrier),
   datacarriersize: number.onMismatch(datacarriersize),
-  permitbaremultisig: boolean.onMismatch(permitbaremultisig),
+  permitbaremultisig: anyOf(literal(0), literal(1)).onMismatch(permitbaremultisig),
 
   // Peers
-  listen: boolean.onMismatch(listen),
+  listen: anyOf(literal(0), literal(1)).onMismatch(listen),
   bind: string.optional().onMismatch(bind),
   connect: arrayOf(string).optional().onMismatch(connect),
   addnode: anyOf(stringArray).optional().onMismatch(addnode),
   onlynet: string.optional().onMismatch(onlynet),
-  v2transport: boolean.onMismatch(v2transport),
+  v2transport: anyOf(literal(0), literal(1)).onMismatch(v2transport),
   externalip: string.optional().onMismatch(externalip),
 
   // Whitelist
@@ -96,8 +96,8 @@ export const shape = object({
   dbcache: number.onMismatch(dbcache),
 
   // Wallet
-  disablewallet: boolean.onMismatch(disablewallet),
-  avoidpartialspends: boolean.onMismatch(avoidpartialspends),
+  disablewallet: anyOf(literal(0), literal(1)).onMismatch(disablewallet),
+  avoidpartialspends: anyOf(literal(0), literal(1)).onMismatch(avoidpartialspends),
   discardfee: number.onMismatch(discardfee),
 
   // Zero MQ
@@ -108,20 +108,21 @@ export const shape = object({
   zmqpubsequence: string.optional().onMismatch(zmqpubsequence),
 
   // TxIndex
-  txindex: boolean.onMismatch(txindex),
+  txindex: anyOf(literal(0), literal(1)).onMismatch(txindex),
 
   // CoinstatsIndex
-  coinstatsindex: boolean.onMismatch(coinstatsindex),
+  coinstatsindex: anyOf(literal(0), literal(1)).onMismatch(coinstatsindex),
 
   // BIP37
-  peerbloomfilters: boolean.onMismatch(peerbloomfilters),
+  peerbloomfilters: anyOf(literal(0), literal(1)).onMismatch(peerbloomfilters),
 
   // BIP157
   blockfilterindex: string.optional().onMismatch(blockfilterindex),
-  peerblockfilters: boolean.onMismatch(peerblockfilters),
+  peerblockfilters: anyOf(literal(0), literal(1)).onMismatch(peerblockfilters),
 })
 
 export const bitcoinConfFile = FileHelper.ini(
   '/media/startos/volumes/main/bitcoin.conf',
   shape,
+  { bracketedArray: false }
 )
