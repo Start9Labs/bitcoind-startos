@@ -149,7 +149,7 @@ export const config = sdk.Action.withInput(
     description: 'Edit the bitcoin.conf configuration file',
     warning: null,
     allowedStatuses: 'any',
-    group: 'Conf',
+    group: 'Configuration',
     visibility: 'enabled',
   }),
 
