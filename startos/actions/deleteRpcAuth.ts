@@ -32,7 +32,7 @@ export const deleteRpcAuth = sdk.Action.withInput(
       'Delete RPC users from Bitcoin.conf. You may want to run this action if the RPC Auth entry is no longer needed or if the password is lost.',
     warning: null,
     allowedStatuses: 'any',
-    group: 'RPC',
+    group: 'RPC Users',
     visibility: (await getRpcUsers(effects))
       ? 'enabled'
       : { disabled: 'There are no RPC users' },

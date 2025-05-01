@@ -29,7 +29,7 @@ export const generateRpcUser = sdk.Action.withInput(
       'Generate RPC User Credentials for remote connections i.e. Sparrow. rpcauth.py will randomly generate a secure password. The username and hashed password will be persisted in Bitcoin.conf',
     warning: null,
     allowedStatuses: 'any',
-    group: 'RPC',
+    group: 'RPC Users',
     visibility: 'enabled',
   }),
 

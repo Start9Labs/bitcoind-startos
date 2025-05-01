@@ -95,7 +95,7 @@ export const peerConfig = sdk.Action.withInput(
     description: 'Edit the Peer settings in bitcoin.conf',
     warning: null,
     allowedStatuses: 'any',
-    group: null,
+    group: 'Conf',
     visibility: 'enabled',
   }),
 

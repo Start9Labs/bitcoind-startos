@@ -59,7 +59,7 @@ export const rpcConfig = sdk.Action.withInput(
     description: 'Edit the RPC settings in bitcoin.conf',
     warning: null,
     allowedStatuses: 'any',
-    group: 'RPC',
+    group: 'Conf',
     visibility: 'enabled',
   }),
 

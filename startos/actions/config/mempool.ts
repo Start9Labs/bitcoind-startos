@@ -81,7 +81,7 @@ export const mempoolConfig = sdk.Action.withInput(
     description: 'Edit the Mempool settings in bitcoin.conf',
     warning: null,
     allowedStatuses: 'any',
-    group: 'conf',
+    group: 'Conf',
     visibility: 'enabled',
   }),
 
