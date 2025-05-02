@@ -94,11 +94,11 @@ export const bitcoinConfDefaults = {
 
   // Other
   prune: 0,
-  zmqpubrawblock: undefined,
-  zmqpubhashblock: undefined,
-  zmqpubrawtx: undefined,
-  zmqpubhashtx: undefined,
-  zmqpubsequence: undefined,
+  zmqpubrawblock: 'tcp://0.0.0.0:28332',
+  zmqpubhashblock: 'tcp://0.0.0.0:28332',
+  zmqpubrawtx: 'tcp://0.0.0.0:28333',
+  zmqpubhashtx: 'tcp://0.0.0.0:28333',
+  zmqpubsequence: 'tcp://0.0.0.0:28333',
 
   coinstatsindex: 0,
   txindex: 0,
