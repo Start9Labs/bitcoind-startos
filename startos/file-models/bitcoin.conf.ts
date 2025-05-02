@@ -5,17 +5,13 @@ const { anyOf, arrayOf, object } = matches
 
 const stringArray = matches.array(matches.string)
 const string = stringArray.map(([a]) => a).orParser(matches.string)
-const number = stringArray.map(([a]) => Number(a)).orParser(matches.number)
-const numLiteral = (val: any) => {
-  return stringArray.map(([val]) => Number(val)).orParser(matches.literal(val))
-}
-const boolean = anyOf(numLiteral(0), numLiteral(1))
-  .map((a) => !!a)
-  .orParser(matches.boolean)
+const number = string.map((a) => Number(a)).orParser(matches.number)
 const literal = (val: string | number) => {
-  return stringArray
-    .map(([val]) => matches.literal(val))
+  return matches
+    .literal([String(val)])
+    .orParser(matches.literal(String(val)))
     .orParser(matches.literal(val))
+    .map((a) => (typeof val === 'number' ? Number(a) : a))
 }
 
 const {
@@ -70,12 +66,18 @@ export const shape = object({
 
   // Mempool
   mempoolfullrbf: anyOf(literal(0), literal(1)).onMismatch(mempoolfullrbf),
-  persistmempool: anyOf(literal(0), literal(1)).onMismatch(persistmempool),
-  maxmempool: number.onMismatch(maxmempool),
+  persistmempool: anyOf(literal(0), literal(1))
+    .optional()
+    .onMismatch(persistmempool),
+  maxmempool: number.optional().onMismatch(maxmempool),
+  // persistmempool: anyOf(literal(0), literal(1)),
+  // maxmempool: number,
   mempoolexpiry: number.onMismatch(mempoolexpiry),
   datacarrier: anyOf(literal(0), literal(1)).onMismatch(datacarrier),
   datacarriersize: number.onMismatch(datacarriersize),
-  permitbaremultisig: anyOf(literal(0), literal(1)).onMismatch(permitbaremultisig),
+  permitbaremultisig: anyOf(literal(0), literal(1)).onMismatch(
+    permitbaremultisig,
+  ),
 
   // Peers
   listen: anyOf(literal(0), literal(1)).onMismatch(listen),
@@ -97,7 +99,9 @@ export const shape = object({
 
   // Wallet
   disablewallet: anyOf(literal(0), literal(1)).onMismatch(disablewallet),
-  avoidpartialspends: anyOf(literal(0), literal(1)).onMismatch(avoidpartialspends),
+  avoidpartialspends: anyOf(literal(0), literal(1)).onMismatch(
+    avoidpartialspends,
+  ),
   discardfee: number.onMismatch(discardfee),
 
   // Zero MQ
@@ -124,5 +128,5 @@ export const shape = object({
 export const bitcoinConfFile = FileHelper.ini(
   '/media/startos/volumes/main/bitcoin.conf',
   shape,
-  { bracketedArray: false }
+  { bracketedArray: false },
 )
