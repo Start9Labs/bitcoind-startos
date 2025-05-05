@@ -64,7 +64,7 @@ export const generateRpcUserDependent = sdk.Action.withInput(
 
     if (existingUsernames?.includes(username!)) {
       return {
-        version: '1' as const,
+        version: '1',
         title: 'Error creating RPC Auth User',
         message: 'RPCAuth entry with this username already exists.',
         result: null,
