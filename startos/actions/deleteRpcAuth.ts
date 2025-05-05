@@ -46,8 +46,8 @@ export const deleteRpcAuth = sdk.Action.withInput(
 
   // execution function
   async ({ effects, input }) => {
-    const rpcauth = await getRpcAuth(effects)
-    const filtered = rpcauth?.filter(
+    const rpcauth = (await getRpcAuth(effects))!
+    const filtered = [rpcauth].flat().filter(
       (auth) => !input.deletedRpcUsers.includes(auth.split(':', 2)[0]),
     )
     await bitcoinConfFile.merge(effects, {

@@ -45,7 +45,7 @@ export const generateRpcUser = sdk.Action.withInput(
 
     if (existingUsernames?.includes(input.username)) {
       return {
-        version: '1' as const,
+        version: '1',
         title: 'Error creating RPC Auth User',
         message: 'RPCAuth entry with this username already exists.',
         result: null,
@@ -69,10 +69,11 @@ export const generateRpcUser = sdk.Action.withInput(
       const password = res.stdout.split('\n')[3].trim()
       const newRpcAuth = res.stdout.split('\n')[1].trim().split('=')[1].trim()
 
-      const rpcAuthEntries = (await getRpcAuth(effects)) || []
+      const existingRpcAuthEntries = (await getRpcAuth(effects)) || []
+      const rpcAuthEntries = [existingRpcAuthEntries].flat()
       rpcAuthEntries.push(newRpcAuth)
 
-      bitcoinConfFile.merge(effects, {
+      await bitcoinConfFile.merge(effects, {
         rpcauth: rpcAuthEntries,
       })
 

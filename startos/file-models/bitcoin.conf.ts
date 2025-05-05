@@ -58,7 +58,7 @@ export const shape = object({
   // RPC
   rpcbind: string.onMismatch(rpcbind),
   rpcallowip: string.onMismatch(rpcallowip),
-  rpcauth: stringArray.optional().onMismatch(rpcauth),
+  rpcauth: stringArray.orParser(string).optional().onMismatch(rpcauth),
   rpcservertimeout: number.onMismatch(rpcservertimeout),
   rpcthreads: number.onMismatch(rpcthreads),
   rpcworkqueue: number.onMismatch(rpcworkqueue),
@@ -70,8 +70,6 @@ export const shape = object({
     .optional()
     .onMismatch(persistmempool),
   maxmempool: number.optional().onMismatch(maxmempool),
-  // persistmempool: anyOf(literal(0), literal(1)),
-  // maxmempool: number,
   mempoolexpiry: number.onMismatch(mempoolexpiry),
   datacarrier: anyOf(literal(0), literal(1)).onMismatch(datacarrier),
   datacarriersize: number.onMismatch(datacarriersize),
@@ -82,14 +80,14 @@ export const shape = object({
   // Peers
   listen: anyOf(literal(0), literal(1)).onMismatch(listen),
   bind: string.optional().onMismatch(bind),
-  connect: arrayOf(string).optional().onMismatch(connect),
-  addnode: anyOf(stringArray).optional().onMismatch(addnode),
+  connect: stringArray.orParser(string).optional().onMismatch(connect),
+  addnode: stringArray.orParser(string).optional().onMismatch(addnode),
   onlynet: string.optional().onMismatch(onlynet),
   v2transport: anyOf(literal(0), literal(1)).onMismatch(v2transport),
   externalip: string.optional().onMismatch(externalip),
 
   // Whitelist
-  whitelist: stringArray.onMismatch(whitelist),
+  whitelist: stringArray.orParser(string).optional().onMismatch(whitelist),
 
   // Pruning
   prune: number.onMismatch(prune),

@@ -92,10 +92,11 @@ export const generateRpcUserDependent = sdk.Action.withInput(
     if (typeof res.stdout === 'string') {
       const newRpcAuth = res.stdout.split('\n')[1].trim().split('=')[1].trim()
 
-      const rpcAuthEntries = (await getRpcAuth(effects)) || []
+      const existingRpcAuthEntries = (await getRpcAuth(effects)) || []
+      const rpcAuthEntries = [existingRpcAuthEntries].flat()
       rpcAuthEntries.push(newRpcAuth)
 
-      bitcoinConfFile.merge(effects, {
+      await bitcoinConfFile.merge(effects, {
         rpcauth: rpcAuthEntries,
       })
 

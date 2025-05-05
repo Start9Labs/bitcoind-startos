@@ -51,7 +51,8 @@ export type GetBlockchainInfo = {
 
 export async function getRpcUsers(effects: Effects) {
   const rpcauth = await getRpcAuth(effects)
-  return rpcauth?.map((e) => e.split(':', 2)[0])
+  if (!rpcauth) return
+  return [rpcauth].flat().map((e) => e.split(':', 2)[0])
 }
 
 export async function getRpcAuth(effects: Effects) {
