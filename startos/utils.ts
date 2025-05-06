@@ -72,25 +72,25 @@ export const bitcoinConfDefaults = {
   bind: undefined,
 
   // Mempool
-  persistmempool: 1,
+  persistmempool: true,
   maxmempool: 300,
   mempoolexpiry: 336,
-  mempoolfullrbf: 1,
-  permitbaremultisig: 1,
-  datacarrier: 1,
+  mempoolfullrbf: true,
+  permitbaremultisig: true,
+  datacarrier: true,
   datacarriersize: 83,
 
   // Peers
-  listen: 1,
+  listen: true,
   onlynet: undefined,
   externalip: undefined,
-  v2transport: 1,
+  v2transport: true,
   connect: undefined,
   addnode: undefined,
 
   // Wallet
-  disablewallet: 0,
-  avoidpartialspends: 0,
+  disablewallet: false,
+  avoidpartialspends: false,
   discardfee: 0.0001,
 
   // Other
@@ -101,13 +101,13 @@ export const bitcoinConfDefaults = {
   zmqpubhashtx: 'tcp://0.0.0.0:28333',
   zmqpubsequence: 'tcp://0.0.0.0:28333',
 
-  coinstatsindex: 0,
-  txindex: 0,
+  coinstatsindex: false,
+  txindex: false,
   dbcache: 450,
 
-  peerbloomfilters: 0,
+  peerbloomfilters: false,
   blockfilterindex: 'basic',
-  peerblockfilters: 0,
+  peerblockfilters: false,
 } as const
 
 export function getExteralAddresses() {

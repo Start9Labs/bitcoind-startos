@@ -142,9 +142,9 @@ async function read(effects: any): Promise<PartialPeerSpec> {
 
 async function write(effects: T.Effects, input: peerSpec) {
   const peerSettings = {
-    listen: input.listen ? 1 : 0,
+    listen: input.listen,
     bind: input.listen ? '0.0.0.0:8333' : bind,
-    v2transport: input.v2transport ? 1 : 0,
+    v2transport: input.v2transport,
     onlynet: input.onlyonion ? 'onion' : onlynet,
     externalip: input.externalip !== 'none' ? input.externalip : externalip,
   }

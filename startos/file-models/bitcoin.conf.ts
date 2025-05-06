@@ -6,6 +6,7 @@ const { anyOf, arrayOf, object } = matches
 const stringArray = matches.array(matches.string)
 const string = stringArray.map(([a]) => a).orParser(matches.string)
 const number = string.map((a) => Number(a)).orParser(matches.number)
+const boolean = number.map((a) => !!a).orParser(matches.boolean)
 const literal = (val: string | number) => {
   return matches
     .literal([String(val)])
@@ -65,25 +66,21 @@ export const shape = object({
   rpccookiefile: literal(rpccookiefile).onMismatch(rpccookiefile),
 
   // Mempool
-  mempoolfullrbf: anyOf(literal(0), literal(1)).onMismatch(mempoolfullrbf),
-  persistmempool: anyOf(literal(0), literal(1))
-    .optional()
-    .onMismatch(persistmempool),
+  mempoolfullrbf: boolean.onMismatch(mempoolfullrbf),
+  persistmempool: boolean.optional().onMismatch(persistmempool),
   maxmempool: number.optional().onMismatch(maxmempool),
   mempoolexpiry: number.onMismatch(mempoolexpiry),
-  datacarrier: anyOf(literal(0), literal(1)).onMismatch(datacarrier),
+  datacarrier: boolean.onMismatch(datacarrier),
   datacarriersize: number.onMismatch(datacarriersize),
-  permitbaremultisig: anyOf(literal(0), literal(1)).onMismatch(
-    permitbaremultisig,
-  ),
+  permitbaremultisig: boolean.onMismatch(permitbaremultisig),
 
   // Peers
-  listen: anyOf(literal(0), literal(1)).onMismatch(listen),
+  listen: boolean.onMismatch(listen),
   bind: string.optional().onMismatch(bind),
   connect: stringArray.orParser(string).optional().onMismatch(connect),
   addnode: stringArray.orParser(string).optional().onMismatch(addnode),
   onlynet: string.optional().onMismatch(onlynet),
-  v2transport: anyOf(literal(0), literal(1)).onMismatch(v2transport),
+  v2transport: boolean.onMismatch(v2transport),
   externalip: string.optional().onMismatch(externalip),
 
   // Whitelist
@@ -96,10 +93,8 @@ export const shape = object({
   dbcache: number.onMismatch(dbcache),
 
   // Wallet
-  disablewallet: anyOf(literal(0), literal(1)).onMismatch(disablewallet),
-  avoidpartialspends: anyOf(literal(0), literal(1)).onMismatch(
-    avoidpartialspends,
-  ),
+  disablewallet: boolean.onMismatch(disablewallet),
+  avoidpartialspends: boolean.onMismatch(avoidpartialspends),
   discardfee: number.onMismatch(discardfee),
 
   // Zero MQ
@@ -110,21 +105,39 @@ export const shape = object({
   zmqpubsequence: string.optional().onMismatch(zmqpubsequence),
 
   // TxIndex
-  txindex: anyOf(literal(0), literal(1)).onMismatch(txindex),
+  txindex: boolean.onMismatch(txindex),
 
   // CoinstatsIndex
-  coinstatsindex: anyOf(literal(0), literal(1)).onMismatch(coinstatsindex),
+  coinstatsindex: boolean.onMismatch(coinstatsindex),
 
   // BIP37
-  peerbloomfilters: anyOf(literal(0), literal(1)).onMismatch(peerbloomfilters),
+  peerbloomfilters: boolean.onMismatch(peerbloomfilters),
 
   // BIP157
   blockfilterindex: string.optional().onMismatch(blockfilterindex),
-  peerblockfilters: anyOf(literal(0), literal(1)).onMismatch(peerblockfilters),
+  peerblockfilters: boolean.onMismatch(peerblockfilters),
 })
+
+function onWrite(a: any): any {
+  if (typeof a === 'object') {
+    if (Array.isArray(a)) {
+      return a.map(onWrite)
+    }
+    return Object.fromEntries(
+      Object.entries(a).map(([k, v]) => [k, onWrite(v)]),
+    )
+  } else if (typeof a === 'boolean') {
+    return a ? 1 : 0
+  }
+  return a
+}
 
 export const bitcoinConfFile = FileHelper.ini(
   '/media/startos/volumes/main/bitcoin.conf',
   shape,
   { bracketedArray: false },
+  {
+    onRead: (a) => a,
+    onWrite,
+  },
 )
