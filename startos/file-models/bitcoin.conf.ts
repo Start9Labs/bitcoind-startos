@@ -119,7 +119,7 @@ export const shape = object({
 })
 
 function onWrite(a: any): any {
-  if (typeof a === 'object') {
+  if (a && typeof a === 'object') {
     if (Array.isArray(a)) {
       return a.map(onWrite)
     }
