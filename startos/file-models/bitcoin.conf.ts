@@ -118,7 +118,7 @@ export const shape = object({
   peerblockfilters: boolean.onMismatch(peerblockfilters),
 })
 
-function onWrite(a: any): any {
+function onWrite(a: unknown): any {
   if (a && typeof a === 'object') {
     if (Array.isArray(a)) {
       return a.map(onWrite)
