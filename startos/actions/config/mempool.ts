@@ -113,10 +113,10 @@ async function read(effects: any): Promise<PartialMempoolSpec> {
 
 async function write(effects: T.Effects, input: MempoolSpec) {
   const mempoolSettings = {
-    mempoolfullrbf: input.mempoolfullrbf ? 1 : 0,
-    persistmempool: input.persistmempool ? 1 : 0,
-    datacarrier: input.datacarrier ? 1 : 0,
-    permitbaremultisig: input.permitbaremultisig ? 1 : 0,
+    mempoolfullrbf: input.mempoolfullrbf,
+    persistmempool: input.persistmempool,
+    datacarrier: input.datacarrier,
+    permitbaremultisig: input.permitbaremultisig,
     maxmempool: input.maxmempool || maxmempool,
     mempoolexpiry: input.mempoolexpiry || mempoolexpiry,
     datacarriersize: input.datacarriersize || datacarriersize,

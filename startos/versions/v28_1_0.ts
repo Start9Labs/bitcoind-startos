@@ -105,32 +105,32 @@ export const v28_1_0_0 = VersionInfo.of({
         whitelist: ['172.18.0.0/16'],
 
         // Mempool
-        persistmempool: persistmempool  ? 1 : 0,
+        persistmempool: persistmempool,
         maxmempool,
         mempoolexpiry,
-        mempoolfullrbf: mempoolfullrbf ? 1 : 0,
-        permitbaremultisig: permitbaremultisig ? 1 : 0,
-        datacarrier: datacarrier ? 1 : 0,
+        mempoolfullrbf: mempoolfullrbf,
+        permitbaremultisig: permitbaremultisig,
+        datacarrier: datacarrier,
         datacarriersize,
 
         // Peers
-        listen: listen ? 1 : 0,
+        listen: listen,
         onlynet: onlyonion ? 'onion' : undefined,
-        v2transport: v2transport ? 1 : 0,
+        v2transport: v2transport,
 
         // Wallet
-        disablewallet: !enable ? 1 : 0,
-        avoidpartialspends: avoidpartialspends ? 1 : 0,
+        disablewallet: !enable,
+        avoidpartialspends: avoidpartialspends,
         discardfee,
 
         // Other
         externalip: peerTorAddress,
-        coinstatsindex: coinstatsindex ? 1 : 0,
-        txindex: txindex ? 1 : 0,
+        coinstatsindex: coinstatsindex,
+        txindex: txindex,
         dbcache: dbcache || bitcoinConfDefaults.dbcache,
-        peerbloomfilters: peerbloomfilters ? 1 : 0,
+        peerbloomfilters: peerbloomfilters,
         blockfilterindex: blockfilterindex ? 'basic' : undefined,
-        peerblockfilters: peerblockfilters ? 1 : 0,
+        peerblockfilters: peerblockfilters,
         prune: pruned ? pruning.size : bitcoinConfDefaults.prune,
         bind: listen ? '0.0.0.0:8333' : bitcoinConfDefaults.bind,
       }
