@@ -140,21 +140,15 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   /**
    * ======================== Daemons ========================
    */
-
-  const bitcoinDaemon = await sdk.Daemon.of(
-    effects,
-    bitcoindSub,
-    ['bitcoind', ...bitcoinArgs],
-    {},
-  )
-  await bitcoinDaemon.start()
-  await bitcoindSub.execFail(['mkdir', '-p', '/data/public'])
-  await bitcoindSub.execFail([
-    'cp',
-    `/data/${bitcoinConfDefaults.rpccookiefile}`,
-    '/data/public',
-  ])
-  await sdk.exposeForDependents(effects, { paths: ['/data/public'] })
+  const onReady = utils.once(async () => {
+    await bitcoindSub.execFail(['mkdir', '-p', '/data/public'])
+    await bitcoindSub.execFail([
+      'cp',
+      `/data/${bitcoinConfDefaults.rpccookiefile}`,
+      '/data/public',
+    ])
+    await sdk.exposeForDependents(effects, { paths: ['/data/public'] })
+  })
 
   const daemons = sdk.Daemons.of(effects, started, healthChecks).addDaemon(
     'primary',
@@ -178,6 +172,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
               result: 'starting',
             }
           } else {
+            await onReady()
             return {
               message: 'The Bitcoin RPC Interface is ready',
               result: 'success',
