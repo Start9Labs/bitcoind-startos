@@ -6,7 +6,7 @@ import { readFile } from 'fs/promises'
 import { bitcoinConfDefaults } from '../utils'
 
 export const v28_1_0_0 = VersionInfo.of({
-  version: '28.1:0-alpha.4',
+  version: '28.1:0-alpha.5',
   releaseNotes: 'Revamped for StartOS 0.4.0',
   migrations: {
     up: async ({ effects }) => {
