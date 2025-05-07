@@ -65,7 +65,7 @@ export const generateRpcUser = sdk.Action.withInput(
         subc.exec(['python3', `${mountpoint}/rpcauth.py`, `${input.username}`]),
     )
 
-    if (typeof res.stdout === 'string') {
+    if (res.exitCode === 0 && typeof res.stdout === 'string') {
       const password = res.stdout.split('\n')[3].trim()
       const newRpcAuth = res.stdout.split('\n')[1].trim().split('=')[1].trim()
 
@@ -91,6 +91,12 @@ export const generateRpcUser = sdk.Action.withInput(
           qr: false,
         },
       }
+    }
+    return {
+      version: '1',
+      title: 'Failed to create RPC user',
+      message: `rpcauth.py failed with error: ${res.stderr}`,
+      result: null,
     }
   },
 )

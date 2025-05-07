@@ -104,7 +104,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
         'getblockchaininfo',
       ])
 
-      if (res.stdout !== '' && typeof res.stdout === 'string') {
+      if (res.exitCode === 0 && res.stdout !== '' && typeof res.stdout === 'string') {
         const info: GetBlockchainInfo = JSON.parse(res.stdout)
 
         if (info.initialblockdownload) {
@@ -166,7 +166,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
             'getrpcinfo',
           ])
 
-          if (res.stderr !== '') {
+          if (res.exitCode !== 0) {
             return {
               message: 'The Bitcoin RPC Interface is not ready',
               result: 'starting',

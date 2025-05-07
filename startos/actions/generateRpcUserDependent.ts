@@ -89,7 +89,7 @@ export const generateRpcUserDependent = sdk.Action.withInput(
         ]),
     )
 
-    if (typeof res.stdout === 'string') {
+    if (res.exitCode === 0 && typeof res.stdout === 'string') {
       const newRpcAuth = res.stdout.split('\n')[1].trim().split('=')[1].trim()
 
       const existingRpcAuthEntries = (await getRpcAuth(effects)) || []
@@ -106,6 +106,13 @@ export const generateRpcUserDependent = sdk.Action.withInput(
         message: `RPC password created for ${username}`,
         result: null,
       }
+    }
+
+    return {
+      version: '1',
+      title: 'Failure',
+      message: `rpcauth.py failed with error: ${res.stderr}`,
+      result: null,
     }
   },
 )
