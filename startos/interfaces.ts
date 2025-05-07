@@ -65,7 +65,7 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
     const zmqMultiOrigin = await zmqMulti.bindPort(zmqPort, {
       preferredExternalPort: zmqPort,
       addSsl: null,
-      secure: null,
+      secure: { ssl: false },
       protocol: null,
     })
     const zmq = sdk.createInterface(effects, {
