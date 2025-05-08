@@ -59,7 +59,10 @@ export const generateRpcUser = sdk.Action.withInput(
       {
         imageId: 'python',
       },
-      sdk.Mounts.of().addAssets(null, mountpoint),
+      sdk.Mounts.of().addAssets({
+        subpath: null,
+        mountpoint,
+      }),
       'rpc-auth-generator',
       (subc) =>
         subc.exec(['python3', `${mountpoint}/rpcauth.py`, `${input.username}`]),

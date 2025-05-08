@@ -78,7 +78,10 @@ export const generateRpcUserDependent = sdk.Action.withInput(
       {
         imageId: 'python',
       },
-      sdk.Mounts.of().addAssets(null, mountpoint),
+      sdk.Mounts.of().addAssets({
+        subpath: null,
+        mountpoint,
+      }),
       'RPC Auth Generator',
       (subc) =>
         subc.exec([

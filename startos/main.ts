@@ -9,12 +9,12 @@ import { promises } from 'fs'
 
 const diskUsage = utils.once(() => diskusage.check('/'))
 const archivalMin = 900_000_000_000
-export const mainMounts = sdk.Mounts.of().addVolume(
-  'main',
-  null,
-  '/data',
-  false,
-)
+export const mainMounts = sdk.Mounts.of().addVolume({
+  volumeId: 'main',
+  subpath: null,
+  mountpoint: '/data',
+  readonly: false,
+})
 
 export const main = sdk.setupMain(async ({ effects, started }) => {
   /**
@@ -104,7 +104,11 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
         'getblockchaininfo',
       ])
 
-      if (res.exitCode === 0 && res.stdout !== '' && typeof res.stdout === 'string') {
+      if (
+        res.exitCode === 0 &&
+        res.stdout !== '' &&
+        typeof res.stdout === 'string'
+      ) {
         const info: GetBlockchainInfo = JSON.parse(res.stdout)
 
         if (info.initialblockdownload) {
