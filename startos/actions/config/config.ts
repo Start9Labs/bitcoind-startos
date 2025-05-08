@@ -205,27 +205,11 @@ async function write(effects: T.Effects, input: ConfigSpec) {
     blockfilterindex: input.blockfilters.blockfilterindex ? 'basic' : undefined,
     prune: input.prune ? input.prune : prune,
     dbcache: input.dbcache ? input.dbcache : dbcache,
-  }
-
-  // Zero MQ
-  if (input.zmqEnabled) {
-    Object.assign({
-      otherConfig,
-      zmqpubrawblock: 'tcp://0.0.0.0:28332',
-      zmqpubhashblock: 'tcp://0.0.0.0:28332',
-      zmqpubrawtx: 'tcp://0.0.0.0:28333',
-      zmqpubhashtx: 'tcp://0.0.0.0:28333',
-      zmqpubsequence: 'tcp://0.0.0.0:28333',
-    })
-  } else {
-    Object.assign({
-      otherConfig,
-      zmqpubrawblock: zmqpubrawblock,
-      zmqpubhashblock: zmqpubhashblock,
-      zmqpubrawtx: zmqpubrawtx,
-      zmqpubhashtx: zmqpubhashtx,
-      zmqpubsequence: zmqpubsequence,
-    })
+    zmqpubrawblock: input.zmqEnabled ? 'tcp://0.0.0.0:28332' : undefined,
+    zmqpubhashblock: input.zmqEnabled ? 'tcp://0.0.0.0:28332' : undefined,
+    zmqpubrawtx: input.zmqEnabled ? 'tcp://0.0.0.0:28333' : undefined,
+    zmqpubhashtx: input.zmqEnabled ? 'tcp://0.0.0.0:28333' : undefined,
+    zmqpubsequence: input.zmqEnabled ? 'tcp://0.0.0.0:28333' : undefined,
   }
 
   await bitcoinConfFile.merge(effects, otherConfig)
