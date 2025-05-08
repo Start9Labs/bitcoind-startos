@@ -1,6 +1,6 @@
 import { sdk } from './sdk'
 import { bitcoinConfFile } from './file-models/bitcoin.conf'
-import { bitcoinConfDefaults, GetBlockchainInfo } from './utils'
+import { bitcoinConfDefaults, GetBlockchainInfo, rootDir } from './utils'
 import * as diskusage from 'diskusage'
 import { T, utils } from '@start9labs/start-sdk'
 import { configToml } from './file-models/rpc-proxy.toml'
@@ -12,7 +12,7 @@ const archivalMin = 900_000_000_000
 export const mainMounts = sdk.Mounts.of().addVolume({
   volumeId: 'main',
   subpath: null,
-  mountpoint: '/data',
+  mountpoint: rootDir,
   readonly: false,
 })
 
@@ -39,8 +39,8 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   const bitcoinArgs: string[] = []
 
   bitcoinArgs.push(`-onion=${osIp}:9050`)
-  bitcoinArgs.push('-datadir=/data/')
-  bitcoinArgs.push('-conf=/data/bitcoin.conf')
+  bitcoinArgs.push(`-datadir=${rootDir}/`)
+  bitcoinArgs.push(`-conf=${rootDir}/bitcoin.conf`)
 
   if (conf.externalip === 'initial-setup') {
     const peerInterface = await sdk.serviceInterface
@@ -98,8 +98,8 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     fn: async () => {
       const res = await bitcoindSub.exec([
         'bitcoin-cli',
-        '-conf=/data/bitcoin.conf',
-        `-rpccookiefile=/data/${bitcoinConfDefaults.rpccookiefile}`,
+        `-conf=${rootDir}/bitcoin.conf`,
+        `-rpccookiefile=${rootDir}/${bitcoinConfDefaults.rpccookiefile}`,
         `-rpcconnect=${conf.rpcbind}`,
         'getblockchaininfo',
       ])
@@ -144,16 +144,8 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   /**
    * ======================== Daemons ========================
    */
-  const onReady = utils.once(async () => {
-    await bitcoindSub.execFail(['mkdir', '-p', '/data/public'])
-    await bitcoindSub.execFail([
-      'cp',
-      `/data/${bitcoinConfDefaults.rpccookiefile}`,
-      '/data/public',
-    ])
-    await sdk.exposeForDependents(effects, { paths: ['/data/public'] })
-  })
 
+  const rpcCookieFile = `${rootDir}/${bitcoinConfDefaults.rpccookiefile}`
   const daemons = sdk.Daemons.of(effects, started, healthChecks).addDaemon(
     'primary',
     {
@@ -164,24 +156,21 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
         fn: async () => {
           const res = await bitcoindSub.exec([
             'bitcoin-cli',
-            '-conf=/data/bitcoin.conf',
-            `-rpccookiefile=/data/${bitcoinConfDefaults.rpccookiefile}`,
+            `-conf=${rootDir}/bitcoin.conf`,
+            `-rpccookiefile=${rpcCookieFile}`,
             `-rpcconnect=${conf.rpcbind}`,
             'getrpcinfo',
           ])
 
-          if (res.exitCode !== 0) {
-            return {
-              message: 'The Bitcoin RPC Interface is not ready',
-              result: 'starting',
-            }
-          } else {
-            await onReady()
-            return {
-              message: 'The Bitcoin RPC Interface is ready',
-              result: 'success',
-            }
-          }
+          return res.exitCode === 0
+            ? {
+                message: 'The Bitcoin RPC Interface is ready',
+                result: 'success',
+              }
+            : {
+                message: 'The Bitcoin RPC Interface is not ready',
+                result: 'starting',
+              }
         },
       },
       requires: [],
@@ -194,10 +183,10 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
       bitcoind_port: 18332,
       bind_address: '0.0.0.0',
       bind_port: rpcPort,
-      cookie_file: `/data/${bitcoinConfDefaults.rpccookiefile}`,
+      cookie_file: `${rootDir}/${bitcoinConfDefaults.rpccookiefile}`,
       tor_proxy: `${osIp}:9050`,
       tor_only: !!conf.onlynet,
-      passthrough_rpcauth: '/data/bitcoin.conf',
+      passthrough_rpcauth: `${rootDir}/bitcoin.conf`,
     })
 
     await promises.chmod(configToml.path, 0o600)
@@ -209,7 +198,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
         mainMounts,
         'proxy-sub',
       ),
-      command: ['/usr/bin/btc_rpc_proxy', '--conf', '/data/config.toml'],
+      command: ['/usr/bin/btc_rpc_proxy', '--conf', `${rootDir}/config.toml`],
       ready: {
         display: 'RPC Proxy',
         fn: () =>

@@ -3,6 +3,8 @@ import { bitcoinConfFile } from './file-models/bitcoin.conf'
 import { sdk } from './sdk'
 import { peerInterfaceId } from './interfaces'
 
+export const rootDir = '/data'
+
 export type GetNetworkInfo = {
   connections: number
   connections_in: number

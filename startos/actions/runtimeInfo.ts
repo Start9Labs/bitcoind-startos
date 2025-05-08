@@ -1,6 +1,6 @@
 import { T } from '@start9labs/start-sdk'
 import { sdk } from '../sdk'
-import { GetBlockchainInfo, GetNetworkInfo } from '../utils'
+import { GetBlockchainInfo, GetNetworkInfo, rootDir } from '../utils'
 import { mainMounts } from '../main'
 import { bitcoinConfFile } from '../file-models/bitcoin.conf'
 import { rpcPort } from '../interfaces'
@@ -31,14 +31,14 @@ export const runtimeInfo = sdk.Action.withoutInput(
       mainMounts,
       'getnetworkinfo',
       async (subc) => {
-        return (await subc.execFail([
+        return await subc.execFail([
           'bitcoin-cli',
-          '-conf=/data/bitcoin.conf',
-          '-rpccookiefile=/data/.cookie',
+          `-conf=${rootDir}/bitcoin.conf`,
+          '-rpccookiefile=${rootDir}/.cookie',
           `-rpcport=${conf.prune ? 18332 : rpcPort}`,
           'getnetworkinfo',
-        ]))
-      }
+        ])
+      },
     )
 
     const networkInfoRaw: GetNetworkInfo = JSON.parse(
@@ -53,16 +53,14 @@ export const runtimeInfo = sdk.Action.withoutInput(
       mainMounts,
       'getblockchaininfo',
       async (subc) => {
-        return (await subc.execFail(
-          [
-            'bitcoin-cli',
-            '-conf=/data/bitcoin.conf',
-            '-rpccookiefile=/data/.cookie',
-            `-rpcport=${conf.prune ? 18332 : rpcPort}`,
-            'getblockchaininfo',
-          ],
-        ))
-      }
+        return await subc.execFail([
+          'bitcoin-cli',
+          `-conf=${rootDir}/bitcoin.conf`,
+          `-rpccookiefile=${rootDir}/.cookie`,
+          `-rpcport=${conf.prune ? 18332 : rpcPort}`,
+          'getblockchaininfo',
+        ])
+      },
     )
 
     const blockchainInfoRaw: GetBlockchainInfo = JSON.parse(
