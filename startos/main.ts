@@ -9,7 +9,7 @@ import { promises } from 'fs'
 
 const diskUsage = utils.once(() => diskusage.check('/'))
 const archivalMin = 900_000_000_000
-export const mainMounts = sdk.Mounts.of().addVolume({
+export const mainMounts = sdk.Mounts.of().mountVolume({
   volumeId: 'main',
   subpath: null,
   mountpoint: rootDir,

@@ -59,7 +59,7 @@ export const generateRpcUser = sdk.Action.withInput(
       {
         imageId: 'python',
       },
-      sdk.Mounts.of().addAssets({
+      sdk.Mounts.of().mountAssets({
         subpath: null,
         mountpoint,
       }),
