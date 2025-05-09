@@ -34,7 +34,7 @@ export const runtimeInfo = sdk.Action.withoutInput(
         return await subc.execFail([
           'bitcoin-cli',
           `-conf=${rootDir}/bitcoin.conf`,
-          '-rpccookiefile=${rootDir}/.cookie',
+          `-rpccookiefile=${rootDir}/.cookie`,
           `-rpcport=${conf.prune ? 18332 : rpcPort}`,
           'getnetworkinfo',
         ])
