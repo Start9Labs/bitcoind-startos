@@ -6,7 +6,7 @@ import { readFile } from 'fs/promises'
 import { bitcoinConfDefaults } from '../utils'
 
 export const v28_1_0_0 = VersionInfo.of({
-  version: '28.1:0-alpha.5',
+  version: '29.0:0-alpha.0',
   releaseNotes: 'Revamped for StartOS 0.4.0',
   migrations: {
     up: async ({ effects }) => {
@@ -133,26 +133,13 @@ export const v28_1_0_0 = VersionInfo.of({
         peerblockfilters: peerblockfilters,
         prune: pruned ? pruning.size : bitcoinConfDefaults.prune,
         bind: listen ? '0.0.0.0:8333' : bitcoinConfDefaults.bind,
-      }
 
-      if (zmq) {
-        Object.assign({
-          structuredConf,
-          zmqpubrawblock: 'tcp://0.0.0.0:28332',
-          zmqpubhashblock: 'tcp://0.0.0.0:28332',
-          zmqpubrawtx: 'tcp://0.0.0.0:28333',
-          zmqpubhashtx: 'tcp://0.0.0.0:28333',
-          zmqpubsequence: 'tcp://0.0.0.0:28333',
-        })
-      } else {
-        Object.assign({
-          structuredConf,
-          zmqpubrawblock: bitcoinConfDefaults.zmqpubrawblock,
-          zmqpubhashblock: bitcoinConfDefaults.zmqpubhashblock,
-          zmqpubrawtx: bitcoinConfDefaults.zmqpubrawtx,
-          zmqpubhashtx: bitcoinConfDefaults.zmqpubhashtx,
-          zmqpubsequence: bitcoinConfDefaults.zmqpubsequence,
-        })
+        // ZMQ
+        zmqpubrawblock: zmq ? 'tcp://0.0.0.0:28332' : undefined,
+        zmqpubhashblock: zmq ? 'tcp://0.0.0.0:28332' : undefined,
+        zmqpubrawtx: zmq ? 'tcp://0.0.0.0:28333' : undefined,
+        zmqpubhashtx: zmq ? 'tcp://0.0.0.0:28333' : undefined,
+        zmqpubsequence: zmq ? 'tcp://0.0.0.0:28333' : undefined,
       }
 
       if (onlyconnect) {
