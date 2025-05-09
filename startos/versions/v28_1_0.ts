@@ -6,7 +6,7 @@ import { bitcoinConfDefaults } from '../utils'
 import { storeJson } from '../file-models/store.json'
 
 export const v28_1_0_0 = VersionInfo.of({
-  version: '28.1:0-alpha.5',
+  version: '28.1:0-alpha.6',
   releaseNotes: 'Revamped for StartOS 0.4.0',
   migrations: {
     up: async ({ effects }) => {
