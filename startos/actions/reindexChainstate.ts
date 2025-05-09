@@ -1,4 +1,5 @@
 import { bitcoinConfFile } from '../file-models/bitcoin.conf'
+import { storeJson } from '../file-models/store.json'
 import { sdk } from '../sdk'
 
 export const reindexChainstate = sdk.Action.withoutInput(
@@ -14,15 +15,14 @@ export const reindexChainstate = sdk.Action.withoutInput(
       "While faster than 'Reindex', 'Reindex Chainstate' can still take several days or more to complete.",
     allowedStatuses: 'any',
     group: 'Reindex',
-    visibility:
-      (await bitcoinConfFile.read.const(effects))?.prune
-        ? 'hidden'
-        : 'enabled',
+    visibility: (await bitcoinConfFile.read().const(effects))?.prune
+      ? 'hidden'
+      : 'enabled',
   }),
 
   // execution function
   async ({ effects }) => {
-    await sdk.store.setOwn(effects, sdk.StorePath.reindexChainstate, true)
+    await storeJson.merge(effects, { reindexChainstate: true})
     return {
       version: '1',
       title: 'Success',

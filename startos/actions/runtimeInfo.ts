@@ -22,7 +22,7 @@ export const runtimeInfo = sdk.Action.withoutInput(
 
   // execution function
   async ({ effects }) => {
-    const conf = (await bitcoinConfFile.read.const(effects))!
+    const conf = (await bitcoinConfFile.read().const(effects))!
     // getnetowrkinfo
 
     const networkInfoRes = await sdk.SubContainer.withTemp(

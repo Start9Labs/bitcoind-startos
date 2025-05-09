@@ -96,7 +96,7 @@ export const mempoolConfig = sdk.Action.withInput(
 )
 
 async function read(effects: any): Promise<PartialMempoolSpec> {
-  const bitcoinConf = await bitcoinConfFile.read.const(effects)
+  const bitcoinConf = await bitcoinConfFile.read().const(effects)
   if (!bitcoinConf) return {}
 
   const mempoolSettings: PartialMempoolSpec = {

@@ -164,7 +164,7 @@ export const config = sdk.Action.withInput(
 )
 
 async function read(effects: any): Promise<PartialConfigSpec> {
-  const bitcoinConf = await bitcoinConfFile.read.const(effects)
+  const bitcoinConf = await bitcoinConfFile.read().const(effects)
   if (!bitcoinConf) return {}
 
   return {

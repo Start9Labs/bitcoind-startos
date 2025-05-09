@@ -1,16 +1,16 @@
 import { VersionInfo, IMPOSSIBLE } from '@start9labs/start-sdk'
 import { bitcoinConfFile, shape } from '../file-models/bitcoin.conf'
 import { load } from 'js-yaml'
-import { sdk } from '../sdk'
 import { readFile } from 'fs/promises'
 import { bitcoinConfDefaults } from '../utils'
+import { storeJson } from '../file-models/store.json'
 
 export const v28_1_0_0 = VersionInfo.of({
   version: '28.1:0-alpha.5',
   releaseNotes: 'Revamped for StartOS 0.4.0',
   migrations: {
     up: async ({ effects }) => {
-      await sdk.store.setOwn(effects, sdk.StorePath, {
+      await storeJson.write(effects, {
         reindexBlockchain: false,
         reindexChainstate: false,
       })

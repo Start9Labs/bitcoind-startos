@@ -1,14 +1,18 @@
 import { sdk } from './sdk'
-import { exposedStore, initStore } from './store'
 import { setDependencies } from './dependencies'
 import { setInterfaces } from './interfaces'
 import { versions } from './versions'
 import { actions } from './actions'
 import { bitcoinConfFile } from './file-models/bitcoin.conf'
 import { bitcoinConfDefaults } from './utils'
+import { storeJson } from './file-models/store.json'
 
 // **** Pre Install ****
 const preInstall = sdk.setupPreInstall(async ({ effects }) => {
+  await storeJson.write(effects, {
+    reindexBlockchain: false,
+    reindexChainstate: false,
+  })
   await bitcoinConfFile.write(effects, {
     ...bitcoinConfDefaults,
     externalip: 'initial-setup',
@@ -32,6 +36,4 @@ export const { packageInit, packageUninit, containerInit } = sdk.setupInit(
   setInterfaces,
   setDependencies,
   actions,
-  initStore,
-  exposedStore,
 )

@@ -110,7 +110,7 @@ export const peerConfig = sdk.Action.withInput(
 )
 
 async function read(effects: any): Promise<PartialPeerSpec> {
-  const bitcoinConf = await bitcoinConfFile.read.const(effects)
+  const bitcoinConf = await bitcoinConfFile.read().const(effects)
   if (!bitcoinConf) return {}
 
   const peerSettings: PartialPeerSpec = {

@@ -6,6 +6,7 @@ import { T, utils } from '@start9labs/start-sdk'
 import { configToml } from './file-models/rpc-proxy.toml'
 import { peerInterfaceId, rpcPort } from './interfaces'
 import { promises } from 'fs'
+import { storeJson } from './file-models/store.json'
 
 const diskUsage = utils.once(() => diskusage.check('/'))
 const archivalMin = 900_000_000_000
@@ -21,7 +22,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
    * ======================== Setup (optional) ========================
    */
 
-  const conf = (await bitcoinConfFile.read.const(effects))!
+  const conf = (await bitcoinConfFile.read().const(effects))!
 
   const disk = await diskUsage()
   if (disk.total < archivalMin || conf.prune) {
@@ -59,27 +60,17 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     }
   }
 
-  const reindexBlockchain = await sdk.store
-    .getOwn(effects, sdk.StorePath.reindexBlockchain)
-    .once()
+  const { reindexBlockchain, reindexChainstate } = (await storeJson.read().once())!
 
   if (reindexBlockchain) {
     bitcoinArgs.push('-reindex')
-    await sdk.store.setOwn(effects, sdk.StorePath.reindexBlockchain, false)
+    await storeJson.merge(effects, { reindexBlockchain: false })
+  } else if (reindexChainstate) {
+    bitcoinArgs.push('-reindex-chainstate')
+    await storeJson.merge(effects, { reindexChainstate: false })
   }
 
-  sdk.store.getOwn(effects, sdk.StorePath.reindexBlockchain).const()
-
-  const reindexChainstate = await sdk.store
-    .getOwn(effects, sdk.StorePath.reindexChainstate)
-    .once()
-
-  if (reindexChainstate) {
-    bitcoinArgs.push('-reindex')
-    await sdk.store.setOwn(effects, sdk.StorePath.reindexChainstate, false)
-  }
-
-  await sdk.store.getOwn(effects, sdk.StorePath.reindexChainstate).const()
+  await storeJson.read().const(effects)
 
   const bitcoindSub = await sdk.SubContainer.of(
     effects,

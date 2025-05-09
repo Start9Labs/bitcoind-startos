@@ -9,7 +9,7 @@ export const peerPort = 8333
 export const rpcPort = 8332
 
 export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
-  let config = await bitcoinConfFile.read.const(effects)
+  let config = await bitcoinConfFile.read().const(effects)
 
   if (!config) return []
 

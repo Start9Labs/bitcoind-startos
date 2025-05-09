@@ -74,7 +74,7 @@ export const rpcConfig = sdk.Action.withInput(
 )
 
 async function read(effects: any): Promise<PartialRpcSpec> {
-  const bitcoinConf = await bitcoinConfFile.read.const(effects)
+  const bitcoinConf = await bitcoinConfFile.read().const(effects)
   if (!bitcoinConf) return {}
 
   return {

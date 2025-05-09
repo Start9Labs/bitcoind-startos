@@ -58,7 +58,7 @@ export async function getRpcUsers(effects: Effects) {
 }
 
 export async function getRpcAuth(effects: Effects) {
-  return (await bitcoinConfFile.read.const(effects))?.rpcauth
+  return (await bitcoinConfFile.read().const(effects))?.rpcauth
 }
 
 export const bitcoinConfDefaults = {
