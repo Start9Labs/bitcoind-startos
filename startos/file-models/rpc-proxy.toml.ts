@@ -11,6 +11,7 @@ const shape = object({
   tor_proxy: string,
   tor_only: boolean,
   passthrough_rpcauth: string.optional(),
+  passthrough_rpccookie: string.optional(),
 })
 
 export const configToml = FileHelper.toml(
