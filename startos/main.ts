@@ -60,7 +60,9 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     }
   }
 
-  const { reindexBlockchain, reindexChainstate } = (await storeJson.read().once())!
+  const { reindexBlockchain, reindexChainstate } = (await storeJson
+    .read()
+    .once()) || { reindexBlockchain: false, reindexChainstate: false }
 
   if (reindexBlockchain) {
     bitcoinArgs.push('-reindex')
