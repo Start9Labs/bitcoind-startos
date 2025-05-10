@@ -180,6 +180,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
       tor_proxy: `${osIp}:9050`,
       tor_only: !!conf.onlynet,
       passthrough_rpcauth: `${rootDir}/bitcoin.conf`,
+      passthrough_rpccookie: `${rootDir}/${bitcoinConfDefaults.rpccookiefile}`,
     })
 
     await promises.chmod(configToml.path, 0o600)
