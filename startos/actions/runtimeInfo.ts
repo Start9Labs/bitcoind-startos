@@ -2,7 +2,7 @@ import { T } from '@start9labs/start-sdk'
 import { sdk } from '../sdk'
 import { GetBlockchainInfo, GetNetworkInfo, rootDir } from '../utils'
 import { mainMounts } from '../main'
-import { bitcoinConfFile } from '../file-models/bitcoin.conf'
+import { bitcoinConfFile } from '../fileModels/bitcoin.conf'
 import { rpcPort } from '../interfaces'
 
 export const runtimeInfo = sdk.Action.withoutInput(
@@ -80,10 +80,7 @@ export const runtimeInfo = sdk.Action.withoutInput(
       version: '1',
       title: 'Node Runtime Info',
       message: null,
-      result: {
-        type: 'group',
-        value,
-      },
+      result: { type: 'group', value },
     }
   },
 )
@@ -205,12 +202,7 @@ function getSoftforks(
       }
     }
 
-    return {
-      type: 'group',
-      name: key,
-      description: null,
-      value,
-    }
+    return { type: 'group', name: key, description: null, value }
   })
 }
 

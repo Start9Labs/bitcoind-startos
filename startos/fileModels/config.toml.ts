@@ -14,6 +14,7 @@ const shape = object({
   passthrough_rpccookie: string.optional(),
 })
 
+// This is the config file for btc-rpc-proxy
 export const configToml = FileHelper.toml(
   '/media/startos/volumes/main/config.toml',
   shape,

@@ -1,4 +1,4 @@
-import { bitcoinConfFile } from '../file-models/bitcoin.conf'
+import { bitcoinConfFile } from '../fileModels/bitcoin.conf'
 import { sdk } from '../sdk'
 import { getRpcAuth, getRpcUsers } from '../utils'
 const { InputSpec, Value } = sdk
@@ -11,10 +11,7 @@ export const inputSpec = InputSpec.of({
       name: 'Existing RPC Users',
       default: [],
       values: existingUsernames.reduce(
-        (obj, curr) => ({
-          ...obj,
-          [curr]: curr,
-        }),
+        (obj, curr) => ({ ...obj, [curr]: curr }),
         {},
       ),
     }
@@ -47,11 +44,9 @@ export const deleteRpcAuth = sdk.Action.withInput(
   // execution function
   async ({ effects, input }) => {
     const rpcauth = (await getRpcAuth(effects))!
-    const filtered = [rpcauth].flat().filter(
-      (auth) => !input.deletedRpcUsers.includes(auth.split(':', 2)[0]),
-    )
-    await bitcoinConfFile.merge(effects, {
-      rpcauth: filtered,
-    })
+    const filtered = [rpcauth]
+      .flat()
+      .filter((auth) => !input.deletedRpcUsers.includes(auth.split(':', 2)[0]))
+    await bitcoinConfFile.merge(effects, { rpcauth: filtered })
   },
 )

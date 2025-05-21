@@ -1,5 +1,5 @@
-import { bitcoinConfFile } from '../file-models/bitcoin.conf'
-import { storeJson } from '../file-models/store.json'
+import { bitcoinConfFile } from '../fileModels/bitcoin.conf'
+import { storeJson } from '../fileModels/store.json'
 import { sdk } from '../sdk'
 
 export const reindexChainstate = sdk.Action.withoutInput(
@@ -22,7 +22,7 @@ export const reindexChainstate = sdk.Action.withoutInput(
 
   // execution function
   async ({ effects }) => {
-    await storeJson.merge(effects, { reindexChainstate: true})
+    await storeJson.merge(effects, { reindexChainstate: true })
     return {
       version: '1',
       title: 'Success',

@@ -1,4 +1,4 @@
-import { bitcoinConfFile } from '../file-models/bitcoin.conf'
+import { bitcoinConfFile } from '../fileModels/bitcoin.conf'
 import { sdk } from '../sdk'
 import { getRpcAuth, getRpcUsers } from '../utils'
 const { InputSpec, Value } = sdk
@@ -56,13 +56,8 @@ export const generateRpcUser = sdk.Action.withInput(
 
     const res = await sdk.SubContainer.withTemp(
       effects,
-      {
-        imageId: 'python',
-      },
-      sdk.Mounts.of().mountAssets({
-        subpath: null,
-        mountpoint,
-      }),
+      { imageId: 'python' },
+      sdk.Mounts.of().mountAssets({ subpath: null, mountpoint }),
       'rpc-auth-generator',
       (subc) =>
         subc.exec(['python3', `${mountpoint}/rpcauth.py`, `${input.username}`]),
@@ -76,9 +71,7 @@ export const generateRpcUser = sdk.Action.withInput(
       const rpcAuthEntries = [existingRpcAuthEntries].flat()
       rpcAuthEntries.push(newRpcAuth)
 
-      await bitcoinConfFile.merge(effects, {
-        rpcauth: rpcAuthEntries,
-      })
+      await bitcoinConfFile.merge(effects, { rpcauth: rpcAuthEntries })
 
       return {
         version: '1',

@@ -1,12 +1,12 @@
 import { sdk } from './sdk'
-import { bitcoinConfFile } from './file-models/bitcoin.conf'
+import { bitcoinConfFile } from './fileModels/bitcoin.conf'
 import { bitcoinConfDefaults, GetBlockchainInfo, rootDir } from './utils'
 import * as diskusage from 'diskusage'
 import { T, utils } from '@start9labs/start-sdk'
-import { configToml } from './file-models/rpc-proxy.toml'
+import { configToml } from './fileModels/config.toml'
 import { peerInterfaceId, rpcPort } from './interfaces'
 import { promises } from 'fs'
-import { storeJson } from './file-models/store.json'
+import { storeJson } from './fileModels/store.json'
 
 const diskUsage = utils.once(() => diskusage.check('/'))
 const archivalMin = 900_000_000_000
@@ -112,22 +112,13 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
           }
         }
 
-        return {
-          message: 'Bitcoin is fully synced',
-          result: 'success',
-        }
+        return { message: 'Bitcoin is fully synced', result: 'success' }
       }
 
       if (res.stderr.includes('error code: -28')) {
-        return {
-          message: 'Bitcoin is starting…',
-          result: 'starting',
-        }
+        return { message: 'Bitcoin is starting…', result: 'starting' }
       } else {
-        return {
-          message: res.stderr as string,
-          result: 'failure',
-        }
+        return { message: res.stderr as string, result: 'failure' }
       }
     },
   })

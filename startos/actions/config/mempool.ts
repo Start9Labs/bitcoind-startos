@@ -1,5 +1,5 @@
 import { T } from '@start9labs/start-sdk'
-import { bitcoinConfFile, shape } from '../../file-models/bitcoin.conf'
+import { bitcoinConfFile, shape } from '../../fileModels/bitcoin.conf'
 import { sdk } from '../../sdk'
 import { bitcoinConfDefaults } from '../../utils'
 

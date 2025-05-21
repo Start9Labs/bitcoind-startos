@@ -1,7 +1,7 @@
 import { sdk } from '../../sdk'
 import { utils } from '@start9labs/start-sdk'
 import * as diskusage from 'diskusage'
-import { bitcoinConfFile } from '../../file-models/bitcoin.conf'
+import { bitcoinConfFile } from '../../fileModels/bitcoin.conf'
 import { bitcoinConfDefaults } from '../../utils'
 import { T } from '@start9labs/start-sdk'
 
@@ -50,10 +50,7 @@ const configSpec = sdk.InputSpec.of({
       'Enabling Coinstats Index reduces the time for the gettxoutsetinfo RPC to complete at the cost of using additional disk space',
   }),
   wallet: Value.object(
-    {
-      name: 'Wallet',
-      description: 'Wallet Settings',
-    },
+    { name: 'Wallet', description: 'Wallet Settings' },
     InputSpec.of({
       enable: Value.toggle({
         name: 'Enable Wallet',

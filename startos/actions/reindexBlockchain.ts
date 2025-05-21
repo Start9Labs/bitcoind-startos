@@ -1,4 +1,4 @@
-import { storeJson } from '../file-models/store.json'
+import { storeJson } from '../fileModels/store.json'
 import { sdk } from '../sdk'
 
 export const reindexBlockchain = sdk.Action.withoutInput(
@@ -19,7 +19,7 @@ export const reindexBlockchain = sdk.Action.withoutInput(
 
   // execution function
   async ({ effects }) => {
-    await storeJson.merge(effects, { reindexBlockchain: true})
+    await storeJson.merge(effects, { reindexBlockchain: true })
     return {
       version: '1',
       title: 'Success',

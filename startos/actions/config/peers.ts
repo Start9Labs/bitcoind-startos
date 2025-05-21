@@ -1,5 +1,5 @@
 import { T } from '@start9labs/start-sdk'
-import { bitcoinConfFile, shape } from '../../file-models/bitcoin.conf'
+import { bitcoinConfFile, shape } from '../../fileModels/bitcoin.conf'
 import { sdk } from '../../sdk'
 import { bitcoinConfDefaults, getExteralAddresses } from '../../utils'
 
@@ -26,10 +26,7 @@ const peerSpec = sdk.InputSpec.of({
   }),
   externalip: getExteralAddresses(),
   connectpeer: Value.union(
-    {
-      name: 'Connect Peer',
-      default: 'addnode',
-    },
+    { name: 'Connect Peer', default: 'addnode' },
     Variants.of({
       connect: {
         name: 'Connect',

@@ -1,5 +1,5 @@
 import { Effects } from '@start9labs/start-sdk/base/lib/Effects'
-import { bitcoinConfFile } from './file-models/bitcoin.conf'
+import { bitcoinConfFile } from './fileModels/bitcoin.conf'
 import { sdk } from './sdk'
 import { peerInterfaceId } from './interfaces'
 
@@ -131,10 +131,7 @@ export function getExteralAddresses() {
     }
 
     const urlsWithNone = urls.reduce(
-      (obj, url) => ({
-        ...obj,
-        [url]: url,
-      }),
+      (obj, url) => ({ ...obj, [url]: url }),
       {} as Record<string, string>,
     )
 
