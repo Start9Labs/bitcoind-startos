@@ -16,6 +16,9 @@ const shape = object({
 
 // This is the config file for btc-rpc-proxy
 export const configToml = FileHelper.toml(
-  '/media/startos/volumes/main/config.toml',
+  {
+    volumeId: 'main',
+    subpath: '/config.toml',
+  },
   shape,
 )

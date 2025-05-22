@@ -133,7 +133,10 @@ function onWrite(a: unknown): any {
 }
 
 export const bitcoinConfFile = FileHelper.ini(
-  '/media/startos/volumes/main/bitcoin.conf',
+  {
+    volumeId: 'main',
+    subpath: '/bitcoin.conf',
+  },
   shape,
   { bracketedArray: false },
   {
