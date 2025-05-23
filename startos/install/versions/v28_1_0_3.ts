@@ -14,66 +14,57 @@ export const v28_1_0_3 = VersionInfo.of({
         reindexBlockchain: false,
         reindexChainstate: false,
       })
-      const configYaml = load(
-        await readFile(
-          '/media/startos/volumes/main/start9/config.yaml',
-          'utf8',
-        ),
-      ) as
-        | {
-            ['peer-tor-address']: string
-            rpc: {
-              advanced: {
-                auth: string[]
-                servertimeout: number
-                threads: number
-                workqueue: number
-              }
-            }
-            'zmq-enabled': boolean
-            txindex: boolean
-            coinstatsindex: boolean
-            wallet: {
-              enable: boolean
-              avoidpartialspends: boolean
-              discardfee: number
-            }
+      try {
+        const configYaml = load(
+          await readFile(
+            '/media/startos/volumes/main/start9/config.yaml',
+            'utf8',
+          ),
+        ) as {
+          ['peer-tor-address']: string
+          rpc: {
             advanced: {
-              mempool: {
-                persistmempool: boolean
-                maxmempool: number
-                mempoolexpiry: number
-                mempoolfullrbf: boolean
-                permitbaremultisig: boolean
-                datacarrier: boolean
-                datacarriersize: number
-              }
-              peers: {
-                listen: boolean
-                onlyconnect: boolean
-                onlyonion: boolean
-                v2transport: boolean
-                addnode: string[]
-              }
-              pruning:
-                | { mode: 'disabled' }
-                | { mode: 'automatic'; size: number }
-              dbcache: number | null
-              blockfilters: {
-                blockfilterindex: boolean
-                peerblockfilters: boolean
-              }
-              bloomfilters: { peerbloomfilters: boolean }
+              auth: string[]
+              servertimeout: number
+              threads: number
+              workqueue: number
             }
           }
-        | undefined
+          'zmq-enabled': boolean
+          txindex: boolean
+          coinstatsindex: boolean
+          wallet: {
+            enable: boolean
+            avoidpartialspends: boolean
+            discardfee: number
+          }
+          advanced: {
+            mempool: {
+              persistmempool: boolean
+              maxmempool: number
+              mempoolexpiry: number
+              mempoolfullrbf: boolean
+              permitbaremultisig: boolean
+              datacarrier: boolean
+              datacarriersize: number
+            }
+            peers: {
+              listen: boolean
+              onlyconnect: boolean
+              onlyonion: boolean
+              v2transport: boolean
+              addnode: string[]
+            }
+            pruning: { mode: 'disabled' } | { mode: 'automatic'; size: number }
+            dbcache: number | null
+            blockfilters: {
+              blockfilterindex: boolean
+              peerblockfilters: boolean
+            }
+            bloomfilters: { peerbloomfilters: boolean }
+          }
+        }
 
-      if (!configYaml) {
-        await bitcoinConfFile.write(effects, {
-          ...bitcoinConfDefaults,
-          externalip: 'initial-setup',
-        })
-      } else {
         const {
           ['peer-tor-address']: peerTorAddress,
           rpc: {
@@ -159,6 +150,11 @@ export const v28_1_0_3 = VersionInfo.of({
         }
 
         await bitcoinConfFile.merge(effects, structuredConf)
+      } catch {
+        await bitcoinConfFile.write(effects, {
+          ...bitcoinConfDefaults,
+          externalip: 'initial-setup',
+        })
       }
     },
     down: IMPOSSIBLE,
