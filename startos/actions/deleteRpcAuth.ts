@@ -23,17 +23,21 @@ export const deleteRpcAuth = sdk.Action.withInput(
   'delete-rpcauth',
 
   // metadata
-  async ({ effects }) => ({
-    name: 'Delete RPC Users',
-    description:
-      'Delete RPC users from Bitcoin.conf. You may want to run this action if the RPC Auth entry is no longer needed or if the password is lost.',
-    warning: null,
-    allowedStatuses: 'any',
-    group: 'RPC Users',
-    visibility: (await getRpcUsers(effects))
-      ? 'enabled'
-      : { disabled: 'There are no RPC users' },
-  }),
+  async ({ effects }) => {
+    const rpcUsers = await getRpcUsers(effects)
+    return {
+      name: 'Delete RPC Users',
+      description:
+        'Delete RPC users from Bitcoin.conf. You may want to run this action if the RPC Auth entry is no longer needed or if the password is lost.',
+      warning: null,
+      allowedStatuses: 'any',
+      group: 'RPC Users',
+      visibility:
+        rpcUsers && rpcUsers.length > 0
+          ? 'enabled'
+          : { disabled: 'There are no RPC users' },
+    }
+  },
 
   // input spec
   inputSpec,
@@ -43,6 +47,7 @@ export const deleteRpcAuth = sdk.Action.withInput(
 
   // execution function
   async ({ effects, input }) => {
+    console.log('FMA getRpcUsers:\n', await getRpcUsers(effects))
     const rpcauth = (await getRpcAuth(effects))!
     const filtered = [rpcauth]
       .flat()
