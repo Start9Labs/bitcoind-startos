@@ -5,7 +5,7 @@ import { readFile } from 'fs/promises'
 import { bitcoinConfDefaults } from '../../utils'
 import { storeJson } from '../../fileModels/store.json'
 
-export const v28_1_0_0 = VersionInfo.of({
+export const v28_1_0_1 = VersionInfo.of({
   version: '28.1:1-alpha.0',
   releaseNotes: 'Revamped for StartOS 0.4.0',
   migrations: {
