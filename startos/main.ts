@@ -132,7 +132,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
 
   const rpcCookieFile = `${rootDir}/${bitcoinConfDefaults.rpccookiefile}`
 
-  bitcoindSub.exec(['rm', rpcCookieFile])
+  await bitcoindSub.exec(['rm', rpcCookieFile])
 
   const daemons = sdk.Daemons.of(effects, started, healthChecks).addDaemon(
     'primary',
