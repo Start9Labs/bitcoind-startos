@@ -7,7 +7,7 @@ import { configToml } from './fileModels/config.toml'
 import { peerInterfaceId, rpcPort } from './interfaces'
 import { promises } from 'fs'
 import { storeJson } from './fileModels/store.json'
-import { access } from 'fs/promises'
+import { access, rm } from 'fs/promises'
 
 const diskUsage = utils.once(() => diskusage.check('/'))
 const archivalMin = 900_000_000_000
@@ -132,7 +132,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
 
   const rpcCookieFile = `${rootDir}/${bitcoinConfDefaults.rpccookiefile}`
 
-  await bitcoindSub.exec(['rm', rpcCookieFile])
+  await rm(`${bitcoindSub.rootfs}/${rpcCookieFile}`)
 
   const daemons = sdk.Daemons.of(effects, started, healthChecks).addDaemon(
     'primary',
@@ -142,6 +142,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
       ready: {
         display: 'RPC',
         fn: async () => {
+          await access(`${bitcoindSub.rootfs}/${rpcCookieFile}`)
           const res = await bitcoindSub.exec([
             'bitcoin-cli',
             `-conf=${rootDir}/bitcoin.conf`,
@@ -180,16 +181,6 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
 
     await promises.chmod(configToml.path, 0o600)
 
-    while (true) {
-      try {
-        await access(rpcCookieFile)
-        break
-      } catch {
-        console.log("Waiting for .cookie file...")
-        await new Promise((resolve) => setTimeout(resolve, 5_000))
-      }
-    }
-
     return daemons.addDaemon('proxy', {
       subcontainer: await sdk.SubContainer.of(
         effects,
@@ -206,7 +197,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
             errorMessage: 'The Bitcoin RPC Proxy is not ready',
           }),
       },
-      requires: [],
+      requires: ['primary'],
     })
   }
   return daemons
