@@ -51,7 +51,7 @@ RUN ./configure LDFLAGS=-L`ls -d /opt/db*`/lib/ CPPFLAGS=-I`ls -d /opt/db*`/incl
   --with-libs \
   --with-sqlite=yes \
   --with-daemon
-RUN make -j$(nproc)
+RUN make -j
 RUN make install
 RUN strip ${BITCOIN_PREFIX}/bin/*
 
