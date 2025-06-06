@@ -96,6 +96,7 @@ export const bitcoinConfDefaults = {
   discardfee: 0.0001,
 
   // Other
+  blocknotify: undefined,
   prune: 0,
   zmqpubrawblock: 'tcp://0.0.0.0:28332',
   zmqpubhashblock: 'tcp://0.0.0.0:28332',

@@ -15,6 +15,7 @@ const {
   blockfilterindex,
   peerblockfilters,
   peerbloomfilters,
+  blocknotify,
 } = bitcoinConfDefaults
 
 const { InputSpec, Value } = sdk
@@ -37,6 +38,12 @@ const configSpec = sdk.InputSpec.of({
         'By enabling Transaction Index (txindex) Bitcoin Core will build a complete transaction index. This allows Bitcoin Core to access any transaction with commands like `getrawtransaction`.',
       disabled: disk.total < archivalMin ? 'Not enough disk space' : false,
     }
+  }),
+  blocknotify: Value.text({
+    name: 'Block Notify',
+    required: false,
+    default: null,
+    description: 'Execute an arbitrary command when the best block changes',
   }),
   coinstatsindex: Value.toggle({
     name: 'Coinstats Index',
@@ -168,6 +175,7 @@ async function read(effects: any): Promise<PartialConfigSpec> {
       avoidpartialspends: !!bitcoinConf.avoidpartialspends,
       discardfee: bitcoinConf.discardfee,
     },
+    blocknotify: bitcoinConf.blocknotify,
     prune: bitcoinConf.prune,
     dbcache: bitcoinConf.dbcache,
     blockfilters: {
@@ -195,6 +203,7 @@ async function write(effects: T.Effects, input: ConfigSpec) {
     peerbloomfilters: input.peerbloomfilters,
     peerblockfilters: input.blockfilters.peerblockfilters,
     blockfilterindex: input.blockfilters.blockfilterindex ? 'basic' : undefined,
+    blocknotify: input.blocknotify ? input.blocknotify : blocknotify,
     prune: input.prune ? input.prune : prune,
     dbcache: input.dbcache ? input.dbcache : dbcache,
     zmqpubrawblock: input.zmqEnabled ? 'tcp://0.0.0.0:28332' : undefined,

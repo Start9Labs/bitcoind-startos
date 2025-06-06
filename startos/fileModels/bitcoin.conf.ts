@@ -41,6 +41,7 @@ const {
   disablewallet,
   avoidpartialspends,
   discardfee,
+  blocknotify,
   prune,
   zmqpubrawblock,
   zmqpubhashblock,
@@ -82,6 +83,9 @@ export const shape = object({
   onlynet: string.optional().onMismatch(onlynet),
   v2transport: boolean.onMismatch(v2transport),
   externalip: string.optional().onMismatch(externalip),
+
+  // Blocknotify
+  blocknotify: string.optional().onMismatch(blocknotify),
 
   // Whitelist
   whitelist: stringArray.orParser(string).optional().onMismatch(whitelist),
