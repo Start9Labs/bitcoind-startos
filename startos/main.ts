@@ -23,7 +23,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
    * ======================== Setup (optional) ========================
    */
 
-  const conf = (await bitcoinConfFile.read().const(effects))!
+  const conf = (await bitcoinConfFile.read().once())!
 
   const disk = await diskUsage()
   if (disk.total < archivalMin || conf.prune) {
@@ -73,6 +73,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     await storeJson.merge(effects, { reindexChainstate: false })
   }
 
+  await bitcoinConfFile.read().const(effects)
   await storeJson.read().const(effects)
 
   const bitcoindSub = await sdk.SubContainer.of(
