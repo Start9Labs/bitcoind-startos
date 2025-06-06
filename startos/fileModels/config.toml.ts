@@ -1,12 +1,12 @@
 import { FileHelper, matches } from '@start9labs/start-sdk'
 
-const { object, string, boolean, number } = matches
+const { object, string, boolean, natural } = matches
 
 const shape = object({
   bitcoind_address: string,
-  bitcoind_port: number,
+  bitcoind_port: natural,
   bind_address: string,
-  bind_port: number,
+  bind_port: natural,
   cookie_file: string,
   tor_proxy: string,
   tor_only: boolean,
