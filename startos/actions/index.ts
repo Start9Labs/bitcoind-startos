@@ -1,5 +1,5 @@
 import { sdk } from '../sdk'
-import { config } from './config/config'
+import { config } from './config/other'
 import { mempoolConfig } from './config/mempool'
 import { peerConfig } from './config/peers'
 import { rpcConfig } from './config/rpc'

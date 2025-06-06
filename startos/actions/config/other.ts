@@ -12,11 +12,6 @@ const {
   discardfee,
   prune,
   dbcache,
-  zmqpubhashblock,
-  zmqpubhashtx,
-  zmqpubrawtx,
-  zmqpubrawblock,
-  zmqpubsequence,
   blockfilterindex,
   peerblockfilters,
   peerbloomfilters,
@@ -142,8 +137,8 @@ export const config = sdk.Action.withInput(
 
   // metadata
   async ({ effects }) => ({
-    name: 'Customize Bitcoin',
-    description: 'Edit the bitcoin.conf configuration file',
+    name: 'Other Settings',
+    description: 'Edit more values in bitcoin.conf',
     warning: null,
     allowedStatuses: 'any',
     group: 'Configuration',
