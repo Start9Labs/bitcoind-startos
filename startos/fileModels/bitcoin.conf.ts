@@ -15,6 +15,14 @@ const literal = (val: string | number) => {
     .map((a) => (typeof val === 'number' ? Number(a) : a))
 }
 
+const onlyNetOptions = anyOf(
+  matches.literal('ipv4'),
+  matches.literal('ipv6'),
+  matches.literal('onion'),
+  matches.literal('i2p'),
+  matches.literal('cjdns'),
+)
+
 const {
   rpcbind,
   rpcallowip,
@@ -80,7 +88,7 @@ export const shape = object({
   bind: string.optional().onMismatch(bind),
   connect: stringArray.orParser(string).optional().onMismatch(connect),
   addnode: stringArray.orParser(string).optional().onMismatch(addnode),
-  onlynet: string.optional().onMismatch(onlynet),
+  onlynet: arrayOf(onlyNetOptions.optional().onMismatch(undefined)).optional(),
   v2transport: boolean.onMismatch(v2transport),
   externalip: string.optional().onMismatch(externalip),
 

@@ -174,7 +174,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
       bind_port: rpcPort,
       cookie_file: `${rootDir}/${bitcoinConfDefaults.rpccookiefile}`,
       tor_proxy: `${osIp}:9050`,
-      tor_only: !!conf.onlynet,
+      tor_only: conf.onlynet ? conf.onlynet.includes('onion') : false,
       passthrough_rpcauth: `${rootDir}/bitcoin.conf`,
       passthrough_rpccookie: `${rootDir}/${bitcoinConfDefaults.rpccookiefile}`,
     })

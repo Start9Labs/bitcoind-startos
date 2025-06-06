@@ -116,7 +116,7 @@ export const v28_1_0_3 = VersionInfo.of({
 
           // Peers
           listen: listen,
-          onlynet: onlyonion ? 'onion' : undefined,
+          onlynet: onlyonion ? ['onion'] : undefined,
           v2transport: v2transport,
 
           // Wallet
