@@ -139,7 +139,9 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     'primary',
     {
       subcontainer: bitcoindSub,
-      command: ['bitcoind', ...bitcoinArgs],
+      exec: {
+        command: ['bitcoind', ...bitcoinArgs],
+      },
       ready: {
         display: 'RPC',
         fn: async () => {
@@ -189,7 +191,9 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
         mainMounts,
         'proxy-sub',
       ),
-      command: ['/usr/bin/btc_rpc_proxy', '--conf', `${rootDir}/config.toml`],
+      exec: {
+        command: ['/usr/bin/btc_rpc_proxy', '--conf', `${rootDir}/config.toml`],
+      },
       ready: {
         display: 'RPC Proxy',
         fn: () =>
