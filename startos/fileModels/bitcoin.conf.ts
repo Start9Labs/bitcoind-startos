@@ -6,6 +6,7 @@ const { anyOf, arrayOf, object } = matches
 const stringArray = matches.array(matches.string)
 const string = stringArray.map(([a]) => a).orParser(matches.string)
 const number = string.map((a) => Number(a)).orParser(matches.number)
+const natural = string.map((a) => Number(a)).orParser(matches.natural)
 const boolean = number.map((a) => !!a).orParser(matches.boolean)
 const literal = (val: string | number) => {
   return matches
@@ -69,18 +70,18 @@ export const shape = object({
   rpcbind: string.onMismatch(rpcbind),
   rpcallowip: string.onMismatch(rpcallowip),
   rpcauth: stringArray.orParser(string).optional().onMismatch(rpcauth),
-  rpcservertimeout: number.onMismatch(rpcservertimeout),
-  rpcthreads: number.onMismatch(rpcthreads),
-  rpcworkqueue: number.onMismatch(rpcworkqueue),
+  rpcservertimeout: natural.onMismatch(rpcservertimeout),
+  rpcthreads: natural.onMismatch(rpcthreads),
+  rpcworkqueue: natural.onMismatch(rpcworkqueue),
   rpccookiefile: literal(rpccookiefile).onMismatch(rpccookiefile),
 
   // Mempool
   mempoolfullrbf: boolean.onMismatch(mempoolfullrbf),
   persistmempool: boolean.optional().onMismatch(persistmempool),
-  maxmempool: number.optional().onMismatch(maxmempool),
-  mempoolexpiry: number.onMismatch(mempoolexpiry),
+  maxmempool: natural.optional().onMismatch(maxmempool),
+  mempoolexpiry: natural.onMismatch(mempoolexpiry),
   datacarrier: boolean.onMismatch(datacarrier),
-  datacarriersize: number.onMismatch(datacarriersize),
+  datacarriersize: natural.onMismatch(datacarriersize),
   permitbaremultisig: boolean.onMismatch(permitbaremultisig),
 
   // Peers
@@ -99,10 +100,10 @@ export const shape = object({
   whitelist: stringArray.orParser(string).optional().onMismatch(whitelist),
 
   // Pruning
-  prune: number.onMismatch(prune),
+  prune: natural.onMismatch(prune),
 
   // Performance Tuning
-  dbcache: number.onMismatch(dbcache),
+  dbcache: natural.onMismatch(dbcache),
 
   // Wallet
   disablewallet: boolean.onMismatch(disablewallet),
