@@ -12,7 +12,7 @@ type ValidNets = (typeof validNets)[number]
 const peerSpec = sdk.InputSpec.of({
   listen: Value.toggle({
     name: 'Make Public',
-    default: !!listen,
+    default: listen,
     description: 'Allow other nodes to find your server on the network.',
   }),
   onlynet: Value.multiselect({
@@ -30,7 +30,7 @@ const peerSpec = sdk.InputSpec.of({
   }),
   v2transport: Value.toggle({
     name: 'Use V2 P2P Transport Protocol',
-    default: !!v2transport,
+    default: v2transport,
     description:
       'Enable or disable the use of BIP324 V2 P2P transport protocol.',
   }),
@@ -121,7 +121,7 @@ async function read(effects: any): Promise<PartialPeerSpec> {
   if (!bitcoinConf) return {}
 
   const peerSettings: PartialPeerSpec = {
-    listen: !!bitcoinConf.listen,
+    listen: bitcoinConf.listen,
     onlynet: bitcoinConf.onlynet
       ? [bitcoinConf.onlynet]
           .flat()
@@ -130,7 +130,7 @@ async function read(effects: any): Promise<PartialPeerSpec> {
               x !== undefined && (validNets as readonly string[]).includes(x),
           )
       : onlynet,
-    v2transport: !!bitcoinConf.v2transport,
+    v2transport: bitcoinConf.v2transport,
     externalip:
       bitcoinConf.externalip === undefined ? 'none' : bitcoinConf.externalip,
     connectpeer: {

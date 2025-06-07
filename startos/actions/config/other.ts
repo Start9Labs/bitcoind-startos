@@ -47,7 +47,7 @@ const configSpec = sdk.InputSpec.of({
   }),
   coinstatsindex: Value.toggle({
     name: 'Coinstats Index',
-    default: !!coinstatsindex,
+    default: coinstatsindex,
     description:
       'Enabling Coinstats Index reduces the time for the gettxoutsetinfo RPC to complete at the cost of using additional disk space',
   }),
@@ -168,11 +168,11 @@ async function read(effects: any): Promise<PartialConfigSpec> {
 
   return {
     zmqEnabled: Object.keys(bitcoinConf).includes('zmqpubrawblock'),
-    txindex: !!bitcoinConf.txindex,
-    coinstatsindex: !!bitcoinConf.coinstatsindex,
+    txindex: bitcoinConf.txindex,
+    coinstatsindex: bitcoinConf.coinstatsindex,
     wallet: {
       enable: !bitcoinConf.disablewallet,
-      avoidpartialspends: !!bitcoinConf.avoidpartialspends,
+      avoidpartialspends: bitcoinConf.avoidpartialspends,
       discardfee: bitcoinConf.discardfee,
     },
     blocknotify: bitcoinConf.blocknotify,
@@ -180,9 +180,9 @@ async function read(effects: any): Promise<PartialConfigSpec> {
     dbcache: bitcoinConf.dbcache,
     blockfilters: {
       blockfilterindex: bitcoinConf.blockfilterindex === ('basic' as const),
-      peerblockfilters: !!bitcoinConf.peerblockfilters,
+      peerblockfilters: bitcoinConf.peerblockfilters,
     },
-    peerbloomfilters: !!bitcoinConf.peerbloomfilters,
+    peerbloomfilters: bitcoinConf.peerbloomfilters,
   }
 }
 

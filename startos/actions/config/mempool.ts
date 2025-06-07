@@ -18,7 +18,7 @@ const { Value } = sdk
 const mempoolSpec = sdk.InputSpec.of({
   persistmempool: Value.toggle({
     name: 'Persist Mempool',
-    default: !!persistmempool,
+    default: persistmempool,
     description: 'Save the mempool on shutdown and load on restart.',
   }),
   maxmempool: Value.number({
@@ -44,18 +44,18 @@ const mempoolSpec = sdk.InputSpec.of({
   }),
   mempoolfullrbf: Value.toggle({
     name: 'Enable Full RBF',
-    default: !!mempoolfullrbf,
+    default: mempoolfullrbf,
     description:
       'Policy for your node to use for relaying and mining unconfirmed transactions.  For details, see https://github.com/bitcoin/bitcoin/blob/master/doc/release-notes/release-notes-24.0.1.md#notice-of-new-option-for-transaction-replacement-policies',
   }),
   permitbaremultisig: Value.toggle({
     name: 'Permit Bare Multisig',
-    default: !!permitbaremultisig,
+    default: permitbaremultisig,
     description: 'Relay non-P2SH multisig transactions',
   }),
   datacarrier: Value.toggle({
     name: 'Relay OP_RETURN Transactions',
-    default: !!datacarrier,
+    default: datacarrier,
     description: 'Relay transactions with OP_RETURN outputs',
   }),
   datacarriersize: Value.number({
@@ -103,10 +103,10 @@ async function read(effects: any): Promise<PartialMempoolSpec> {
     maxmempool: bitcoinConf.maxmempool,
     mempoolexpiry: bitcoinConf.mempoolexpiry,
     datacarriersize: bitcoinConf.datacarriersize,
-    mempoolfullrbf: !!bitcoinConf.mempoolfullrbf,
-    persistmempool: !!bitcoinConf.persistmempool,
-    datacarrier: !!bitcoinConf.datacarrier,
-    permitbaremultisig: !!bitcoinConf.permitbaremultisig,
+    mempoolfullrbf: bitcoinConf.mempoolfullrbf,
+    persistmempool: bitcoinConf.persistmempool,
+    datacarrier: bitcoinConf.datacarrier,
+    permitbaremultisig: bitcoinConf.permitbaremultisig,
   }
   return mempoolSettings
 }
