@@ -1,5 +1,7 @@
+import { mainMounts } from '../main'
 import { sdk } from '../sdk'
 import * as fs from 'fs/promises'
+import { rootDir } from '../utils'
 
 export const deletePeers = sdk.Action.withoutInput(
   // id
@@ -17,7 +19,15 @@ export const deletePeers = sdk.Action.withoutInput(
 
   // execution function
   async ({ effects }) => {
-    await fs.rm('/root/.bitcoin/peers.dat')
+    await sdk.SubContainer.withTemp(
+      effects,
+      { imageId: 'bitcoind' },
+      mainMounts,
+      'delete-peers',
+      async (subc) => {
+        await fs.rm(`${subc.rootfs}/${rootDir}/peers.dat`, {force: true})
+      },
+    )
 
     return {
       version: '1',
