@@ -1,5 +1,10 @@
 import { sdk } from './sdk'
-import { peerInterfaceId } from './interfaces'
+export const rpcInterfaceId = 'rpc'
+export const peerInterfaceId = 'peer'
+export const zmqInterfaceId = 'zmq'
+export const zmqPort = 28332
+export const peerPort = 8333
+export const rpcPort = 8332
 
 export const rootDir = '/data'
 

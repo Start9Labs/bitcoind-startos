@@ -3,7 +3,7 @@ import { sdk } from '../sdk'
 import { GetBlockchainInfo, GetNetworkInfo, rootDir } from '../utils'
 import { mainMounts } from '../main'
 import { bitcoinConfFile } from '../fileModels/bitcoin.conf'
-import { rpcPort } from '../interfaces'
+import { rpcPort } from '../utils'
 
 export const runtimeInfo = sdk.Action.withoutInput(
   // id

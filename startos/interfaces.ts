@@ -1,12 +1,13 @@
 import { bitcoinConfFile } from './fileModels/bitcoin.conf'
 import { sdk } from './sdk'
-
-export const rpcInterfaceId = 'rpc'
-export const peerInterfaceId = 'peer'
-export const zmqInterfaceId = 'zmq'
-export const zmqPort = 28332
-export const peerPort = 8333
-export const rpcPort = 8332
+import {
+  peerInterfaceId,
+  peerPort,
+  rpcInterfaceId,
+  rpcPort,
+  zmqInterfaceId,
+  zmqPort,
+} from './utils'
 
 export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
   let config = await bitcoinConfFile.read().const(effects)
