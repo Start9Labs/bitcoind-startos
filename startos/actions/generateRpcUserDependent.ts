@@ -1,6 +1,6 @@
 import { bitcoinConfFile } from '../fileModels/bitcoin.conf'
 import { sdk } from '../sdk'
-import { getRpcAuth, getRpcUsers } from '../utils'
+import { getRpcAuth, getRpcUsers } from './deleteRpcAuth'
 const { InputSpec, Value } = sdk
 
 export const inputSpec = InputSpec.of({
