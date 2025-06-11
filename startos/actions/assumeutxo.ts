@@ -70,6 +70,13 @@ export const assumeutxo = sdk.Action.withInput(
       'assumeutxo',
     )
 
+    try {
+      await fs.access(`${assumeutxoSubc.rootfs}${rootDir}/chainstate_snapshot`)
+      throw new Error('already in progress')
+    } catch {
+      console.log('Exsisting chainstate_snapshot not found')
+    }
+
     assumeutxoPromise = (async () => {
       const conf = (await bitcoinConfFile.read().once())!
 
