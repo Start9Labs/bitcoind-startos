@@ -12,7 +12,7 @@ export const reindexBlockchain = sdk.Action.withoutInput(
       'Rebuilds the block and chainstate databases starting from genesis. If blocks already exist on disk, these are used rather than being re-downloaded. For pruned nodes, this means downloading the entire blockchain over again.',
     warning:
       'Blocks not stored on disk will be re-downloaded in order to rebuild the database. If your node is pruned, this action is equivalent to syncing the node from scratch, so this process could take weeks on low-end hardware.',
-    allowedStatuses: 'any',
+    allowedStatuses: 'only-running',
     group: 'Reindex',
     visibility: 'enabled',
   }),
@@ -23,11 +23,14 @@ export const reindexBlockchain = sdk.Action.withoutInput(
       reindexBlockchain: true,
       fullySynced: false,
     })
+
+    await sdk.restart(effects)
+
     return {
       version: '1',
       title: 'Success',
       message:
-        'Blockchain will be reindexed on next startup. If Bitcoin is already running, it will be automatically restarted now.',
+        'Restarting bitcoind with -reindex argument',
       result: null,
     }
   },

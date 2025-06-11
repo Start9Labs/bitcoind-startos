@@ -73,8 +73,8 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     await storeJson.merge(effects, { reindexChainstate: false })
   }
 
+  // Watch bitcoin.conf and trigger restart if it changes
   await bitcoinConfFile.read().const(effects)
-  await storeJson.read().const(effects)
 
   const bitcoindSub = await sdk.SubContainer.of(
     effects,
