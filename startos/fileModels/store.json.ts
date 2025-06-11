@@ -6,6 +6,7 @@ export const shape = object({
   reindexBlockchain: boolean,
   reindexChainstate: boolean,
   fullySynced: boolean,
+  snapshotInUse: boolean,
 })
 
 export const storeJson = FileHelper.json(

@@ -90,9 +90,10 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   const syncCheck = sdk.HealthCheck.of(effects, {
     id: 'sync-progress',
     name: 'Blockchain Sync Progress',
-    onFirstSuccess: async () => {
-      await storeJson.merge(effects, { fullySynced: true })
-    },
+    // onFirstSuccess: async () => {
+    //   await storeJson.merge(effects, { fullySynced: true, snapshotInUse: false }) // @TODO does this fire on completion of snapshot -> tip or genesis -> shapshot
+    //   await sdk.restart(effects)
+    // },
     fn: async () => {
       const res = await bitcoindSub.exec([
         'bitcoin-cli',

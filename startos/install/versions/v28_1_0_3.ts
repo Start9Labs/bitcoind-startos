@@ -14,6 +14,7 @@ export const v28_1_0_3 = VersionInfo.of({
         reindexBlockchain: false,
         reindexChainstate: false,
         fullySynced: false,
+        snapshotInUse: false,
       })
       try {
         const configYaml = load(

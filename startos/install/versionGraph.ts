@@ -12,6 +12,7 @@ export const versionGraph = VersionGraph.of({
       reindexBlockchain: false,
       reindexChainstate: false,
       fullySynced: false,
+      snapshotInUse: false,
     })
     await bitcoinConfFile.write(effects, {
       ...bitcoinConfDefaults,

@@ -41,10 +41,12 @@ export const assumeutxo = sdk.Action.withInput(
         "While any downloaded snapshot will be checked against a hash that's been hardcoded in source code, this action will download anything at the provided URL to the server - Only download from trusted sources!",
       allowedStatuses: 'only-running',
       group: null,
-      visibility: (await storeJson.read((e) => e.fullySynced).const(effects))
-        ? 'hidden'
-        : assumeutxoPromise
-          ? { disabled: 'Download in progress...' }
+      // visibility: (await storeJson.read((e) => e.fullySynced).const(effects))
+      //   ? 'hidden'
+      visibility: assumeutxoPromise
+        ? { disabled: 'Download in progress...' }
+        : (await storeJson.read((e) => e.snapshotInUse).const(effects))
+          ? { disabled: 'Snapshot in use' }
           : 'enabled',
     }
   },
@@ -69,13 +71,6 @@ export const assumeutxo = sdk.Action.withInput(
       }),
       'assumeutxo',
     )
-
-    try {
-      await fs.access(`${assumeutxoSubc.rootfs}${rootDir}/chainstate_snapshot`)
-      throw new Error('already in progress')
-    } catch {
-      console.log('Exsisting chainstate_snapshot not found')
-    }
 
     assumeutxoPromise = (async () => {
       const conf = (await bitcoinConfFile.read().once())!
@@ -121,6 +116,7 @@ export const assumeutxo = sdk.Action.withInput(
           {},
           null,
         )
+        await storeJson.merge(effects, { snapshotInUse: true })
       } catch (e) {
         console.log('Error downloading snapshot:\n', e)
         await sdk.action.createOwnTask(effects, assumeutxo, 'important')
