@@ -13,6 +13,7 @@ export const v28_1_0_3 = VersionInfo.of({
       await storeJson.write(effects, {
         reindexBlockchain: false,
         reindexChainstate: false,
+        fullySynced: false,
       })
       try {
         const configYaml = load(

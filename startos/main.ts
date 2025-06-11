@@ -90,6 +90,9 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   const syncCheck = sdk.HealthCheck.of(effects, {
     id: 'sync-progress',
     name: 'Blockchain Sync Progress',
+    onFirstSuccess: async () => {
+      await storeJson.merge(effects, { fullySynced: true })
+    },
     fn: async () => {
       const res = await bitcoindSub.exec([
         'bitcoin-cli',

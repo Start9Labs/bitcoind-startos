@@ -22,7 +22,10 @@ export const reindexChainstate = sdk.Action.withoutInput(
 
   // execution function
   async ({ effects }) => {
-    await storeJson.merge(effects, { reindexChainstate: true })
+    await storeJson.merge(effects, {
+      reindexChainstate: true,
+      fullySynced: false,
+    })
     return {
       version: '1',
       title: 'Success',

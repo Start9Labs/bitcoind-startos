@@ -19,7 +19,10 @@ export const reindexBlockchain = sdk.Action.withoutInput(
 
   // execution function
   async ({ effects }) => {
-    await storeJson.merge(effects, { reindexBlockchain: true })
+    await storeJson.merge(effects, {
+      reindexBlockchain: true,
+      fullySynced: false,
+    })
     return {
       version: '1',
       title: 'Success',

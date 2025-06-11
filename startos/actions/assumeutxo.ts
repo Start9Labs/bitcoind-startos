@@ -7,6 +7,7 @@ import { Value } from '@start9labs/start-sdk/base/lib/actions/input/builder'
 import * as fs from 'fs/promises'
 import { SubContainer } from '@start9labs/start-sdk'
 import { manifest } from '../manifest'
+import { storeJson } from '../fileModels/store.json'
 
 export const snapshotTempFile = `/tmp/snap/snapshot`
 const block_840_000 =
@@ -40,9 +41,11 @@ export const assumeutxo = sdk.Action.withInput(
         "While any downloaded snapshot will be checked against a hash that's been hardcoded in source code, this action will download anything at the provided URL to the server - Only download from trusted sources!",
       allowedStatuses: 'only-running',
       group: null,
-      visibility: assumeutxoPromise
-        ? { disabled: 'Download in progress...' }
-        : 'enabled',
+      visibility: (await storeJson.read((e) => e.fullySynced).const(effects))
+        ? 'hidden'
+        : assumeutxoPromise
+          ? { disabled: 'Download in progress...' }
+          : 'enabled',
     }
   },
 
