@@ -122,7 +122,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
       },
       requires: [],
     })
-    .addHealthCheck('sync', {
+    .addHealthCheck('sync-progress', {
       ready: {
         display: 'Blockchain Sync Progress',
         // onFirstSuccess: async () => {
