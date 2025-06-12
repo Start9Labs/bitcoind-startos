@@ -100,24 +100,31 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
       ready: {
         display: 'RPC',
         fn: async () => {
-          await access(`${bitcoindSub.rootfs}/${rpcCookieFile}`)
-          const res = await bitcoindSub.exec([
-            'bitcoin-cli',
-            `-conf=${rootDir}/bitcoin.conf`,
-            `-rpccookiefile=${rpcCookieFile}`,
-            `-rpcconnect=${conf.rpcbind}`,
-            'getrpcinfo',
-          ])
-
-          return res.exitCode === 0
-            ? {
-                message: 'The Bitcoin RPC Interface is ready',
-                result: 'success',
-              }
-            : {
-                message: 'The Bitcoin RPC Interface is not ready',
-                result: 'starting',
-              }
+          try {
+            await access(`${bitcoindSub.rootfs}${rpcCookieFile}`)
+            const res = await bitcoindSub.exec([
+              'bitcoin-cli',
+              `-conf=${rootDir}/bitcoin.conf`,
+              `-rpccookiefile=${rpcCookieFile}`,
+              `-rpcconnect=${conf.rpcbind}`,
+              'getrpcinfo',
+            ])
+            return res.exitCode === 0
+              ? {
+                  message: 'The Bitcoin RPC Interface is ready',
+                  result: 'success',
+                }
+              : {
+                  message: 'The Bitcoin RPC Interface is not ready',
+                  result: 'starting',
+                }
+          } catch {
+            console.log('Waiting for cookie to be created')
+            return {
+              message: 'The Bitcoin RPC Interface is not ready',
+              result: 'starting',
+            }
+          }
         },
       },
       requires: [],
@@ -179,7 +186,11 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
           }
 
           if (!fullySynced && store.snapshotInUse) {
-            // @TODO does this fire on completion of snapshot -> tip or genesis -> shapshot
+            /*
+              @TODO this fires on completion of snapshot -> tip
+              i.e. the snapshot built chainstate is still in use until the sync from genesis (ibd) is complete && server is restarted
+
+            */
             await sdk.restart(effects)
           }
 
