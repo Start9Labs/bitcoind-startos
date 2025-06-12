@@ -33,6 +33,12 @@ export const assumeutxo = sdk.Action.withInput(
   // metadata
   async ({ effects }) => {
     retriggerActionMetadata = effects.constRetry
+    const { snapshotInUse, fullySynced } = (await storeJson
+      .read()
+      .const(effects)) || {
+      snapshotInUse: false,
+      fullySynced: false,
+    }
     return {
       name: 'Download UTXO Snapshot (assumeutxo)',
       description:
@@ -41,13 +47,13 @@ export const assumeutxo = sdk.Action.withInput(
         "While any downloaded snapshot will be checked against a hash that's been hardcoded in source code, this action will download anything at the provided URL to the server - Only download from trusted sources!",
       allowedStatuses: 'only-running',
       group: null,
-      // visibility: (await storeJson.read((e) => e.fullySynced).const(effects))
-      //   ? 'hidden'
       visibility: assumeutxoPromise
         ? { disabled: 'Download in progress...' }
-        : (await storeJson.read((e) => e.snapshotInUse).const(effects))
+        : snapshotInUse
           ? { disabled: 'Snapshot in use' }
-          : 'enabled',
+          : fullySynced
+            ? 'hidden'
+            : 'enabled',
     }
   },
 
