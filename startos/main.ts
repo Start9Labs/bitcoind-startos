@@ -125,13 +125,6 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     .addHealthCheck('sync-progress', {
       ready: {
         display: 'Blockchain Sync Progress',
-        // onFirstSuccess: async () => {
-        //   await storeJson.merge(effects, {
-        //     fullySynced: true,
-        //     snapshotInUse: false,
-        //   }) // @TODO does this fire on completion of snapshot -> tip or genesis -> shapshot
-        //   await sdk.restart(effects)
-        // },
         fn: async () => {
           const res = await bitcoindSub.exec([
             'bitcoin-cli',
@@ -167,6 +160,32 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
         },
       },
       requires: ['primary'],
+    })
+    .addOneshot('synced-true', {
+      requires: ['sync-progress'],
+      subcontainer: null,
+      exec: {
+        fn: async () => {
+          const store = await storeJson.read().once()
+          if (!store) return null
+
+          const fullySynced = store.fullySynced
+
+          if (!fullySynced) {
+            await storeJson.merge(effects, {
+              fullySynced: true,
+              snapshotInUse: false,
+            })
+          }
+
+          if (!fullySynced && store.snapshotInUse) {
+            // @TODO does this fire on completion of snapshot -> tip or genesis -> shapshot
+            await sdk.restart(effects)
+          }
+
+          return null
+        },
+      },
     })
 
   if (conf.prune) {
