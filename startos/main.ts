@@ -139,9 +139,8 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
 
   await rm(`${bitcoindSub.rootfs}/${rpcCookieFile}`, { force: true })
 
-  const daemons = sdk.Daemons.of(effects, started, healthChecks).addDaemon(
-    'primary',
-    {
+  const daemons = sdk.Daemons.of(effects, started)
+    .addDaemon('primary', {
       subcontainer: bitcoindSub,
       exec: {
         command: ['bitcoind', ...bitcoinArgs],
@@ -170,8 +169,46 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
         },
       },
       requires: [],
-    },
-  )
+    })
+    .addHealthCheck('sync', {
+      requires: ['primary'],
+      ready: {
+        display: 'Blockchain Sync Progress',
+        fn: async () => {
+          const res = await bitcoindSub.exec([
+            'bitcoin-cli',
+            `-conf=${rootDir}/bitcoin.conf`,
+            `-rpccookiefile=${rootDir}/${bitcoinConfDefaults.rpccookiefile}`,
+            `-rpcconnect=${conf.rpcbind}`,
+            'getblockchaininfo',
+          ])
+
+          if (
+            res.exitCode === 0 &&
+            res.stdout !== '' &&
+            typeof res.stdout === 'string'
+          ) {
+            const info: GetBlockchainInfo = JSON.parse(res.stdout)
+
+            if (info.initialblockdownload) {
+              const percentage = (info.verificationprogress * 100).toFixed(2)
+              return {
+                message: `Syncing blocks...${percentage}%`,
+                result: 'loading',
+              }
+            }
+
+            return { message: 'Bitcoin is fully synced', result: 'success' }
+          }
+
+          if (res.stderr.includes('error code: -28')) {
+            return { message: 'Bitcoin is starting…', result: 'starting' }
+          } else {
+            return { message: res.stderr as string, result: 'failure' }
+          }
+        },
+      },
+    })
 
   if (conf.prune) {
     await configToml.write(effects, {
