@@ -185,15 +185,6 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
             })
           }
 
-          if (!fullySynced && store.snapshotInUse) {
-            /*
-              @TODO this fires on completion of snapshot -> tip
-              i.e. the snapshot built chainstate is still in use until the sync from genesis (ibd) is complete && server is restarted
-
-            */
-            await sdk.restart(effects)
-          }
-
           return null
         },
       },
