@@ -1,2 +1,4 @@
 export { v28_1_0_3 as current } from './v28_1_0_3'
-export const other = []
+import { current as bitcoinKnotsCurrent } from 'bitcoin-knots-startos/startos/install/versions'
+
+export const other = [bitcoinKnotsCurrent]
