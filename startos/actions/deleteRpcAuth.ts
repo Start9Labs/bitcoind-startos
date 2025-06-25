@@ -58,7 +58,6 @@ export const deleteRpcAuth = sdk.Action.withInput(
 
   // execution function
   async ({ effects, input }) => {
-    console.log('FMA getRpcUsers:\n', await getRpcUsers(effects))
     const rpcauth = (await getRpcAuth(effects))!
     const filtered = [rpcauth]
       .flat()
