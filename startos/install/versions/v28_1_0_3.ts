@@ -8,7 +8,7 @@ import { current as bitcoinKnotsCurrent } from 'bitcoin-knots-startos/startos/in
 
 
 export const v28_1_0_3 = VersionInfo.of({
-  version: '28.1:3-alpha.3',
+  version: '28.1:3-alpha.4',
   releaseNotes: 'Revamped for StartOS 0.4.0',
   migrations: {
     other: {
