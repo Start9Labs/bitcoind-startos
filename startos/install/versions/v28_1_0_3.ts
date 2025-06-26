@@ -4,7 +4,7 @@ import { load } from 'js-yaml'
 import { readFile } from 'fs/promises'
 import { bitcoinConfDefaults } from '../../utils'
 import { storeJson } from '../../fileModels/store.json'
-import { current as bitcoinKnotsCurrent } from 'bitcoin-knots-startos/startos/install/versions'
+import { current as bitcoinKnotsCurrent } from 'bitcoin-knots/startos/install/versions'
 
 
 export const v28_1_0_3 = VersionInfo.of({

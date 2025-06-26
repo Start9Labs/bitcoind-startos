@@ -7,8 +7,8 @@
   },
   "dependencies": {
     "@start9labs/start-sdk": "^0.4.0-beta.30",
-    "bitcoin-knots-startos": "git+https://github.com/Start9Labs/bitcoin-knots-startos.git#update/040",
     "@types/js-yaml": "^4.0.5",
+    "bitcoin-knots": "github:Start9Labs/bitcoin-knots-startos#update/040",
     "diskusage": "^1.2.0",
     "js-yaml": "^4.1.0"
   },
