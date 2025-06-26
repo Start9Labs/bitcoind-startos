@@ -14,6 +14,8 @@ export const v28_1_0_3 = VersionInfo.of({
     other: {
       [bitcoinKnotsCurrent.options.version]: async ({ effects }) => {
         // bitcoin core will discard unrecognized config options - no migration to discard knots specific options
+        // but we do want to merge bitcoin core defaults into bitcoin.conf
+        await bitcoinConfFile.merge(effects, bitcoinConfDefaults)
       }
     },
     up: async ({ effects }) => {
