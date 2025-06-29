@@ -4,14 +4,14 @@ import { load } from 'js-yaml'
 import { readFile } from 'fs/promises'
 import { bitcoinConfDefaults } from '../../utils'
 import { storeJson } from '../../fileModels/store.json'
-import { current as bitcoinKnotsCurrent } from 'bitcoin-knots/startos/install/versions'
+import { knotsCurrent } from 'bitcoin-knots/startos/install/versions'
 
 export const v28_1_0_3 = VersionInfo.of({
   version: '28.1:3-alpha.4',
   releaseNotes: 'Revamped for StartOS 0.4.0',
   migrations: {
     other: {
-      [bitcoinKnotsCurrent.options.version]: async ({ effects }) => {
+      [knotsCurrent.options.version]: async ({ effects }) => {
         /*
           bitcoin core will discard unrecognized config options - no migration to discard knots specific options
           but we do want to merge bitcoin core defaults into bitcoin.conf if those options
