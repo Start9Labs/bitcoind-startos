@@ -23,7 +23,7 @@ export const inputSpec = InputSpec.of({
       default: [],
       values: existingUsernames.reduce(
         (obj, curr) => ({ ...obj, [curr]: curr }),
-        {},
+        {} as Record<string, string>,
       ),
     }
   }),

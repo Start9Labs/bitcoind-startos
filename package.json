@@ -6,9 +6,8 @@
     "check": "tsc --noEmit"
   },
   "dependencies": {
-    "@start9labs/start-sdk": "^0.4.0-beta.30",
+    "@start9labs/start-sdk": "^0.4.0-beta.32",
     "@types/js-yaml": "^4.0.5",
-    "bitcoin-knots": "github:Start9Labs/bitcoin-knots-startos#update/040",
     "diskusage": "^1.2.0",
     "js-yaml": "^4.1.0"
   },

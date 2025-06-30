@@ -35,9 +35,10 @@ const peerSpec = sdk.InputSpec.of({
       'Enable or disable the use of BIP324 V2 P2P transport protocol.',
   }),
   externalip: getExteralAddresses(),
-  connectpeer: Value.union(
-    { name: 'Connect Peer', default: 'addnode' },
-    Variants.of({
+  connectpeer: Value.union({
+    name: 'Connect Peer',
+    default: 'addnode',
+    variants: Variants.of({
       connect: {
         name: 'Connect',
         spec: InputSpec.of({
@@ -89,7 +90,7 @@ const peerSpec = sdk.InputSpec.of({
         }),
       },
     }),
-  ),
+  }),
 })
 
 export const peerConfig = sdk.Action.withInput(
