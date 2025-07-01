@@ -96,6 +96,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
       subcontainer: bitcoindSub,
       exec: {
         command: ['bitcoind', ...bitcoinArgs],
+        sigtermTimeout: 300_000,
       },
       ready: {
         display: 'RPC',
