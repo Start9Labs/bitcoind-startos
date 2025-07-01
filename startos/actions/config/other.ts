@@ -202,7 +202,9 @@ async function write(effects: T.Effects, input: ConfigSpec) {
     coinstatsindex: input.coinstatsindex,
     peerbloomfilters: input.peerbloomfilters,
     peerblockfilters: input.blockfilters.peerblockfilters,
-    blockfilterindex: input.blockfilters.blockfilterindex ? 'basic' : undefined,
+    blockfilterindex: input.blockfilters.blockfilterindex
+      ? ('basic' as const)
+      : false,
     blocknotify: input.blocknotify ? input.blocknotify : blocknotify,
     prune: input.prune ? input.prune : prune,
     dbcache: input.dbcache ? input.dbcache : dbcache,
