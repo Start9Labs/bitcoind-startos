@@ -167,7 +167,17 @@ async function read(effects: any): Promise<PartialConfigSpec> {
   if (!bitcoinConf) return {}
 
   return {
-    zmqEnabled: Object.keys(bitcoinConf).includes('zmqpubrawblock'),
+    zmqEnabled:
+      !!bitcoinConf?.zmqpubhashblock &&
+      bitcoinConf.zmqpubhashblock !== '' &&
+      !!bitcoinConf?.zmqpubhashtx &&
+      bitcoinConf.zmqpubhashtx !== '' &&
+      !!bitcoinConf?.zmqpubrawblock &&
+      bitcoinConf.zmqpubrawblock !== '' &&
+      !!bitcoinConf?.zmqpubrawtx &&
+      bitcoinConf.zmqpubrawtx !== '' &&
+      !!bitcoinConf?.zmqpubsequence &&
+      bitcoinConf.zmqpubsequence !== '',
     txindex: bitcoinConf.txindex,
     coinstatsindex: bitcoinConf.coinstatsindex,
     wallet: {
@@ -208,11 +218,11 @@ async function write(effects: T.Effects, input: ConfigSpec) {
     blocknotify: input.blocknotify ? input.blocknotify : blocknotify,
     prune: input.prune ? input.prune : prune,
     dbcache: input.dbcache ? input.dbcache : dbcache,
-    zmqpubrawblock: input.zmqEnabled ? 'tcp://0.0.0.0:28332' : undefined,
-    zmqpubhashblock: input.zmqEnabled ? 'tcp://0.0.0.0:28332' : undefined,
-    zmqpubrawtx: input.zmqEnabled ? 'tcp://0.0.0.0:28333' : undefined,
-    zmqpubhashtx: input.zmqEnabled ? 'tcp://0.0.0.0:28333' : undefined,
-    zmqpubsequence: input.zmqEnabled ? 'tcp://0.0.0.0:28333' : undefined,
+    zmqpubrawblock: input.zmqEnabled ? 'tcp://0.0.0.0:28332' : '',
+    zmqpubhashblock: input.zmqEnabled ? 'tcp://0.0.0.0:28332' : '',
+    zmqpubrawtx: input.zmqEnabled ? 'tcp://0.0.0.0:28333' : '',
+    zmqpubhashtx: input.zmqEnabled ? 'tcp://0.0.0.0:28333' : '',
+    zmqpubsequence: input.zmqEnabled ? 'tcp://0.0.0.0:28333' : '',
   }
 
   await bitcoinConfFile.merge(effects, otherConfig)
