@@ -4,12 +4,14 @@ import { load } from 'js-yaml'
 import { readFile } from 'fs/promises'
 import { bitcoinConfDefaults } from '../../utils'
 import { storeJson } from '../../fileModels/store.json'
+import { nocow } from '../versionGraph'
 
 export const v28_1_0_3 = VersionInfo.of({
   version: '28.1:3-alpha.5',
   releaseNotes: 'Revamped for StartOS 0.4.0',
   migrations: {
     up: async ({ effects }) => {
+      await nocow('/media/startos/volumes/main/')
       await storeJson.write(effects, {
         reindexBlockchain: false,
         reindexChainstate: false,
