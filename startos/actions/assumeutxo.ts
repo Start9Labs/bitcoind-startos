@@ -22,7 +22,8 @@ const assumeutxoInputSpec = sdk.InputSpec.of({
     name: 'UTXO Snapshot URL',
     description: 'URL of UTXO Snapshot to bootstrap bitcoin',
     required: true,
-    default: null,
+    default: null, // @TODO update to start9 hosted and placeholder
+    // @TODO add pattern for url ending in .dat
   }),
 })
 
@@ -125,7 +126,9 @@ export const assumeutxo = sdk.Action.withInput(
         await storeJson.merge(effects, { snapshotInUse: true })
       } catch (e) {
         console.log('Error downloading snapshot:\n', e)
-        await sdk.action.createOwnTask(effects, assumeutxo, 'important')
+        await sdk.action.createOwnTask(effects, assumeutxo, 'important', {
+          reason: 'Previous attempt to download Snapshot failed.',
+        })
       } finally {
         await assumeutxoSubc.destroy()
         assumeutxoSubc = null
