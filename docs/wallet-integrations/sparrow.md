@@ -16,16 +16,9 @@
 
 ## Sparrow on StartOS
 
-```admonish tip
+TIP: To choose between a connection to Bitcoin Core/Knots or to Electrs, instead of using the Sparrow's own UI you will instead set your choice in the StartOS UI at `Services > Sparrow > Actions`
 
-To choose between a connection to Bitcoin Core/Knots or to Electrs, instead of using the Sparrow's own UI you will instead set your choice in the StartOS UI at `Services > Sparrow > Actions`
-
-```
-```admonish note
-
-You cannot connect hardware signing devices (wallets) to your server, they will not be detected by Sparrow.
-
-```
+NOTE: You cannot connect hardware signing devices (wallets) to your server, they will not be detected by Sparrow.
 
 1. Ensure Sparrow is installed and running if not already.
 
