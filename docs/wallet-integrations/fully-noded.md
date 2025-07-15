@@ -7,12 +7,10 @@
 
 **Instructions**
 
-```admonish note
+NOTE: Fulled Noded does not currently support `https` and recommends [using Tor](https://docs.start9.com/user-manual/connecting-remotely/tor.html#running-tor-in-the-background-on-your-phonelaptop). This means it is not possible to connect to Bitcoin Core/Knots over LAN or Router VPN. You can however connect to Bitcoin Core/Knots over its Tor interface.
 
-Fulled Noded does not currently support `https` and recommends [using Tor](../../../user-manual/connecting-remotely/tor.md). This means it is not possible to connect to Bitcoin Core/Knots over LAN or Router VPN. You can however connect to Bitcoin Core/Knots over its Tor interface.
 
-```
-1. Make sure you're [running Tor](../../../user-manual/connecting-remotely/tor.md).
+1. Make sure you're [running Tor](https://docs.start9.com/user-manual/connecting-remotely/tor.html#running-tor-in-the-background-on-your-phonelaptop).
 
 1. If this is your first time using Fully Noded, you will be presented with a option to `Connect my node`. Otherwise, you can find the server setup in `Configuration (Cog icon) > Node Manage > +`.
 

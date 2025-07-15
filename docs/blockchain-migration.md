@@ -2,9 +2,8 @@
 
 If you already have a synced Bitcoin blockchain on one StartOS server, and would like to skip IBD on another StartOS server, follow this guide.
 
-```admonish warning
-This is an advanced feature and should be used with caution. Start9 is not responsible for any damage you might cause through SSH access.
-```
+WARNING: This is an advanced feature and should be used with caution. Start9 is not responsible for any damage you might cause through SSH access.
+
 
 ## Instructions
 
