@@ -20,7 +20,7 @@
 
 1. Click `Settings` and select the `Tor` tab.
 
-   - If you have Tor running as [local Proxy](https://staging.docs.start9.com/user-manual/connecting-remotely/tor.html#running-tor-in-the-background-on-your-phonelaptop) scroll down and select `Custom`
+   - If you have Tor running as [local Proxy](https://docs.start9.com/user-manual/connecting-remotely/tor.html#running-tor-in-the-background-on-your-phonelaptop) scroll down and select `Custom`
 
      - Enter or leave the URL as `socks5h://localhost:9050`
 
@@ -32,11 +32,11 @@
 
    - then click the `Save` button
 
-### Connecting to Bitcoin Core (Recommended)
+### Connecting to Bitcoin Core 
 
 1. Click the `...` menu and click `+ Add Connection`
 
-1. In the `Username` and `Password` fields, enter your Bitcoin Core RPC credentials (found in `Services > Bitcoin Core > Properties`)
+1. In the `Username` and `Password` fields, enter a new user and password that you will now generate and copy from StartOS at `Services > Bitcoin Core/Knots > Actions > Generate RPC Credentials`
 
    ![Specter Bitcoin RPC](./assets/specter-new.png)
 
@@ -46,22 +46,4 @@
 
 ### Connecting to Electrs
 
-```admonish note
-
-If you already have a Bitcoin Core connection set up, Specter will make you delete it before you can add your connection to Electrs. If you don't already have a connection, you can skip the first step.
-
-```
-
-1. Delete any connections you already have by clicking `...`, hovering over the connection to reveal the cog icon, clicking the cog icon and then clicking `Delete`. Do this for all the connections you have.
-
-1. Click `Add plugin` then click `Spectrum`
-
-   ![Specter add plugin](./assets/specter-spectrum.png)
-
-1. Select `Enter my own`
-
-   ![Specter Electrs](./assets/specter-electrs.png)
-
-1. In the `Host` field, enter your electrs Tor hostname (found in `Services > electrs > Properties`) and enter your port as `50001`.
-
-1. Click `Connect`, then `Let's Go!`
+To connect to Electrs, see the Electrs [documentation](https://github.com/Start9Labs/electrs-startos/docs/instructions.md)

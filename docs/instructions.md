@@ -24,21 +24,15 @@ When your server backs up this service, it will *not* include the blocks, chains
 
 ## Using a Wallet
 
-Enter your QuickConnect QR code **OR** your raw RPC credentials (both located in `Properties`) into any wallet that supports connecting to a remote node over Tor. For a full list of compatible wallets, as well as guides for setup, please see the [documentation](https://docs.start9.com/latest/service-guides/bitcoin/bitcoin-integrations).
+Enter your QuickConnect QR code **OR** your raw RPC credentials (both located in `Properties`) into any wallet that supports connecting to a remote node over Tor. 
 
 ### Wallet Integration Guides
 
-The following wallets have a setups guides that are tested and known to work. You should also be able to adapt these for most other wallets.
+The following wallets have a setup guides that is tested and known to work. You should also be able to adapt these for most other wallets that can connect to Bitcoin Core (To connect to Electrs, see the Electrs [documentation](https://github.com/Start9Labs/electrs-startos/docs/instructions.md)).
 
-- [BitBoxApp](wallet-integrations/bitboxapp.md)
-- [Blockstream Green](wallet-integrations/blockstream-green.md)
-- [Blue Wallet](wallet-integrations/blue-wallet.md)
-- [Electrum](wallet-integrations/electrum.md)
 - [Fully Noded](wallet-integrations/fully-noded.md)
-- [Nunchuck](wallet-integrations/nunchuck.md)
 - [Sparrow](wallet-integrations/sparrow.md)
 - [Specter](wallet-integrations/specter.md)
-- [Trezor Suite](wallet-integrations/trezor-suite.md)
 
 ## Blockchain Migration
 
