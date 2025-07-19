@@ -50,11 +50,12 @@ WARNING: This is an advanced feature and should be used with caution. Start9 is 
 1.  In `synced.local` shell, run the following commands, _replacing `unsynced.local` in the second command with the correct URL_:
 
     ```
-    cd /embassy-data/package-data/volumes/bitcoind/data/main/
+    cd /media/startos/data/package-data/volumes/bitcoind/data/main/
+    cd /media/startos/data/package-data/volumes/bitcoind/data/main/
     ```
 
     ```
-    sudo rsync -e "ssh -i ~/.ssh/temp.key" -povgr --append-verify --rsync-path="sudo mkdir -p /embassy-data/package-data/volumes/bitcoind/data/main ; sudo rsync" ./{blocks,chainstate} start9@unsynced.local:/embassy-data/package-data/volumes/bitcoind/data/main/
+    sudo rsync -e "ssh -i ~/.ssh/temp.key" -povgr --append-verify --rsync-path="sudo mkdir -p /media/startos/data/package-data/volumes/bitcoind/data/main/ ; sudo rsync" ./{blocks,chainstate} start9@unsynced.local:/media/startos/data/package-data/volumes/bitcoind/data/main/
     ```
 
 1.  Wait some hours until the copy is complete. On a gigabit network, the limiting factor will be the write speed of your SSD on the unsynced server.
