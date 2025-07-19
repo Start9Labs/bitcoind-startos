@@ -24,8 +24,6 @@ When your server backs up this service, it will *not* include the blocks, chains
 
 ## Using a Wallet
 
-Enter your QuickConnect QR code **OR** your raw RPC credentials (both located in `Properties`) into any wallet that supports connecting to a remote node over Tor. 
-
 ### Wallet Integration Guides
 
 The following wallets have a setup guides that is tested and known to work. You should also be able to adapt these for most other wallets that can connect to Bitcoin Core (To connect to Electrs, see the Electrs [documentation](https://github.com/Start9Labs/electrs-startos/docs/instructions.md)).
