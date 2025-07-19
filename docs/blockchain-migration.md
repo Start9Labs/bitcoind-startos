@@ -4,6 +4,8 @@ If you already have a synced Bitcoin blockchain on one StartOS server, and would
 
 WARNING: This is an advanced feature and should be used with caution. Start9 is not responsible for any damage you might cause through SSH access.
 
+WARNING: This guide assumes you are migrating from a StartOS v0.4.0 to v0.4.0 server. If you are migrating from v0.3.5 then the source directory will always be `/embassy-data/package-data/volumes/bitcoind/data/main/`.
+
 
 ## Instructions
 
@@ -13,9 +15,9 @@ WARNING: This is an advanced feature and should be used with caution. Start9 is 
 
 1.  In `synced.local` UI:
 
-    1.  Ensure you have already have an [SSH key](https://docs.start9.com/user-manual/ssh.html).
+    1.  Review the SSH guide to choose whether to use your master password or create an [SSH key](https://docs.start9.com/user-manual/ssh.html).
 
-    1.  _Stop Bitcoin_.
+    1.  _Stop Bitcoin_ by going to Services and clicking the Stop icon, or clicking on Bitcoin and clicking the Stop button.
 
 1.  SSH into `synced.local`:
 
@@ -45,12 +47,11 @@ WARNING: This is an advanced feature and should be used with caution. Start9 is 
 
 1.  Copy the output of the final `cat` command to your clipboard.
 
-1.  In `unsynced.local` UI, go to `System > SSH > Add New Key`, and paste the value from above. Click "Submit"
+1.  In `unsynced.local` UI, go to `System > SSH > Add Key`, and paste the value from above. Click "Submit"
 
 1.  In `synced.local` shell, run the following commands, _replacing `unsynced.local` in the second command with the correct URL_:
 
     ```
-    cd /media/startos/data/package-data/volumes/bitcoind/data/main/
     cd /media/startos/data/package-data/volumes/bitcoind/data/main/
     ```
 
