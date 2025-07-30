@@ -6,7 +6,7 @@ export const zmqPort = 28332
 export const peerPort = 8333
 export const rpcPort = 8332
 
-export const rootDir = '/data'
+export const rootDir = '/root/.bitcoin'
 
 export type GetNetworkInfo = {
   connections: number
