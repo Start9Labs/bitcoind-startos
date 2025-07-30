@@ -74,6 +74,8 @@ export const shape = object({
   rpcthreads: natural.onMismatch(rpcthreads),
   rpcworkqueue: natural.onMismatch(rpcworkqueue),
   rpccookiefile: literal(rpccookiefile).onMismatch(rpccookiefile),
+  rpcuser: matches.literal(undefined).optional().onMismatch(undefined),
+  rpcpassword: matches.literal(undefined).optional().onMismatch(undefined),
 
   // Mempool
   mempoolfullrbf: boolean.onMismatch(mempoolfullrbf),
