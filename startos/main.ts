@@ -41,8 +41,6 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   const bitcoinArgs: string[] = []
 
   bitcoinArgs.push(`-onion=${osIp}:9050`)
-  bitcoinArgs.push(`-datadir=${rootDir}/`)
-  bitcoinArgs.push(`-conf=${rootDir}/bitcoin.conf`)
 
   if (conf.externalip === 'initial-setup') {
     const peerInterface = await sdk.serviceInterface
