@@ -1,7 +1,5 @@
 import { VersionInfo, IMPOSSIBLE } from '@start9labs/start-sdk'
-import { bitcoinConfFile, shape } from '../../fileModels/bitcoin.conf'
-import { load } from 'js-yaml'
-import { readFile } from 'fs/promises'
+import { bitcoinConfFile } from '../../fileModels/bitcoin.conf'
 import { bitcoinConfDefaults } from '../../utils'
 import { storeJson } from '../../fileModels/store.json'
 import { nocow } from '../versionGraph'
