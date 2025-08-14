@@ -10,10 +10,6 @@ Your node is highly configurable. Many settings are considered _advanced_ and sh
 
 Depending on your hardware resources, internet bandwidth, how many other services are running, and what peers your node happens to connect to, your node should take anywhere from under a day to several days to sync from genesis to present.
 
-### Using a Wallet
-
-Enter your QuickConnect QR code **OR** your raw RPC credentials (both located in `Properties`) into any wallet that supports connecting to a remote node over Tor. For a full list of compatible wallets, as well as guides for setup, please see the [documentation](https://docs.start9.com/latest/service-guides/bitcoin/bitcoin-integrations).
-
 ## Pruning
 
 Beginning with version **25.0.0.1**, pruning is now handled automatically depending on the available space. If there is insufficient free space, pruning will be automatically configured. Users also have the option to adjust pruning settings manually.
@@ -25,3 +21,17 @@ Pruning is a process by which your node discards old blocks and transactions aft
 ## Backups
 
 When your server backs up this service, it will *not* include the blocks, chainstate, or indexes, so you don't need to worry about it eating your backup drive if you run an archival node.
+
+## Using a Wallet
+
+### Wallet Integration Guides
+
+The following wallets have a setup guides that is tested and known to work. You should also be able to adapt these for most other wallets that can connect to Bitcoin Core (To connect to Electrs, see the Electrs [documentation](https://github.com/Start9Labs/electrs-startos/docs/instructions.md)).
+
+- [Fully Noded](wallet-integrations/fully-noded.md)
+- [Sparrow](wallet-integrations/sparrow.md)
+- [Specter](wallet-integrations/specter.md)
+
+## Blockchain Migration
+
+To migrate the full blockchain from one StartOS server to another, please see the [blockchain migration guide](blockchain-migration.md).
