@@ -33,9 +33,13 @@ export const watchPrune = sdk.setupOnInit(async (effects, _) => {
     }
   } else {
     if (rpcbind !== unprunedRpcbind || rpcallowip !== unprunedRpcallowIp)
-      await bitcoinConfFile.merge(effects, {
-        rpcbind: unprunedRpcbind,
-        rpcallowip: unprunedRpcallowIp,
-      })
+      await bitcoinConfFile.merge(
+        effects,
+        {
+          rpcbind: unprunedRpcbind,
+          rpcallowip: unprunedRpcallowIp,
+        },
+        { allowWriteAfterConst: true },
+      )
   }
 })
