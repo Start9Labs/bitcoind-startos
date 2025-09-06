@@ -1,16 +1,12 @@
 import { sdk } from './sdk'
 import { bitcoinConfFile } from './fileModels/bitcoin.conf'
 import { bitcoinConfDefaults, GetBlockchainInfo, rootDir } from './utils'
-import * as diskusage from 'diskusage'
-import { T, utils } from '@start9labs/start-sdk'
 import { configToml } from './fileModels/config.toml'
-import { peerInterfaceId, rpcPort } from './utils'
+import { rpcPort } from './utils'
 import { promises } from 'fs'
 import { storeJson } from './fileModels/store.json'
 import { access, rm } from 'fs/promises'
 
-const diskUsage = utils.once(() => diskusage.check('/'))
-const archivalMin = 900_000_000_000
 export const mainMounts = sdk.Mounts.of().mountVolume({
   volumeId: 'main',
   subpath: null,
@@ -22,42 +18,11 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   /**
    * ======================== Setup (optional) ========================
    */
-
-  const conf = (await bitcoinConfFile.read().once())!
-
-  const disk = await diskUsage()
-  if (disk.total < archivalMin || conf.prune) {
-    conf.prune = conf.prune || 550
-    conf.rpcbind = '127.0.0.1:18332'
-    conf.rpcallowip = '127.0.0.1/32'
-  } else {
-    conf.rpcbind = '0.0.0.0:8332'
-    conf.rpcallowip = '0.0.0.0/0'
-  }
-  await bitcoinConfFile.merge(effects, conf)
-
   const osIp = await sdk.getOsIp(effects)
 
   const bitcoinArgs: string[] = []
 
   bitcoinArgs.push(`-onion=${osIp}:9050`)
-
-  if (conf.externalip === 'initial-setup') {
-    const peerInterface = await sdk.serviceInterface
-      .getOwn(effects, peerInterfaceId)
-      .once()
-    const onionUrls = peerInterface?.addressInfo?.publicUrls.filter((x) =>
-      x.includes('.onion'),
-    )
-
-    if (onionUrls) {
-      await bitcoinConfFile.merge(effects, { externalip: onionUrls[0] })
-    } else {
-      await bitcoinConfFile.merge(effects, {
-        externalip: bitcoinConfDefaults.externalip,
-      })
-    }
-  }
 
   const { reindexBlockchain, reindexChainstate } = (await storeJson
     .read()
@@ -71,8 +36,10 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     await storeJson.merge(effects, { reindexChainstate: false })
   }
 
-  // Watch bitcoin.conf and trigger restart if it changes
-  await bitcoinConfFile.read().const(effects)
+  const conf = await bitcoinConfFile.read().const(effects)
+  if (!conf) {
+    throw new Error('bticoin.conf not found')
+  }
 
   const bitcoindSub = await sdk.SubContainer.of(
     effects,

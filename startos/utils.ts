@@ -8,6 +8,12 @@ export const rpcPort = 8332
 
 export const rootDir = '/.bitcoin'
 
+export const unprunedRpcbind = '0.0.0.0:8332'
+export const unprunedRpcallowIp = '0.0.0.0/0'
+
+export const prunedRpcbind = '127.0.0.1:18332'
+export const prunedRpcallowip = '127.0.0.1/32'
+
 export type GetNetworkInfo = {
   connections: number
   connections_in: number
@@ -56,8 +62,8 @@ export type GetBlockchainInfo = {
 
 export const bitcoinConfDefaults = {
   // RPC
-  rpcbind: '0.0.0.0:8332',
-  rpcallowip: '0.0.0.0/0',
+  rpcbind: unprunedRpcbind,
+  rpcallowip: unprunedRpcallowIp,
   rpcauth: undefined,
   rpcservertimeout: 30,
   rpcthreads: 4,

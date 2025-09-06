@@ -42,7 +42,6 @@ const {
   datacarrier,
   datacarriersize,
   listen,
-  onlynet,
   externalip,
   v2transport,
   connect,
