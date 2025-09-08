@@ -60,6 +60,7 @@ RUN . /tmp/bdb_prefix.sh && \
   -DBUILD_CLI=ON \
   -DBUILD_BITCOINCONSENSUS_LIB=ON \
   -DWITH_SQLITE=ON \
+  -DWITH_ZMQ=ON \
   -DBUILD_DAEMON=ON
 RUN cmake --build build -j$(nproc)
 RUN cmake --install build
