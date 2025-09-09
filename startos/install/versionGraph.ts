@@ -29,9 +29,6 @@ export const versionGraph = VersionGraph.of({
       fullySynced: false,
       snapshotInUse: false,
     })
-    await bitcoinConfFile.write(effects, {
-      ...bitcoinConfDefaults,
-      externalip: 'initial-setup',
-    })
+    await bitcoinConfFile.write(effects, bitcoinConfDefaults)
   },
 })

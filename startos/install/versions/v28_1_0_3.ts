@@ -20,10 +20,7 @@ export const v28_1_0_3 = VersionInfo.of({
 
       if (existingConf) return // Only write conf defaults if no existing bitcoin.conf found
 
-      await bitcoinConfFile.write(effects, {
-        ...bitcoinConfDefaults,
-        externalip: 'initial-setup',
-      })
+      await bitcoinConfFile.write(effects, bitcoinConfDefaults)
     },
     down: IMPOSSIBLE,
   },

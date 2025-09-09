@@ -42,7 +42,6 @@ const {
   datacarrier,
   datacarriersize,
   listen,
-  onlynet,
   externalip,
   v2transport,
   connect,
@@ -133,7 +132,7 @@ export const shape = object({
     .optional()
     .onMismatch(blockfilterindex),
   peerblockfilters: boolean.onMismatch(peerblockfilters),
-})
+}).onMismatch(bitcoinConfDefaults)
 
 function onWrite(a: unknown): any {
   if (a && typeof a === 'object') {
