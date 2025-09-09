@@ -3,7 +3,7 @@ ARG PLATFORM
 FROM lncm/berkeleydb:db-4.8.30.NC-${PLATFORM} AS berkeleydb
 
 # Build stage for Bitcoin Core
-FROM alpine:3.18 as bitcoin-core
+FROM alpine:3.21 as bitcoin-core
 
 COPY --from=berkeleydb /opt /opt
 
@@ -55,13 +55,14 @@ RUN . /tmp/bdb_prefix.sh && \
   -DBUILD_BENCH=OFF \
   -DWITH_CCACHE=OFF \
   -DBUILD_GUI=OFF \
-  -DWITH_BDB=ON \
   #--with-utils \
   -DBUILD_CLI=ON \
   -DBUILD_BITCOINCONSENSUS_LIB=ON \
   -DWITH_SQLITE=ON \
-  -DWITH_ZMQ=ON \
-  -DBUILD_DAEMON=ON
+  -DBUILD_DAEMON=ON \
+  -DENABLE_HARDENING=ON \
+  -DREDUCE_EXPORTS=ON \
+  -DWITH_ZMQ=ON
 RUN cmake --build build -j$(nproc)
 RUN cmake --install build
 RUN strip ${BITCOIN_PREFIX}/bin/*
