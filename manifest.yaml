@@ -1,9 +1,9 @@
 id: bitcoind
 title: "Bitcoin Core"
-version: 28.1.0.2
+version: 29.1.0
 eos-version: 0.3.4.4
 release-notes: |
-  * Update Bitcoin to [v28.1](https://github.com/bitcoin/bitcoin/releases/tag/v28.1)
+  * Update Bitcoin to [v29.1](https://github.com/bitcoin/bitcoin/releases/tag/v29.1)
 license: MIT
 wrapper-repo: https://github.com/Start9Labs/bitcoind-startos
 upstream-repo: https://github.com/bitcoin/bitcoin
@@ -15,7 +15,7 @@ description:
   long: Bitcoin is an innovative payment network and a new kind of money. Bitcoin uses peer-to-peer technology to operate with no central authority or banks; managing transactions and the issuing of bitcoins is carried out collectively by the network. Bitcoin is open-source; its design is public, nobody owns or controls Bitcoin and everyone can take part. Through many of its unique properties, Bitcoin allows exciting uses that could not be covered by any previous payment system.
 assets:
   license: LICENSE
-  icon: icon.png
+  icon: icon.svg
   instructions: instructions.md
 main:
   type: docker
