@@ -63,5 +63,5 @@ manager/target/aarch64-unknown-linux-musl/release/bitcoind-manager: $(MANAGER_SR
 manager/target/x86_64-unknown-linux-musl/release/bitcoind-manager: $(MANAGER_SRC)
 	docker run --rm -v ~/.cargo/registry:/root/.cargo/registry -v "$(shell pwd)"/manager:/home/rust/src messense/rust-musl-cross:x86_64-musl cargo build --release
 
-scripts/embassy.js: scripts/**/*.ts
-	deno bundle scripts/embassy.ts scripts/embassy.js
+scripts/embassy.js: $(TS_FILES)
+	deno run --allow-read --allow-write --allow-env --allow-net scripts/bundle.ts
