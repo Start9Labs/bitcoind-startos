@@ -4,18 +4,22 @@ import { bitcoinConfDefaults } from '../../utils'
 import { storeJson } from '../../fileModels/store.json'
 import { nocow } from '../versionGraph'
 
-export const v28_1_0_3 = VersionInfo.of({
-  version: '28.1:3-alpha.6',
+export const v29_1_0_1 = VersionInfo.of({
+  version: '29.1:1-beta.1',
   releaseNotes: 'Revamped for StartOS 0.4.0',
   migrations: {
     up: async ({ effects }) => {
       await nocow('/media/startos/volumes/main/')
-      await storeJson.write(effects, {
-        reindexBlockchain: false,
-        reindexChainstate: false,
-        fullySynced: false,
-        snapshotInUse: false,
-      })
+      const store = await storeJson.read().once()
+
+      if (!store) {
+        await storeJson.write(effects, {
+          reindexBlockchain: false,
+          reindexChainstate: false,
+          fullySynced: false,
+          snapshotInUse: false,
+        })
+      }
       const existingConf = await bitcoinConfFile.read().once()
 
       if (existingConf) return // Only write conf defaults if no existing bitcoin.conf found
