@@ -1,10 +1,5 @@
-# Build stage for BerkeleyDB
-FROM lncm/berkeleydb:db-4.8.30.NC AS berkeleydb
-
 # Build stage for Bitcoin Core
 FROM alpine:3.21 AS bitcoin-core
-
-COPY --from=berkeleydb /opt /opt
 
 RUN sed -i 's/http\:\/\/dl-cdn.alpinelinux.org/https\:\/\/alpine.global.ssl.fastly.net/g' /etc/apk/repositories
 RUN apk --no-cache add \
@@ -45,7 +40,6 @@ RUN . /tmp/bdb_prefix.sh && \
     cmake -B build -DCMAKE_LD_FLAGS=-L`ls -d /opt/db*`/lib/ -DCMAKE_CPP_FLAGS=-I`ls -d /opt/db*`/include/ \
   # If building on Mac make sure to increase Docker VM memory, or uncomment this line. See https://github.com/bitcoin/bitcoin/issues/6658 for more info.
   # CXXFLAGS="--param ggc-min-expand=1 --param ggc-min-heapsize=32768" \
-  # -DWITH_BDB=ON \
   -DBerkeleyDB_INCLUDE_DIR:PATH="${BDB_PREFIX}/include" -DWITH_BDB=ON \
   -DCMAKE_CXX_FLAGS="-O1" \
   -DCMAKE_CXX=clang++ CC=clang \
@@ -59,21 +53,13 @@ RUN . /tmp/bdb_prefix.sh && \
   -DBUILD_CLI=ON \
   -DBUILD_BITCOINCONSENSUS_LIB=ON \
   -DWITH_SQLITE=ON \
-  -DBUILD_DAEMON=ON \
-  -DENABLE_HARDENING=ON \
-  -DREDUCE_EXPORTS=ON \
-  -DWITH_ZMQ=ON
+  -DBUILD_DAEMON=ON
 RUN cmake --build build -j$(nproc)
 RUN cmake --install build
 RUN strip ${BITCOIN_PREFIX}/bin/*
 
 # Build stage for compiled artifacts
 FROM alpine:3.21
-
-LABEL maintainer.0="João Fonseca (@joaopaulofonseca)" \
-  maintainer.1="Pedro Branco (@pedrobranco)" \
-  maintainer.2="Rui Marinho (@ruimarinho)" \
-  maintainer.3="Aiden McClelland (@dr-bonez)"
 
 RUN sed -i 's/http\:\/\/dl-cdn.alpinelinux.org/https\:\/\/alpine.global.ssl.fastly.net/g' /etc/apk/repositories
 RUN apk --no-cache add \
@@ -83,7 +69,8 @@ RUN apk --no-cache add \
   libzmq \
   sqlite-dev \
   tini \
-  yq
+  yq \
+  jq \
 RUN rm -rf /var/cache/apk/*
 
 ARG ARCH
