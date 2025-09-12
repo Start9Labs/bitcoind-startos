@@ -5,7 +5,7 @@ import { storeJson } from '../../fileModels/store.json'
 import { nocow } from '../versionGraph'
 
 export const v29_1_0_1 = VersionInfo.of({
-  version: '29.1:1-beta.1',
+  version: '29.1:1-beta.0',
   releaseNotes: 'Revamped for StartOS 0.4.0',
   migrations: {
     up: async ({ effects }) => {
