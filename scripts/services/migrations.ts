@@ -360,7 +360,7 @@ export const migration: T.ExpectedExports.migration =
                 })
                 .test(config)
             ) {
-              throw new Error("Upgrading from Knots to Core is prohibited.");
+              throw new Error("Due to a bug in StartOS, and to protect against people accidentally switching from Core to Knots, or from Knots to Core, it is not possible to UPDATE from one to the other. To switch between them, the current version and the target version must be the same.");
             }
             return config;
           },
