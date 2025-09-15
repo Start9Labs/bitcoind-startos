@@ -91,7 +91,15 @@ v2transport=0
 
 ## WHITELIST
 ## whitelist all services subnet
-whitelist=172.18.0.0/16
+## whitelist=172.18.0.0/16
+{{#FOREACH advanced.peers.whitelist
+{{#IF advanced.peers.whitelist.port
+connect={{advanced.peers.whitelist.hostname}}:{{advanced.peers.whitelist.port}}
+}}
+{{#IF !advanced.peers.whitelist.port
+connect={{advanced.peers.whitelist.hostname}}
+}}
+}}
 
 ## PRUNING
 {{#IF advanced.pruning.mode = "automatic"
