@@ -250,37 +250,6 @@ export const getConfig: T.ExpectedExports.getConfig = async (effects) => {
                 "Allow other nodes to find your server on the network.",
               default: true,
             },
-            whitelist: {
-              name: "Whitelist Peers",
-              description: "Add IP addresses to whitelist.",
-              type: "list",
-              subtype: "object",
-              range: "[0,*)",
-              default: [],
-              spec: {
-                spec: {
-                  hostname: {
-                    type: "string",
-                    nullable: false,
-                    name: "Hostname",
-                    description: "Domain or IP address of bitcoin peer",
-                    pattern:
-                      "(^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$)|((^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$)|(^[a-z2-7]{16}\\.onion$)|(^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$))",
-                    "pattern-description":
-                      "Must be either a domain name, or an IPv4 or IPv6 address. Do not include protocol scheme (eg 'http://') or port.",
-                  },
-                  port: {
-                    type: "number",
-                    nullable: true,
-                    name: "Port",
-                    description:
-                      "Port that peer is listening on for inbound p2p connections",
-                    range: "[0,65535]",
-                    integral: true,
-                  },
-                },
-              },
-            },
             onlyconnect: {
               type: "boolean",
               name: "Disable Peer Discovery",
