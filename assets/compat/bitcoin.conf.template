@@ -90,8 +90,23 @@ v2transport=0
 }}
 
 ## WHITELIST
-## whitelist all services subnet
-whitelist=172.18.0.0/16
+## whitelist all services subnet except 172.18.0.1
+whitelist=172.18.0.0/32
+whitelist=172.18.0.2/31
+whitelist=172.18.0.4/30
+whitelist=172.18.0.8/29
+whitelist=172.18.0.16/28
+whitelist=172.18.0.32/27
+whitelist=172.18.0.64/26
+whitelist=172.18.0.128/25
+whitelist=172.18.1.0/24
+whitelist=172.18.2.0/23
+whitelist=172.18.4.0/22
+whitelist=172.18.8.0/21
+whitelist=172.18.16.0/20
+whitelist=172.18.32.0/19
+whitelist=172.18.64.0/18
+whitelist=172.18.128.0/17
 
 ## PRUNING
 {{#IF advanced.pruning.mode = "automatic"
