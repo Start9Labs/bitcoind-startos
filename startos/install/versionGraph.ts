@@ -23,12 +23,21 @@ export const versionGraph = VersionGraph.of({
   other,
   preInstall: async (effects) => {
     await nocow('/media/startos/volumes/main/')
-    await storeJson.write(effects, {
-      reindexBlockchain: false,
-      reindexChainstate: false,
-      fullySynced: false,
-      snapshotInUse: false,
-    })
-    await bitcoinConfFile.write(effects, bitcoinConfDefaults)
+    const store = await storeJson.read().once()
+
+    if (!store) {
+      await storeJson.write(effects, {
+        reindexBlockchain: false,
+        reindexChainstate: false,
+        fullySynced: false,
+        snapshotInUse: false,
+      })
+    }
+
+    const conf = await bitcoinConfFile.read().once()
+
+    if (!conf) {
+      await bitcoinConfFile.write(effects, bitcoinConfDefaults)
+    }
   },
 })
