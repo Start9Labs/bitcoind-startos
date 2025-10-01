@@ -47,15 +47,16 @@ RUN . /tmp/bdb_prefix.sh && \
   # If building on Mac make sure to increase Docker VM memory, or uncomment this line. See https://github.com/bitcoin/bitcoin/issues/6658 for more info.
   # CXXFLAGS="--param ggc-min-expand=1 --param ggc-min-heapsize=32768" \
   -DBerkeleyDB_INCLUDE_DIR:PATH="${BDB_PREFIX}/include" -DWITH_BDB=ON \
-  -DCMAKE_CXX_FLAGS="-O1" \
-  -DCMAKE_CXX=clang++ CC=clang \
+  -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-O2 -g0" \
+  -DCMAKE_CXX_COMPILER=clang++ \
+  -DCMAKE_C_COMPILER=clang \
   -DCMAKE_INSTALL_PREFIX=${BITCOIN_PREFIX} \
   -DINSTALL_MAN=OFF \
   -DBUILD_TESTS=OFF \
   -DBUILD_BENCH=OFF \
   -DWITH_CCACHE=OFF \
   -DBUILD_GUI=OFF \
-  #--with-utils \
+  -DENABLE_IPC=OFF \
   -DBUILD_CLI=ON \
   -DBUILD_BITCOINCONSENSUS_LIB=ON \
   -DWITH_SQLITE=ON \

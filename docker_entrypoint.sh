@@ -7,4 +7,7 @@ export EMBASSY_IP=$(ip -4 route list match 0/0 | awk '{print $3}')
 export PEER_TOR_ADDRESS=$(yq e '.peer-tor-address' "$CONFIG_FILE")
 export RPC_TOR_ADDRESS=$(yq e '.rpc-tor-address' "$CONFIG_FILE")
 
+# disable CoW (Copy on Write) for the Bitcoin data directory
+chattr -R +C /root/.bitcoin
+
 exec tini -p SIGTERM -- bitcoind-manager
