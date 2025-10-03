@@ -24,7 +24,7 @@ export const v29_1_0_2 = VersionInfo.of({
       const existingConf = await bitcoinConfFile.read().once()
 
       if (existingConf) {
-        await bitcoinConfFile.merge(effects, { rpcuser: undefined, rpcpassword: undefined, bind: existingConf.listen ? '0.0.0.0:18333' : bind, whitebind,})
+        await bitcoinConfFile.merge(effects, { rpcuser: undefined, rpcpassword: undefined, bind: existingConf.listen ? '0.0.0.0:18333' : bind, whitebind, whitelist: undefined})
         return
       } // Only write conf defaults if no existing bitcoin.conf found
 

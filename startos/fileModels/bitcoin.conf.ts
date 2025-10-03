@@ -99,6 +99,7 @@ export const shape = object({
 
   // Whitebind
   whitebind: literal(whitebind).onMismatch(whitebind),
+  whitelist: matches.literal(undefined).onMismatch(undefined),
 
   // Pruning
   prune: natural.onMismatch(prune),
