@@ -3,6 +3,7 @@ import { bitcoinConfFile } from '../../fileModels/bitcoin.conf'
 import { bitcoinConfDefaults } from '../../utils'
 import { storeJson } from '../../fileModels/store.json'
 import { nocow } from '../versionGraph'
+const { bind, whitebind} = bitcoinConfDefaults
 
 export const v29_1_0_2 = VersionInfo.of({
   version: '29.1:2-beta.0',
@@ -22,7 +23,10 @@ export const v29_1_0_2 = VersionInfo.of({
       }
       const existingConf = await bitcoinConfFile.read().once()
 
-      if (existingConf) return // Only write conf defaults if no existing bitcoin.conf found
+      if (existingConf) {
+        await bitcoinConfFile.merge(effects, { rpcuser: undefined, rpcpassword: undefined, bind: existingConf.listen ? '0.0.0.0:18333' : bind, whitebind,})
+        return
+      } // Only write conf defaults if no existing bitcoin.conf found
 
       await bitcoinConfFile.write(effects, bitcoinConfDefaults)
     },
