@@ -70,7 +70,7 @@ export const bitcoinConfDefaults = {
   rpcworkqueue: 16,
   rpccookiefile: '.cookie',
   whitebind: '0.0.0.0:8333',
-  bind: undefined,
+  bind: `0.0.0.0:${peerPort}`,
 
   // Mempool
   persistmempool: true,

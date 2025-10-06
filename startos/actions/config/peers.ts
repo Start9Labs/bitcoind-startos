@@ -3,18 +3,13 @@ import { bitcoinConfFile, shape } from '../../fileModels/bitcoin.conf'
 import { sdk } from '../../sdk'
 import { bitcoinConfDefaults, getExteralAddresses } from '../../utils'
 
-const { listen, onlynet, v2transport, externalip, addnode, connect, bind } =
+const { onlynet, v2transport, externalip, addnode, connect } =
   bitcoinConfDefaults
 const { Value, Variants, List, InputSpec } = sdk
 const validNets = ['ipv4', 'ipv6', 'onion', 'i2p', 'cjdns'] as const
 type ValidNets = (typeof validNets)[number]
 
 const peerSpec = sdk.InputSpec.of({
-  listen: Value.toggle({
-    name: 'Make Public',
-    default: listen,
-    description: 'Allow other nodes to find your server on the network.',
-  }),
   onlynet: Value.multiselect({
     name: 'Onlynet',
     description:
@@ -122,7 +117,6 @@ async function read(effects: any): Promise<PartialPeerSpec> {
   if (!bitcoinConf) return {}
 
   const peerSettings: PartialPeerSpec = {
-    listen: bitcoinConf.listen,
     onlynet: bitcoinConf.onlynet
       ? [bitcoinConf.onlynet]
           .flat()
@@ -154,8 +148,6 @@ async function read(effects: any): Promise<PartialPeerSpec> {
 
 async function write(effects: T.Effects, input: peerSpec) {
   const peerSettings = {
-    listen: input.listen,
-    bind: input.listen ? '0.0.0.0:18333' : bind,
     v2transport: input.v2transport,
     onlynet: input.onlynet.length > 0 ? input.onlynet : onlynet,
     externalip: input.externalip !== 'none' ? input.externalip : externalip,

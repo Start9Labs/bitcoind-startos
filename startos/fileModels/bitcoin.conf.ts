@@ -86,7 +86,7 @@ export const shape = object({
   permitbaremultisig: boolean.onMismatch(permitbaremultisig),
 
   // Peers
-  listen: boolean.onMismatch(listen),
+  listen: matches.literal(listen).onMismatch(listen),
   bind: string.optional().onMismatch(bind),
   connect: stringArray.orParser(string).optional().onMismatch(connect),
   addnode: stringArray.orParser(string).optional().onMismatch(addnode),
