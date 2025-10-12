@@ -1,10 +1,9 @@
 id: bitcoind
 title: "Bitcoin Core"
-version: 29.2.0
+version: 30.0.0
 eos-version: 0.3.4.4
 release-notes: |
-  * Update Bitcoin to [v29.2](https://github.com/bitcoin/bitcoin/releases/tag/v29.2)
-  * IBD performance optimizations
+  * Update Bitcoin to [v30.0](https://github.com/bitcoin/bitcoin/releases/tag/v30.0)
 license: MIT
 wrapper-repo: https://github.com/Start9Labs/bitcoind-startos
 upstream-repo: https://github.com/bitcoin/bitcoin
