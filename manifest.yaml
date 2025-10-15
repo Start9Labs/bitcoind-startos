@@ -1,9 +1,9 @@
 id: bitcoind
 title: "Bitcoin Core"
-version: 29.1.0.1
+version: 29.2.0
 eos-version: 0.3.4.4
 release-notes: |
-  * Remove Proxy from whitelist - see [PR](https://github.com/Start9Labs/bitcoind-startos/pull/175) for details
+  * Update Bitcoin to [v29.2](https://github.com/bitcoin/bitcoin/releases/tag/v29.2)
 license: MIT
 wrapper-repo: https://github.com/Start9Labs/bitcoind-startos
 upstream-repo: https://github.com/bitcoin/bitcoin
