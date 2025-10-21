@@ -117,6 +117,10 @@ prune={{advanced.pruning.size}}
 {{#IF advanced.dbcache
 dbcache={{advanced.dbcache}}
 }}
+{{#IF advanced.dbbatchsize
+dbbatchsize={{advanced.dbbatchsize}}
+}}
+assumevalid=00000000000000000000611fd22f2df7c8fbd0688745c3a6c3bb5109cc2a12cb
 
 ## WALLET
 {{#IF !wallet.enable
