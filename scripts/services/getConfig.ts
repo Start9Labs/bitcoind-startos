@@ -358,7 +358,7 @@ export const getConfig: T.ExpectedExports.getConfig = async (effects) => {
           range: "(0,*)",
           default: 33_554_432,
           integral: true,
-          units: "MiB",
+          units: "Bytes",
         },
         blockfilters: {
           type: "object",
