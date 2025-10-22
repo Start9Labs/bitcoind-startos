@@ -234,7 +234,7 @@ export const getConfig: T.ExpectedExports.getConfig = async (effects) => {
               range: "[0,100000]",
               integral: true,
               units: "bytes",
-              default: 83,
+              default: 100_000,
             },
           },
         },

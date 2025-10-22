@@ -429,6 +429,76 @@ export const migration: T.ExpectedExports.migration =
           type: "down",
         }),
       },
+      "30.0.0": {
+        up: compat.migrations.updateConfig(
+          (config) => {
+            if (
+              matches
+                .shape({
+                  advanced: matches.shape({
+                    mempool: matches.shape({
+                      datacarriersize: matches.any,
+                    }),
+                  }),
+                })
+                .test(config)
+            ) {
+              if (
+                config.advanced.mempool.datacarriersize === 83
+              ) {
+                config.advanced.mempool.datacarriersize = 100_000;
+              }
+            } else if (
+              matches
+                .shape({
+                  blkconstr: matches.shape({
+                    datacarriersize: matches.any,
+                  }),
+                })
+                .test(config)
+            ) {
+              if (
+                config.blkconstr.datacarriersize === 42
+              ) {
+                config.advanced.mempool.datacarriersize = 100_000;
+              } else {
+                config.advanced.mempool.datacarriersize = config.blkconstr.datacarriersize
+              }
+            }
+            return config;
+          },
+          false,
+          {
+            version: "30.0.0",
+            type: "up",
+          }
+        ),
+        down: compat.migrations.updateConfig(
+          (config: any) => {
+            if (
+              matches
+                .shape({
+                  advanced: matches.shape({
+                    mempool: matches.shape({
+                      datacarriersize: matches.any,
+                    }),
+                  }),
+                })
+                .test(config)
+            ) {
+              if (config.advanced.mempool.datacarriersize === 100_000) {
+                config.advanced.mempool.datacarriersize = 83;
+              }
+            }
+            return config;
+          },
+          false,
+          {
+            version: "30.0.0",
+            type: "down",
+          }
+        ),
+      },
     },
-    "29.2.0"
+    "30.0.0"
   );

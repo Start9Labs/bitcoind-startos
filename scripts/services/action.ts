@@ -62,7 +62,7 @@ export const action = {
     _input?: T.Config,
   ): Promise<T.ResultType<T.ActionResult>> {
     const coinstatsinfoLocation = {
-      path: "indexes/coinstats",
+      path: "/indexes/coinstatsindex/",
       volumeId: "main",
     };
     if (await util.exists(effect, coinstatsinfoLocation) === false) {
