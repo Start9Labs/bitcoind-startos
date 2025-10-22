@@ -452,7 +452,7 @@ export const migration: T.ExpectedExports.migration =
             }
             return config;
           },
-          true,
+          false,
           {
             version: "30.0.0",
             type: "up",
@@ -477,7 +477,7 @@ export const migration: T.ExpectedExports.migration =
             }
             return config;
           },
-          true,
+          false,
           {
             version: "30.0.0",
             type: "down",
