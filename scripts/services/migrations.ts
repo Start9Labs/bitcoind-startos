@@ -460,7 +460,9 @@ export const migration: T.ExpectedExports.migration =
               if (
                 config.blkconstr.datacarriersize === 42
               ) {
-                config.blkconstr.datacarriersize = 100_000;
+                config.advanced.mempool.datacarriersize = 100_000;
+              } else {
+                config.advanced.mempool.datacarriersize = config.blkconstr.datacarriersize
               }
             }
             return config;
