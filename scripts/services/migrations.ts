@@ -444,10 +444,23 @@ export const migration: T.ExpectedExports.migration =
                 .test(config)
             ) {
               if (
-                config.advanced.mempool.datacarriersize === 83 ||
-                config.advanced.mempool.datacarriersize === 42
+                config.advanced.mempool.datacarriersize === 83
               ) {
                 config.advanced.mempool.datacarriersize = 100_000;
+              }
+            } else if (
+              matches
+                .shape({
+                  blkconstr: matches.shape({
+                    datacarriersize: matches.any,
+                  }),
+                })
+                .test(config)
+            ) {
+              if (
+                config.blkconstr.datacarriersize === 42
+              ) {
+                config.blkconstr.datacarriersize = 100_000;
               }
             }
             return config;
