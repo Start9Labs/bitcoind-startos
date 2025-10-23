@@ -360,7 +360,9 @@ export const migration: T.ExpectedExports.migration =
                 })
                 .test(config)
             ) {
-              throw new Error("Due to a bug in StartOS, and to protect against people accidentally switching from Core to Knots, or from Knots to Core, it is not possible to UPDATE from one to the other. To switch between them, the current version and the target version must be the same.");
+              throw new Error(
+                "Due to a bug in StartOS, and to protect against people accidentally switching from Core to Knots, or from Knots to Core, it is not possible to UPDATE from one to the other. To switch between them, the current version and the target version must be the same."
+              );
             }
             return config;
           },
@@ -387,7 +389,9 @@ export const migration: T.ExpectedExports.migration =
                 })
                 .test(config)
             ) {
-              throw new Error("Due to a bug in StartOS, and to protect against people accidentally switching from Core to Knots, or from Knots to Core, it is not possible to UPDATE from one to the other. To switch between them, the current version and the target version must be the same.");
+              throw new Error(
+                "Due to a bug in StartOS, and to protect against people accidentally switching from Core to Knots, or from Knots to Core, it is not possible to UPDATE from one to the other. To switch between them, the current version and the target version must be the same."
+              );
             }
             return config;
           },
@@ -414,7 +418,9 @@ export const migration: T.ExpectedExports.migration =
                 })
                 .test(config)
             ) {
-              throw new Error("Due to a bug in StartOS, and to protect against people accidentally switching from Core to Knots, or from Knots to Core, it is not possible to UPDATE from one to the other. To switch between them, the current version and the target version must be the same.");
+              throw new Error(
+                "Due to a bug in StartOS, and to protect against people accidentally switching from Core to Knots, or from Knots to Core, it is not possible to UPDATE from one to the other. To switch between them, the current version and the target version must be the same."
+              );
             }
             return config;
           },
@@ -428,76 +434,6 @@ export const migration: T.ExpectedExports.migration =
           version: "29.2.0",
           type: "down",
         }),
-      },
-      "30.0.0": {
-        up: compat.migrations.updateConfig(
-          (config) => {
-            if (
-              matches
-                .shape({
-                  advanced: matches.shape({
-                    mempool: matches.shape({
-                      datacarriersize: matches.any,
-                    }),
-                  }),
-                })
-                .test(config)
-            ) {
-              if (
-                config.advanced.mempool.datacarriersize === 83
-              ) {
-                config.advanced.mempool.datacarriersize = 100_000;
-              }
-            } else if (
-              matches
-                .shape({
-                  blkconstr: matches.shape({
-                    datacarriersize: matches.any,
-                  }),
-                })
-                .test(config)
-            ) {
-              if (
-                config.blkconstr.datacarriersize === 42
-              ) {
-                config.advanced.mempool.datacarriersize = 100_000;
-              } else {
-                config.advanced.mempool.datacarriersize = config.blkconstr.datacarriersize
-              }
-            }
-            return config;
-          },
-          false,
-          {
-            version: "30.0.0",
-            type: "up",
-          }
-        ),
-        down: compat.migrations.updateConfig(
-          (config: any) => {
-            if (
-              matches
-                .shape({
-                  advanced: matches.shape({
-                    mempool: matches.shape({
-                      datacarriersize: matches.any,
-                    }),
-                  }),
-                })
-                .test(config)
-            ) {
-              if (config.advanced.mempool.datacarriersize === 100_000) {
-                config.advanced.mempool.datacarriersize = 83;
-              }
-            }
-            return config;
-          },
-          false,
-          {
-            version: "30.0.0",
-            type: "down",
-          }
-        ),
       },
     },
     "30.0.0"
